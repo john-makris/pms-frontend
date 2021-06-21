@@ -11,14 +11,14 @@
     <div><a routerLink="/">HUA Pms</a></div>
     <div fxFlex fxLayout fxLayoutAlign="flex-end" fxHide.xs>
         <ul fxLayout fxLayoutGap="0.625em" class="navigation-items">
-            <li>
+            <li *ngIf="!isAuth">
                 <a routerLink="/signup">Signup</a>
             </li>
-            <li>
+            <li *ngIf="!isAuth">
                 <a routerLink="/login">Login</a>
             </li>
-            <li>
-                <a style="cursor:pointer">Logout</a>
+            <li *ngIf="isAuth">
+                <a style="cursor:pointer" (click)="onLogout()">Logout</a>
             </li>
         </ul>
     </div>
