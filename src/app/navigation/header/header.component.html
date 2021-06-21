@@ -1,0 +1,25 @@
+<mat-toolbar color="primary">
+    <!--fxHide.gt-xs-->
+    <div>
+        <button 
+            mat-icon-button 
+            onclick="this.blur()"
+            (click)="onToggleSidenav()">
+            <mat-icon>menu</mat-icon>
+        </button>
+    </div>
+    <div><a routerLink="/">HUA Pms</a></div>
+    <div fxFlex fxLayout fxLayoutAlign="flex-end" fxHide.xs>
+        <ul fxLayout fxLayoutGap="0.625em" class="navigation-items">
+            <li>
+                <a routerLink="/signup">Signup</a>
+            </li>
+            <li>
+                <a routerLink="/login">Login</a>
+            </li>
+            <li>
+                <a style="cursor:pointer">Logout</a>
+            </li>
+        </ul>
+    </div>
+</mat-toolbar>
