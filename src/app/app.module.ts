@@ -12,6 +12,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './material.module';
 import { AuthModule } from './auth/auth.module';
 import { WelcomeComponent } from './welcome/welcome.component';
+import { SchoolsModule } from './schools/schools.module';
+import { CoreModule } from './core.module';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { WelcomeComponent } from './welcome/welcome.component';
     MaterialModule,
     AppRoutingModule,
     FlexLayoutModule,
-    AuthModule
+    AuthModule,
+    CoreModule,
+    SchoolsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
