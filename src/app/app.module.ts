@@ -11,12 +11,14 @@ import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
 import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './material.module';
 import { AuthModule } from './auth/auth.module';
+import { WelcomeComponent } from './welcome/welcome.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    SidenavListComponent
+    SidenavListComponent,
+    WelcomeComponent
   ],
   imports: [
     BrowserModule,
