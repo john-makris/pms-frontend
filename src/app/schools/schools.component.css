@@ -1,17 +1,17 @@
 .container {
+    /*border: 2px solid black;*/
     padding-top: 4rem;
     padding-left: 4rem;
     padding-right: 2rem;
     padding-bottom: 4rem;
-    border: 2px solid black;
 }
 
 .medium-container {
+    /*border: 2px solid black;*/
     padding-top: 4rem;
     padding-left: 0rem;
     padding-right: 0rem;
     padding-bottom: 4rem;
-    border: 2px solid black;
 }
 
 .min-container {
