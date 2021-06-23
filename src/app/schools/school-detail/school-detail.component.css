@@ -1,0 +1,16 @@
+.container {
+    border: 2px solid black;
+    padding: 2em;
+}
+
+.min-container {
+    border: 2px solid black;
+    padding-top: 2em;
+    padding-bottom: 2em;
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+}
+
+mat-card-actions {
+    margin: auto;
+}

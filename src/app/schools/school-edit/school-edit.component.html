@@ -1,1 +1,69 @@
-<p>school-edit works!</p>
+<section 
+    [ngClass]="'container'"
+    [ngClass.lt-sm]="'min-container'"
+    fxLayout>
+    <form 
+        [formGroup]="schoolForm"
+        (ngSubmit)="onSubmit()">
+        <mat-card
+            fxFlex.xs="19em"
+            fxFlex="22em">
+            <mat-card-title fxLayoutAlign="center">
+                <h1 *ngIf="isAddMode">Add School</h1>
+                <h1 *ngIf="!isAddMode">Edit School</h1>
+            </mat-card-title>
+            <mat-card-content fxLayout="column" 
+            fxLayoutAlign="center">
+                <mat-form-field appearance="outline">
+                    <textarea 
+                        type="text"
+                        matInput 
+                        placeholder="Name"
+                        formControlName="name">
+                    </textarea>
+                    <div matSuffix>
+                        <mat-icon>school</mat-icon>
+                    </div>
+                    <mat-hint>Please enter a valid name.</mat-hint>
+                    <mat-error>Invalid or missing name.</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <textarea
+                        type="text"
+                        matInput
+                        placeholder="Location"
+                        formControlName="location">
+                    </textarea>
+                    <div matSuffix>
+                        <mat-icon>add_location_alt</mat-icon>
+                    </div>
+                    <mat-hint>Please enter a valid location.</mat-hint>
+                    <mat-error>Invalid or missing location.</mat-error>
+                </mat-form-field>
+                <div fxLayoutAlign="center">
+                    <mat-spinner *ngIf="isLoading"></mat-spinner>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div
+                    *ngIf="!isLoading"
+                    class="form-actions"
+                    fxLayout="row"
+                    fxLayoutAlign="start">
+                        <button 
+                            type="submit" 
+                            mat-raised-button color="primary" 
+                            [disabled]="schoolForm.invalid || isLoading">
+                            {{ isAddMode ? 'Save' : 'Update' }}
+                        </button>
+                        <button 
+                            type="button" 
+                            mat-button color="primary" 
+                            (click)="onCancel()">
+                            Cancel
+                        </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </form>
+</section>

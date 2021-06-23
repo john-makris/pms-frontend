@@ -1,1 +1,50 @@
-<p>school-detail works!</p>
+<section
+    [ngClass]="'container'"
+    [ngClass.lt-sm]="'min-container'"
+    fxLayout>
+    <div *ngIf="school">
+        <mat-card
+            fxFlex.xs="19em"
+            fxFlex="22em">
+            <mat-card-title fxLayoutAlign="center">
+                School Details
+            </mat-card-title>
+            <br>
+            <mat-card-content fxLayout="column" 
+            fxLayoutAlign="center"
+            fxLayoutGap="1em">
+                <div>
+                    <mat-label><strong>School Name:</strong></mat-label>
+                    {{ school?.name }}
+                </div>
+                <div>
+                    <label><strong>Location:</strong></label>
+                    {{ school?.location }}
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div>
+                    <button
+                        mat-raised-button color="primary"
+                        (click)="editSchool()">
+                        Edit
+                    </button>
+              
+                    <button 
+                        mat-raised-button color="warn"
+                        (click)="deleteSchool(school.id)">
+                        Delete
+                    </button>
+                </div>
+                <hr>
+                <div fxLayoutAlign="end">
+                    <button 
+                        mat-button color="primary"
+                        (click)="onCancel()">
+                        Cancel
+                    </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</section>
