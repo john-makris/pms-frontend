@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
-import { AppModule } from 'src/app/app.module';
+import { SnackbarService } from 'src/app/shared/snackbar.service';
 import { SchoolService } from '../school.service';
 
 export interface SchoolData {
@@ -26,7 +26,8 @@ export class SchoolEditComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private schoolService: SchoolService
+    private schoolService: SchoolService,
+    private snackbarService: SnackbarService
   ) { }
 
   ngOnInit(): void {
@@ -78,6 +79,7 @@ export class SchoolEditComponent implements OnInit {
     this.schoolService.createSchool(schoolData)
       .pipe(first())
       .subscribe(() => {
+        this.snackbarService.success('School added');
         this.router.navigate(['../'], { relativeTo: this.route });
       })
       .add(() => { this.isLoading = false; });
@@ -87,6 +89,7 @@ export class SchoolEditComponent implements OnInit {
     this.schoolService.updateSchool(this.id, schoolData)
       .pipe(first())
       .subscribe(() => {
+        this.snackbarService.success('School updated');
         this.router.navigate(['../../'], { relativeTo: this.route});
       })
       .add(() => this.isLoading = false);

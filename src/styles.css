@@ -2,3 +2,44 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.success {
+    background-color:#5cb85c;
+    color:white;
+}
+
+.danger {
+    background-color:#d9534f;
+    color:white;
+}
+
+.warning {
+    background-color:#f0ad4e;
+    color:white;
+}
+
+.info {
+    background-color:#5bc0de;
+    color:white;
+}
+
+.primary {
+    background-color:#0275d8;
+    color:white;
+}
+
+.inverse {
+    background-color:#292b2c;
+    color:white;
+}
+
+.faded {
+    background-color:#f7f7f7;
+    color:white;
+}
+
+.default {
+    color: white;
+}
+
+.mat-simple-snackbar-action > button { color: white }

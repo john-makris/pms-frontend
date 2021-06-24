@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
+import { SnackbarService } from 'src/app/shared/snackbar.service';
 import { School } from '../school.model';
 import { SchoolService } from '../school.service';
 
@@ -15,7 +16,8 @@ export class SchoolDetailComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
     private router: Router,
-    private schoolService: SchoolService) { }
+    private schoolService: SchoolService,
+    private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
     this.route.params
@@ -42,6 +44,7 @@ export class SchoolDetailComponent implements OnInit {
         .pipe(first())
         .subscribe(() => {
           this.school.isDeleting = false;
+          this.snackbarService.success('School deleted');
           this.router.navigate(['../../'], { relativeTo: this.route });
         });
   }

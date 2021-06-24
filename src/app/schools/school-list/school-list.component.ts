@@ -4,6 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
+import { SnackbarData, SnackbarService } from 'src/app/shared/snackbar.service';
 import { School } from '../school.model';
 import { SchoolService } from '../school.service';
 
@@ -24,7 +25,9 @@ export class SchoolListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private schoolService: SchoolService) { }
+  constructor(
+    private schoolService: SchoolService,
+    private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
     if(!this.dataSource.data.length) {
@@ -34,9 +37,20 @@ export class SchoolListComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(schools => {
         this.dataSource.data = schools;
         console.log(this.dataSource.data);
-      }
-      );
+      });
     }
+    this.snackbarService.snackbarState.subscribe(
+      (state: SnackbarData) => {
+        if(state.message.search('added' || 'updated' || 'deleted')) {
+          console.log("Snackbar: " + state.message);
+          this.schoolService.getAllSchools()
+          .pipe(first())
+          .subscribe(schools => {
+            this.dataSource.data = schools;
+          });
+        }
+      }
+    );
   }
 
   ngAfterViewInit() {
