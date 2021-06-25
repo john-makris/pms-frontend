@@ -4,7 +4,8 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { SnackbarData, SnackbarService } from 'src/app/shared/snackbar.service';
+import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
+import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { School } from '../school.model';
 import { SchoolService } from '../school.service';
 

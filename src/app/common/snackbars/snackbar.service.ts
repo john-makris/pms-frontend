@@ -1,13 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
-
-export interface SnackbarData {
-    message: string, 
-    action: string,
-    duration: number,
-    styleClass: string
-}
+import { SnackbarData } from './snackbar-data.interface';
 
 @Injectable({ providedIn: 'root' })
 export class SnackbarService {

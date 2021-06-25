@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { SnackbarService } from 'src/app/shared/snackbar.service';
+import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.service';
+import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { School } from '../school.model';
 import { SchoolService } from '../school.service';
 
@@ -10,14 +12,17 @@ import { SchoolService } from '../school.service';
   templateUrl: './school-detail.component.html',
   styleUrls: ['./school-detail.component.css']
 })
-export class SchoolDetailComponent implements OnInit {
+export class SchoolDetailComponent implements OnInit, OnDestroy {
   id!: number;
   school!: School;
+  private ensureDialogSubscription!: Subscription;
+  ensureDialogStatus!: boolean;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
     private schoolService: SchoolService,
-    private snackbarService: SnackbarService) { }
+    private snackbarService: SnackbarService,
+    private ensureDialogService: EnsureDialogService) { }
 
   ngOnInit(): void {
     this.route.params
@@ -39,17 +44,35 @@ export class SchoolDetailComponent implements OnInit {
 
   deleteSchool(id: number) {
     if (!this.school) return;
-    this.school.isDeleting = false;
-    this.schoolService.deleteSchoolById(id)
-        .pipe(first())
-        .subscribe(() => {
-          this.school.isDeleting = false;
-          this.snackbarService.success('School deleted');
-          this.router.navigate(['../../'], { relativeTo: this.route });
-        });
+    this.ensureDialogService.openDialog('will be Deleted', this.school.name);
+    this.ensureDialogSubscription = this.ensureDialogService
+      .ensureDialogState
+      .pipe(first())
+      .subscribe(
+        (state: boolean) => {
+          this.ensureDialogStatus = state;
+          if (this.ensureDialogStatus) {
+            this.school.isDeleting = true;
+            console.log("Hallo");
+            this.schoolService.deleteSchoolById(id)
+                .pipe(first())
+                .subscribe(() => {
+                  this.school.isDeleting = false;
+                  this.snackbarService.success('School deleted');
+                  this.router.navigate(['../../'], { relativeTo: this.route });
+                });
+          }
+        }
+    );
   }
 
   onCancel() {
     this.router.navigate(['../../'], { relativeTo: this.route });
+  }
+
+  ngOnDestroy() {
+    if(this.ensureDialogSubscription) {
+      this.ensureDialogSubscription.unsubscribe();
+    }
   }
 }

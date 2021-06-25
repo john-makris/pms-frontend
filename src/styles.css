@@ -3,6 +3,10 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+.ensure-dialog > mat-dialog-container {
+    min-width: 17em;
+}
+
 .success {
     background-color:#5cb85c;
     color:white;

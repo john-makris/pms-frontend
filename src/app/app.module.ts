@@ -14,7 +14,8 @@ import { AuthModule } from './auth/auth.module';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { SchoolsModule } from './schools/schools.module';
 import { CoreModule } from './core.module';
-import { ErrorInterceptor } from './shared/error.interceptor';
+import { ErrorInterceptor } from './common/interceptors/error.interceptor';
+import { DialogsModule } from './common/dialogs/dialogs.module';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { ErrorInterceptor } from './shared/error.interceptor';
     FlexLayoutModule,
     AuthModule,
     CoreModule,
-    SchoolsModule
+    SchoolsModule,
+    DialogsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
