@@ -1,8 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
 import { EnsureDialogData } from '../ensure-dialog-data.interface';
-import { EnsureDialogService } from '../ensure-dialog.service';
 
 @Component({
   selector: 'app-ensure-dialog',
@@ -12,7 +10,6 @@ import { EnsureDialogService } from '../ensure-dialog.service';
 export class EnsureDialogComponent implements OnInit {
 
   constructor(
-    private ensureDialogService: EnsureDialogService,
     public dialogRef: MatDialogRef<EnsureDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: EnsureDialogData
   ) { }
@@ -20,13 +17,8 @@ export class EnsureDialogComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onClick(): void {
-    this.ensureDialogService.ensureDialogSubject.next(true);
-  }
-
   onNoClick(): void {
-    this.ensureDialogService.ensureDialogSubject.next(false);
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 
 }

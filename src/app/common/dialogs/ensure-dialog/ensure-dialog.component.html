@@ -5,11 +5,11 @@
     >Warning !</h1>
   <div mat-dialog-content fxLayoutAlign="center" fxLayout="column">
     <p>{{ data.content }}, {{ data.title }} !</p>
-    <p> Are you sure to Delete ?</p>
+    <p>Are you sure to Delete ?</p>
   </div>
   <div mat-dialog-actions>
     <button mat-button (click)="onNoClick()">No</button>
     <!-- <button mat-button [mat-dialog-close]="data.content" cdkFocusInitial>Yes</button> -->
-    <button mat-button color="warn" (click)="onClick()" [mat-dialog-close]>Yes</button>
+    <button mat-button color="warn" [mat-dialog-close]="true" cdkFocusInitial>Yes</button>
   </div>
 </div>

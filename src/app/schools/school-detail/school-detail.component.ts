@@ -53,7 +53,7 @@ export class SchoolDetailComponent implements OnInit, OnDestroy {
           this.ensureDialogStatus = state;
           if (this.ensureDialogStatus) {
             this.school.isDeleting = true;
-            console.log("Hallo");
+            console.log("Hallo "+this.ensureDialogStatus);
             this.schoolService.deleteSchoolById(id)
                 .pipe(first())
                 .subscribe(() => {
@@ -63,7 +63,7 @@ export class SchoolDetailComponent implements OnInit, OnDestroy {
                 });
           }
         }
-    );
+      );
   }
 
   onCancel() {

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { EnsureDialogData } from './ensure-dialog-data.interface';
 import { EnsureDialogComponent } from './ensure-dialog/ensure-dialog.component';
 
 @Injectable({ providedIn: 'root' })
@@ -19,7 +18,8 @@ export class EnsureDialogService {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            console.log('The dialog was closed');
+            console.log(`Dialog result: ${result}`);
+            this.ensureDialogSubject.next(result);
         })
     }
 
