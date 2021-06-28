@@ -11,6 +11,10 @@
         <mat-icon>school</mat-icon>
         <span class="nav-caption">Schools</span>
     </a>
+    <a mat-list-item routerLink="/departments" (click)="onClose()" *ngIf="isAuth">
+        <mat-icon>domain</mat-icon>
+        <span class="nav-caption">Departments</span>
+    </a>
     <mat-list-item>
         <button mat-icon-button (click)="onLogout()" *ngIf="isAuth">
             <mat-icon>eject</mat-icon>
