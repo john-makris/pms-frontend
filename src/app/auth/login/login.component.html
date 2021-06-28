@@ -1,16 +1,18 @@
-<section class="login" fxLayout fxLayoutAlign="center">
+<section
+    [ngClass]="'container'"
+    [ngClass.lt-sm]="'min-container'" 
+    fxLayout 
+    fxLayoutAlign="center">
     <form 
-        fxLayout="column" 
-        fxLayoutAlign="center center"
-        fxLayoutGap="10px"
+        fxLayout="row" 
         [formGroup]="loginForm"
         (ngSubmit)="onSubmit()">
-        <mat-card fxFlex.xs="100%" fxFlex="326px">
+        <mat-card fxFlex.xs="19em" fxFlex="23.3em">
             <mat-card-title fxLayoutAlign="center">
                 Login
             </mat-card-title>
-            <mat-card-content fxLayout="column" 
-            fxLayoutAlign="center center">
+            <mat-card-content fxLayout="column"
+            fxLayoutAlign="center">
                 <mat-form-field appearance="outline">
                     <input 
                         type="username"
