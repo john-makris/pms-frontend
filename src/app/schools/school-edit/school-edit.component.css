@@ -14,6 +14,10 @@
     padding-right: 0.25em;
 }
 
+mat-form-field {
+    padding: 0.35em;
+}
+
 mat-card-actions {
-    margin: auto;
+    margin-left: 0.4em;
 }
