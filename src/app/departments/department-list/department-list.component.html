@@ -1,7 +1,7 @@
 <div 
     [ngClass]="'container'"
     [ngClass.lt-sm]="'min-container'"
-    fxFlex="30em"
+    fxFlex="40em"
     fxFlex.lt-sm="calc(20em)"
 >
     <a routerLink="add" 
@@ -28,6 +28,11 @@
             <ng-container matColumnDef="name">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
                 <mat-cell *matCellDef="let element">{{ element.name }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="school">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>School</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{ element.school.name }}</mat-cell>
             </ng-container>
     
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
