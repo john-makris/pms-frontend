@@ -1,0 +1,23 @@
+.container {
+    border: 2px solid black;
+    padding-top: 5em;
+    padding-bottom: 2em;
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+.min-container {
+    border: 2px solid black;
+    padding-top: 0em;
+    padding-bottom: 2em;
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+}
+
+mat-form-field {
+    padding: 0.35em;
+}
+
+mat-card-actions {
+    margin-left: 0.4em;
+}

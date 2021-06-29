@@ -1,1 +1,97 @@
-<p>department-edit works!</p>
+<section 
+    [ngClass]="'container'"
+    [ngClass.lt-md]="'min-container'"
+    fxLayout>
+    <form 
+        [formGroup]="departmentForm"
+        (ngSubmit)="onSubmit()">
+        <mat-card
+            fxFlex.xs="19em"
+            fxFlex="22em">
+            <mat-card-title fxLayoutAlign="center">
+                <h1 *ngIf="isAddMode">Add Department</h1>
+                <h1 *ngIf="!isAddMode">Edit Department</h1>
+            </mat-card-title>
+            <mat-card-content fxLayout="column" 
+            fxLayoutAlign="center">
+
+                <!-- 
+                                    <mat-form-field appearance="outline">
+                    <mat-label>Location</mat-label>
+                    <textarea
+                        type="text"
+                        matInput
+                        placeholder="Location"
+                        formControlName="location">
+                    </textarea>
+                    <div matSuffix>
+                        <mat-icon>add_location_alt</mat-icon>
+                    </div>
+                    <mat-hint>Please enter a valid location.</mat-hint>
+                    <mat-error>Invalid or missing location.</mat-error>
+                </mat-form-field>
+                 -->
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Name</mat-label>
+                    <textarea 
+                        type="text"
+                        matInput 
+                        placeholder="Name"
+                        formControlName="name">
+                    </textarea>
+                    <div matSuffix>
+                        <mat-icon>domain</mat-icon>
+                    </div>
+                    <mat-hint>Please enter a valid name.</mat-hint>
+                    <mat-error>Invalid or missing name.</mat-error>
+                </mat-form-field>
+
+                <mat-form-field
+                    appearance="outline"
+                    [hideRequiredMarker]="hideRequiredControl.value"
+                    [floatLabel]="floatLabelControl.value">
+                    <mat-select
+                        panelClass="mat-select-panel"
+                        formControlName="school_id">
+                        <mat-option>-- None --</mat-option>
+                        <mat-option 
+                            *ngFor="let school of schools"
+                            [value]="school.id">
+                            <p>
+                                {{ school.name }}
+                            </p>
+                        </mat-option>
+                    </mat-select>
+                    <mat-label><mat-icon>school</mat-icon> <b> School</b></mat-label>
+                    <mat-hint>Choose School</mat-hint>
+                    <mat-error>School is required.</mat-error>
+                </mat-form-field>
+
+                <div fxLayoutAlign="center">
+                    <mat-spinner *ngIf="isLoading"></mat-spinner>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div
+                    *ngIf="!isLoading"
+                    class="form-actions"
+                    fxLayout="row"
+                    fxLayoutAlign="start">
+                        <button 
+                            type="submit" 
+                            mat-raised-button color="primary" 
+                            [disabled]="departmentForm.invalid || isLoading">
+                            {{ isAddMode ? 'Save' : 'Update' }}
+                        </button>
+                        <button 
+                            type="button" 
+                            mat-button color="primary" 
+                            (click)="onCancel()">
+                            Cancel
+                        </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </form>
+</section>
