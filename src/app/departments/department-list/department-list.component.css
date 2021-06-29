@@ -1,0 +1,32 @@
+.container {
+    border: 2px solid black;
+    padding: 2em;
+}
+
+.min-container {
+    border: 2px solid black;
+    padding-top: 2em;
+    padding-bottom: 2em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.table-row-style:hover {
+    cursor: pointer;
+    background-color: whitesmoke;
+}
+
+.table {
+    margin-top: 1em;
+    max-width: 100%;
+}
+
+.mat-column-id {
+    max-width: 13%;
+}
+
+.mat-column-name {
+    max-width: 87%;
+    margin-right: 0%;
+    padding: 0;
+}
