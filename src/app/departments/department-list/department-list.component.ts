@@ -8,8 +8,6 @@ import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { Department } from '../department.model';
 import { DepartmentService } from '../department.service';
-import { SchoolsDepartment } from '../schools-department.model';
-import { SchoolsDepartmentService } from '../schools-department.service';
 
 @Component({
   selector: 'app-department-list',
@@ -19,36 +17,35 @@ import { SchoolsDepartmentService } from '../schools-department.service';
 export class DepartmentListComponent implements OnInit {
   displayedColumns = [
     'id',
-    'name',
-    'school'
+    'name'
   ];
-  dataSource = new MatTableDataSource<SchoolsDepartment>();
+  dataSource = new MatTableDataSource<Department>();
   private departmentsSnackbarSubscription!: Subscription;
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
-    private schoolsDepartmentService: SchoolsDepartmentService,
+    private departmentService: DepartmentService,
     private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
     if(this.dataSource.data.length === 0) {
       console.log("Departments list is empty");
-      this.schoolsDepartmentService.getAllSchoolsDepartments()
+      this.departmentService.getAllDepartments()
       .pipe(first())
-      .subscribe(schoolsDepartments => {
-        this.checkData(schoolsDepartments);
+      .subscribe(departments => {
+        this.checkData(departments);
       });
     }
     this.departmentsSnackbarSubscription = this.snackbarService.snackbarState.subscribe(
       (state: SnackbarData) => {
         if(state.message.search('added' || 'updated' || 'deleted')) {
           console.log("Snackbar: " + state.message);
-          this.schoolsDepartmentService.getAllSchoolsDepartments()
+          this.departmentService.getAllDepartments()
           .pipe(first())
-          .subscribe(schoolsDepartments => {
-            this.checkData(schoolsDepartments);
+          .subscribe(departments => {
+            this.checkData(departments);
           });
         }
       }
@@ -73,7 +70,7 @@ export class DepartmentListComponent implements OnInit {
     }
   }
 
-  checkData(departments: SchoolsDepartment[]) {
+  checkData(departments: Department[]) {
     if(departments===null) {
       this.dataSource.data = [];
       console.log(this.dataSource.data);

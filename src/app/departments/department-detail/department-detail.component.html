@@ -2,7 +2,7 @@
     [ngClass]="'container'"
     [ngClass.lt-md]="'min-container'"
     fxLayout>
-    <div *ngIf="schoolsDepartment">
+    <div *ngIf="department">
         <mat-card
             fxFlex.xs="19em"
             fxFlex="22em">
@@ -15,11 +15,11 @@
             fxLayoutGap="1em">
                 <div>
                     <mat-label><strong>Department Name:</strong></mat-label>
-                    {{ schoolsDepartment.department?.name }}
+                    {{ department?.name }}
                 </div>
                 <div>
                     <label><strong>School:</strong></label>
-                    {{ schoolsDepartment.school?.name }}
+                    {{ school?.name }}
                 </div>
             </mat-card-content>
             <mat-card-actions>
@@ -32,7 +32,7 @@
               
                     <button 
                         mat-raised-button color="warn"
-                        (click)="deleteDepartment(schoolsDepartment.department.id)">
+                        (click)="deleteDepartment(department.id)">
                         Delete
                     </button>
                 </div>

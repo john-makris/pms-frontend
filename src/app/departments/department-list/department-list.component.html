@@ -22,23 +22,23 @@
         <mat-table [dataSource]="dataSource" matSort>
             <ng-container matColumnDef="id">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
-                <mat-cell *matCellDef="let element">{{ element.department.id | number }}</mat-cell>
+                <mat-cell *matCellDef="let element">{{ element.id | number }}</mat-cell>
             </ng-container>
     
             <ng-container matColumnDef="name">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-                <mat-cell *matCellDef="let element">{{ element.department.name }}</mat-cell>
+                <mat-cell *matCellDef="let element">{{ element.name }}</mat-cell>
             </ng-container>
 
-            <ng-container matColumnDef="school">
+            <!--<ng-container matColumnDef="school">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>School</mat-header-cell>
                 <mat-cell *matCellDef="let element">{{ element.school.name }}</mat-cell>
-            </ng-container>
+            </ng-container>-->
     
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row
                 *matRowDef="let row; columns: displayedColumns;"
-                routerLink="detail/{{row.department.id}}"
+                routerLink="detail/{{row.id}}"
                 routerLinkActive="active"
                 class="table-row-style"
                 matRipple>

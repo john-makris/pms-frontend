@@ -6,8 +6,6 @@ import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.servic
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { Department } from '../department.model';
 import { DepartmentService } from '../department.service';
-import { SchoolsDepartment } from '../schools-department.model';
-import { SchoolsDepartmentService } from '../schools-department.service';
 
 @Component({
   selector: 'app-department-detail',
@@ -16,14 +14,13 @@ import { SchoolsDepartmentService } from '../schools-department.service';
 })
 export class DepartmentDetailComponent implements OnInit, OnDestroy{
   id!: number;
-  schoolsDepartment!: SchoolsDepartment;
+  department!: Department;
   private ensureDialogSubscription!: Subscription;
   ensureDialogStatus!: boolean;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
     private departmentService: DepartmentService,
-    private schoolsDepartmentService: SchoolsDepartmentService,
     private snackbarService: SnackbarService,
     private ensureDialogService: EnsureDialogService) { }
 
@@ -32,10 +29,10 @@ export class DepartmentDetailComponent implements OnInit, OnDestroy{
       .subscribe(
         (params: Params) => {
           this.id = params['id'];
-          this.schoolsDepartmentService.getByDepartmentId(this.id)
+          this.departmentService.getDepartmentById(this.id)
           .pipe(first())
-          .subscribe((x: SchoolsDepartment) => {
-            this.schoolsDepartment = x;
+          .subscribe((x) => {
+            this.department = x;
           });
       }
     );
@@ -46,8 +43,8 @@ export class DepartmentDetailComponent implements OnInit, OnDestroy{
   }
 
   deleteDepartment(id: number) {
-    if (!this.schoolsDepartment.department) return;
-    this.ensureDialogService.openDialog('will be Deleted', this.schoolsDepartment.department.name);
+    if (!this.department) return;
+    this.ensureDialogService.openDialog('will be Deleted', this.department.name);
     this.ensureDialogSubscription = this.ensureDialogService
       .ensureDialogState
       .pipe(first())
@@ -55,22 +52,15 @@ export class DepartmentDetailComponent implements OnInit, OnDestroy{
         (state: boolean) => {
           this.ensureDialogStatus = state;
           if (this.ensureDialogStatus) {
-            this.schoolsDepartment.department.isDeleting = true;
+            this.department.isDeleting = true;
             console.log("Hallo "+this.ensureDialogStatus);
-            this.schoolsDepartmentService.deleteSchoolsDepartmentById(this.schoolsDepartment.id)
-              .pipe(first())
-              .subscribe(error => {
-                if(!error) {
-                  console.log("No error exists");
-                  this.departmentService.deleteDepartmentById(id)
-                  .pipe(first())
-                  .subscribe(() => {
-                    this.schoolsDepartment.department.isDeleting = false;
-                    this.snackbarService.success('Department deleted');
-                    this.router.navigate(['../../'], { relativeTo: this.route });
-                  });
-                }
-              });
+            this.departmentService.deleteDepartmentById(id)
+                .pipe(first())
+                .subscribe(() => {
+                  this.department.isDeleting = false;
+                  this.snackbarService.success('Department deleted');
+                  this.router.navigate(['../../'], { relativeTo: this.route });
+                });
           }
         }
       );
