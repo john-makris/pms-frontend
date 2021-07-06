@@ -15,23 +15,6 @@
             <mat-card-content fxLayout="column" 
             fxLayoutAlign="center">
 
-                <!-- 
-                                    <mat-form-field appearance="outline">
-                    <mat-label>Location</mat-label>
-                    <textarea
-                        type="text"
-                        matInput
-                        placeholder="Location"
-                        formControlName="location">
-                    </textarea>
-                    <div matSuffix>
-                        <mat-icon>add_location_alt</mat-icon>
-                    </div>
-                    <mat-hint>Please enter a valid location.</mat-hint>
-                    <mat-error>Invalid or missing location.</mat-error>
-                </mat-form-field>
-                 -->
-
                 <mat-form-field appearance="outline">
                     <mat-label>Name</mat-label>
                     <textarea 
@@ -52,8 +35,9 @@
                     [hideRequiredMarker]="hideRequiredControl.value"
                     [floatLabel]="floatLabelControl.value">
                     <mat-select
+                        [(value)]="selectedSchoolId"
                         panelClass="mat-select-panel"
-                        formControlName="school_id">
+                        formControlName="schoolId">
                         <mat-option>-- None --</mat-option>
                         <mat-option 
                             *ngFor="let school of schools"

@@ -2,8 +2,9 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { throwError } from 'rxjs';
 import { Subscription } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { catchError, first } from 'rxjs/operators';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { School } from '../school.model';
@@ -28,18 +29,18 @@ export class SchoolListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private schoolService: SchoolService,
-    private snackbarService: SnackbarService) { }
+    private snackbarService: SnackbarService) {
+  }
 
   ngOnInit(): void {
-    if(!this.dataSource.data.length) {
+    if(this.dataSource.data.length === 0) {
       console.log("Schools list is empty");
-      this.schoolService.getAllSchools()
-      .pipe(first())
+      this.schoolService.getAllSchools().pipe(first())
       .subscribe(schools => {
-        this.dataSource.data = schools;
-        console.log(this.dataSource.data);
+        this.checkData(schools);
       });
     }
+
     this.snackbarService.snackbarState.subscribe(
       (state: SnackbarData) => {
         if(state.message.search('added' || 'updated' || 'deleted')) {
@@ -47,7 +48,7 @@ export class SchoolListComponent implements OnInit, AfterViewInit, OnDestroy {
           this.schoolService.getAllSchools()
           .pipe(first())
           .subscribe(schools => {
-            this.dataSource.data = schools;
+            this.checkData(schools);
           });
         }
       }
@@ -68,6 +69,15 @@ export class SchoolListComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     if (this.schoolsSubscription) {
       this.schoolsSubscription.unsubscribe();
+    }
+  }
+
+  checkData(schools: School[]) {
+    if(schools===null) {
+      this.dataSource.data = [];
+      console.log(this.dataSource.data);
+    } else {
+      this.dataSource.data = schools;
     }
   }
 

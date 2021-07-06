@@ -8,6 +8,8 @@ import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { Department } from '../department.model';
 import { DepartmentService } from '../department.service';
+import { SchoolsDepartment } from '../schools-department.model';
+import { SchoolsDepartmentService } from '../schools-department.service';
 
 @Component({
   selector: 'app-department-list',
@@ -20,34 +22,33 @@ export class DepartmentListComponent implements OnInit {
     'name',
     'school'
   ];
-  dataSource = new MatTableDataSource<Department>();
+  dataSource = new MatTableDataSource<SchoolsDepartment>();
   private departmentsSnackbarSubscription!: Subscription;
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
-    private departmentService: DepartmentService,
+    private schoolsDepartmentService: SchoolsDepartmentService,
     private snackbarService: SnackbarService) { }
 
   ngOnInit(): void {
-    if(!this.dataSource.data.length) {
+    if(this.dataSource.data.length === 0) {
       console.log("Departments list is empty");
-      this.departmentService.getAllDepartments()
+      this.schoolsDepartmentService.getAllSchoolsDepartments()
       .pipe(first())
-      .subscribe(departments => {
-        this.dataSource.data = departments;
-        console.log(this.dataSource.data);
+      .subscribe(schoolsDepartments => {
+        this.checkData(schoolsDepartments);
       });
     }
     this.departmentsSnackbarSubscription = this.snackbarService.snackbarState.subscribe(
       (state: SnackbarData) => {
         if(state.message.search('added' || 'updated' || 'deleted')) {
           console.log("Snackbar: " + state.message);
-          this.departmentService.getAllDepartments()
+          this.schoolsDepartmentService.getAllSchoolsDepartments()
           .pipe(first())
-          .subscribe(departments => {
-            this.dataSource.data = departments;
+          .subscribe(schoolsDepartments => {
+            this.checkData(schoolsDepartments);
           });
         }
       }
@@ -60,6 +61,7 @@ export class DepartmentListComponent implements OnInit {
   }
 
   doFilter(filterValue: string) {
+    console.log("Hallo from the Department doFilter: " + filterValue);
     this.dataSource.filter = filterValue.trim().toLowerCase();
     console.log("Department filter value: "+this.dataSource.filter);
     console.log("Department value after filtering"+this.dataSource.data);
@@ -70,4 +72,14 @@ export class DepartmentListComponent implements OnInit {
       this.departmentsSnackbarSubscription.unsubscribe();
     }
   }
+
+  checkData(departments: SchoolsDepartment[]) {
+    if(departments===null) {
+      this.dataSource.data = [];
+      console.log(this.dataSource.data);
+    } else {
+      this.dataSource.data = departments;
+    }
+  }
+
 }
