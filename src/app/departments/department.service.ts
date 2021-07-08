@@ -6,7 +6,10 @@ import { Department } from "./department.model";
 const API_URL = 'http://localhost:8080/pms/departments/';
 
 export interface DepartmentRequestData {
-    name: string
+    name: string,
+    school: {
+        id: number;
+    }
 }
 
 @Injectable({

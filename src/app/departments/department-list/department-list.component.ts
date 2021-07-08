@@ -17,7 +17,8 @@ import { DepartmentService } from '../department.service';
 export class DepartmentListComponent implements OnInit {
   displayedColumns = [
     'id',
-    'name'
+    'name',
+    'school'
   ];
   dataSource = new MatTableDataSource<Department>();
   private departmentsSnackbarSubscription!: Subscription;

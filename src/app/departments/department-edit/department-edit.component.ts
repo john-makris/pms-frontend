@@ -26,6 +26,7 @@ export class DepartmentEditComponent implements OnInit {
   isLoading: boolean = false;
   submitted: boolean = false;
   schools: School[] = [];
+  selectedSchoolId!: number;
 
   hideRequiredControl = new FormControl(false);
   floatLabelControl = new FormControl('auto');
@@ -47,10 +48,21 @@ export class DepartmentEditComponent implements OnInit {
           this.id = params['id'];
           this.isAddMode = params['id'] == null;
           if(!this.isAddMode) {
+            this.schoolService.getAllSchools()
+            .pipe(first())
+            .subscribe(schools => {
+              this.schools = schools;
+              console.log(this.schools);
+            });
             this.departmentService.getDepartmentById(this.id)
               .pipe(first())
               .subscribe(x => {
-                this.departmentForm.patchValue(x);
+                this.departmentForm.patchValue({
+                  name: x.name,
+                  schoolId: x.school.id
+                });
+                this.selectedSchoolId = x.school.id;
+                console.log(x.school.id);
               });
           } else {
             this.schoolService.getAllSchools()
@@ -65,7 +77,7 @@ export class DepartmentEditComponent implements OnInit {
 
       this.departmentForm = this.formBuilder.group({
         name: ['', Validators.required],
-        //school_id: ['', Validators.required],
+        schoolId: ['', Validators.required],
         hideRequired: this.hideRequiredControl,
         floatLabel: this.floatLabelControl
       });
@@ -84,7 +96,7 @@ export class DepartmentEditComponent implements OnInit {
     const departmentData = {
       name: this.departmentForm.value.name,
       school: {
-        id: this.departmentForm.value.school_id
+        id: this.departmentForm.value.schoolId
       }
     };
 
