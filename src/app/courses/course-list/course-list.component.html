@@ -1,0 +1,62 @@
+<div 
+    [ngClass]="'container'"
+    [ngClass.lt-sm]="'min-container'"
+    fxFlex="40em"
+    fxFlex.lt-sm="calc(20em)"
+>
+    <a routerLink="add" 
+       mat-raised-button
+       color="primary">Add Course</a>
+
+    <div class="table">
+        <div fxLayoutAlign="center">
+            <mat-form-field fxFlex="40%">
+                <input matInput 
+                    type="text" 
+                    (keyup)="doFilter($any($event.target).value)"
+                    [(ngModel)]="value"
+                    placeholder="Filter">
+            </mat-form-field>
+        </div>
+
+
+        <mat-table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="id">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{ element.id | number }}</mat-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{ element.name }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="semester">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Semester</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{ element.semester }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="department">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Department</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{ element.department.name }}</mat-cell>
+            </ng-container>
+    
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row
+                *matRowDef="let row; columns: displayedColumns;"
+                routerLink="detail/{{row.id}}"
+                routerLinkActive="active"
+                class="table-row-style"
+                matRipple>
+            </mat-row>
+        </mat-table>
+    
+        <mat-paginator
+            [length]="totalItems"
+            [pageSize]="3" 
+            [pageSizeOptions]="[3, 5]"
+            (page)="pageEvent = $event; onPaginateChange($event)" 
+            showFirstLastButtons>
+        </mat-paginator>
+    </div>
+</div>

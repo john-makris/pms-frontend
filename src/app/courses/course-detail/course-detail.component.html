@@ -1,0 +1,54 @@
+<section
+    [ngClass]="'container'"
+    [ngClass.lt-md]="'min-container'"
+    fxLayout>
+    <div *ngIf="course">
+        <mat-card
+            fxFlex.xs="19em"
+            fxFlex="22em">
+            <mat-card-title fxLayoutAlign="center">
+                Course Details
+            </mat-card-title>
+            <br>
+            <mat-card-content fxLayout="column" 
+            fxLayoutAlign="center"
+            fxLayoutGap="1em">
+                <div>
+                    <mat-label><strong>Course Name:</strong></mat-label>
+                    {{ course?.name }}
+                </div>
+                <div>
+                    <label><strong>Semester:</strong></label>
+                    {{ course?.semester }}
+                </div>
+                <div>
+                    <label><strong>Department:</strong></label>
+                    {{ course.department?.name }}
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div>
+                    <button
+                        mat-raised-button color="primary"
+                        (click)="editCourse()">
+                        Edit
+                    </button>
+              
+                    <button 
+                        mat-raised-button color="warn"
+                        (click)="deleteCourse(course.id)">
+                        Delete
+                    </button>
+                </div>
+                <hr>
+                <div fxLayoutAlign="end">
+                    <button 
+                        mat-button color="primary"
+                        (click)="onCancel()">
+                        Cancel
+                    </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</section>
