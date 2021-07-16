@@ -1,136 +1,84 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { Subscription } from 'rxjs';
-import { first } from 'rxjs/operators';
-import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
-import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
-import { Course } from '../course.model';
 import { CourseService } from '../course.service';
+import { CoursesDataSource } from '../courses.datasource';
+import {debounceTime, distinctUntilChanged, startWith, tap, delay} from 'rxjs/operators';
+import {merge, fromEvent} from "rxjs";
+import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 
 @Component({
   selector: 'app-course-list',
   templateUrl: './course-list.component.html',
   styleUrls: ['./course-list.component.css']
 })
-export class CourseListComponent implements OnInit {
+export class CourseListComponent implements OnInit, AfterViewInit {
+
+  dataSource!: CoursesDataSource;
+
+  currentColumnDef: string = 'id';
+
+  totalItems!: number;
+
   displayedColumns = [
     'id',
     'name',
-    'semester',
-    'department'
+    'semester'
   ];
-  dataSource = new MatTableDataSource<Course>();
 
-  
-
-  value!: string;
-  name = '';
-  page = 1;
-  pageSize = 3;
-  totalPages = 0;
-  totalItems = 0;
-
-  private coursesSnackbarSubscription!: Subscription;
-
-  @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(
-    private courseService: CourseService,
-    private snackbarService: SnackbarService) { }
+  @ViewChild(MatSort) sort!: MatSort;
 
+  @ViewChild('input') input!: ElementRef;
+
+  constructor(private courseService: CourseService,
+    private snackbarService: SnackbarService) {
+
+}
   ngOnInit(): void {
-    this.retrieveCourses();
-  }
+    this.dataSource = new CoursesDataSource(this.courseService, this.snackbarService);
 
-  getRequestParams(searchName: string, page: number, pageSize: number): any {
-    let params: any = {};
+    this.dataSource.loadCourses('', 0, 3, 'asc','id');
 
-    if (searchName) {
-      params[`name`] = searchName;
-    }
-    ///// !!!!!
-    if (page) {
-      params[`page`] = page - 1;
-    }
-
-    if (pageSize) {
-      params[`size`] = pageSize;
-    }
-
-    params[`sort`] = "id,asc";
-
-    return params;
-  }
-
-  retrieveCourses() {
-    const params = this.getRequestParams(this.name, this.page, this.pageSize);
-    console.log("after: "+this.page+" "+this.pageSize);
-    if(this.dataSource.data.length === 0) {
-      console.log("Courses list is empty");
-      this.getCourses(params);
-    }
-    this.coursesSnackbarSubscription = this.snackbarService.snackbarState.subscribe(
-      (state: SnackbarData) => {
-        if(state.message.search('added' || 'updated' || 'deleted')) {
-          this.name = '';
-          this.value = '';
-          console.log("Snackbar: " + state.message);
-          console.log("PARAMS: "+"name: "+this.name+", page: "+this.page+", size: "+this.pageSize);
-          this.getCourses(params);
-        }
+    this.dataSource.totalItemsState.subscribe(
+      totalItems => {
+        this.totalItems = totalItems;
       }
     );
   }
 
-  getCourses(params: any) {
-    this.courseService.getAllCourses(params)
-    .pipe(first())
-    .subscribe(response => {
-      if(response !== null) {
-        const { courses, totalItems, totalPages } = response;
-        this.totalItems = totalItems;
-        this.totalPages = totalPages;
-        console.log(response);
-        console.log("After response page size: "+this.pageSize);
-        this.checkData(courses);
-      } else {
-        this.checkData([]);
-      }
-    });
+  ngAfterViewInit() {
+
+    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+
+    fromEvent(this.input.nativeElement,'keyup')
+        .pipe(
+            debounceTime(150),
+            distinctUntilChanged(),
+            tap(() => {
+                this.paginator.pageIndex = 0;
+
+                this.loadCoursesPage();
+            })
+        )
+        .subscribe();
+
+    merge(this.sort.sortChange, this.paginator.page)
+    .pipe(
+        tap(() => this.loadCoursesPage())
+    )
+    .subscribe();
+
   }
 
-  doFilter(filterValue: string) {
-    this.name = filterValue;
-    this.page = 1;
-    const params = this.getRequestParams(this.name, this.page, this.pageSize);
-    console.log("PARAMS: "+"name: "+this.name+", page: "+this.page+", size: "+this.pageSize);
-    this.getCourses(params);
+  loadCoursesPage() {
+    this.dataSource.loadCourses(
+        this.input.nativeElement.value,
+        this.paginator.pageIndex,
+        this.paginator.pageSize,
+        this.sort.direction,
+        this.currentColumnDef);
   }
 
-  onPaginateChange(event: PageEvent) {
-    this.page = +event.pageIndex + 1;
-    console.log(event.pageIndex);
-    this.pageSize = +event.pageSize;
-    console.log("HALLOOO");
-    const params = this.getRequestParams(this.name, this.page, this.pageSize);
-    this.getCourses(params);
-  }
-
-  ngOnDestroy() {
-    if (this.coursesSnackbarSubscription) {
-      this.coursesSnackbarSubscription.unsubscribe();
-    }
-  }
-
-  checkData(courses: Course[]) {
-    if(courses===null) {
-      this.dataSource.data = [];
-      console.log(this.dataSource.data);
-    } else {
-      this.dataSource.data = courses;
-    }
-  }
 }

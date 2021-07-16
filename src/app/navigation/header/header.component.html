@@ -24,6 +24,9 @@
                 <a routerLink="/departments">Departments</a>
             </li>
             <li *ngIf="isAuth">
+                <a routerLink="/courses">Courses</a>
+            </li>
+            <li *ngIf="isAuth">
                 <a style="cursor:pointer" (click)="onLogout()">Logout</a>
             </li>
         </ul>

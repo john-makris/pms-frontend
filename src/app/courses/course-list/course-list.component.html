@@ -11,34 +11,27 @@
     <div class="table">
         <div fxLayoutAlign="center">
             <mat-form-field fxFlex="40%">
-                <input matInput 
-                    type="text" 
-                    (keyup)="doFilter($any($event.target).value)"
-                    [(ngModel)]="value"
-                    placeholder="Filter">
+                <input matInput placeholder="Search courses" #input>
             </mat-form-field>
         </div>
 
 
-        <mat-table [dataSource]="dataSource" matSort>
+        <mat-table class="lessons-table mat-elevation-z8"
+            [dataSource]="dataSource" matSort matSortActive="id"
+            matSortDirection="asc" matSortDisableClear>
             <ng-container matColumnDef="id">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
-                <mat-cell *matCellDef="let element">{{ element.id | number }}</mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header (click)="currentColumnDef='id'">ID</mat-header-cell>
+                <mat-cell *matCellDef="let course">{{ course.id | number }}</mat-cell>
             </ng-container>
     
             <ng-container matColumnDef="name">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-                <mat-cell *matCellDef="let element">{{ element.name }}</mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header (click)="currentColumnDef='name'">Name</mat-header-cell>
+                <mat-cell *matCellDef="let course">{{ course.name }}</mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="semester">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Semester</mat-header-cell>
-                <mat-cell *matCellDef="let element">{{ element.semester }}</mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="department">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Department</mat-header-cell>
-                <mat-cell *matCellDef="let element">{{ element.department.name }}</mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header (click)="currentColumnDef='semester'">Semester</mat-header-cell>
+                <mat-cell *matCellDef="let course">{{ course.semester }}</mat-cell>
             </ng-container>
     
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -55,7 +48,6 @@
             [length]="totalItems"
             [pageSize]="3" 
             [pageSizeOptions]="[3, 5]"
-            (page)="pageEvent = $event; onPaginateChange($event)" 
             showFirstLastButtons>
         </mat-paginator>
     </div>

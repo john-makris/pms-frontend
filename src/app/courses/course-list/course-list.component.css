@@ -7,8 +7,8 @@
     /*border: 2px solid black;*/
     padding-top: 2em;
     padding-bottom: 2em;
-    padding-left: 1em;
-    padding-right: 1em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
 }
 
 .table-row-style:hover {
@@ -26,13 +26,11 @@
 }
 
 .mat-column-name {
-    max-width: 25%;
-    margin-right: 6%;}
-
-.mat-column-semester {
-    max-width: 20%;
+    max-width: 57%;
+    margin-right: 6%;
 }
 
-.mat-column-department {
-    max-width: 42%;
+.mat-column-semester {
+    max-width: 30%;
+
 }
