@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Course } from "./course.model";
@@ -20,8 +20,12 @@ export class CourseService {
 
     constructor(private http: HttpClient) { }
 
-    getAllCourses(params: any): Observable<any> {
-        return this.http.get<Course[]>(API_URL + 'all/sorted', { params });
+    getAllCourses(params: HttpParams): Observable<any> {
+        return this.http.get<Course[]>(API_URL + 'all/paginated_sorted_filtered', { params });
+    }
+
+    getAllCoursesByDepartmentId(params: HttpParams): Observable<any> {
+        return this.http.get<Course[]>(API_URL + 'per_department/all/paginated_sorted_filtered', { params });
     }
 
     getCourseById(courseId: number): Observable<Course> {

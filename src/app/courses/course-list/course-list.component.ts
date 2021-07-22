@@ -3,9 +3,13 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { CourseService } from '../course.service';
 import { CoursesDataSource } from '../courses.datasource';
-import {debounceTime, distinctUntilChanged, startWith, tap, delay} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, startWith, tap, delay, first} from 'rxjs/operators';
 import {merge, fromEvent} from "rxjs";
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { DepartmentService } from 'src/app/departments/department.service';
+import { Department } from 'src/app/departments/department.model';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-course-list',
@@ -14,10 +18,16 @@ import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 })
 export class CourseListComponent implements OnInit, AfterViewInit {
 
+  selectDepartmentForm!: FormGroup;
+  hideRequiredControl = new FormControl(false);
+  floatLabelControl = new FormControl('auto');
+  isLoading: boolean = false;
+  submitted: boolean = false;
   dataSource!: CoursesDataSource;
+  departments!: Department[];
+  selectedDepartmentId: number = 0;
 
   currentColumnDef: string = 'id';
-
   totalItems!: number;
 
   displayedColumns = [
@@ -27,25 +37,55 @@ export class CourseListComponent implements OnInit, AfterViewInit {
   ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-
   @ViewChild(MatSort) sort!: MatSort;
-
   @ViewChild('input') input!: ElementRef;
 
-  constructor(private courseService: CourseService,
-    private snackbarService: SnackbarService) {
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private formBuilder: FormBuilder,
+    private courseService: CourseService,
+    private snackbarService: SnackbarService,
+    private departmentService: DepartmentService) {
 
 }
   ngOnInit(): void {
+    this.departmentService.getAllDepartments()
+      .pipe(first())
+      .subscribe(departments => {
+        this.departments = departments;
+      });
     this.dataSource = new CoursesDataSource(this.courseService, this.snackbarService);
 
-    this.dataSource.loadCourses('', 0, 3, 'asc','id');
+    this.dataSource.loadCourses(0, '', 0, 3, 'asc','id');
 
     this.dataSource.totalItemsState.subscribe(
       totalItems => {
         this.totalItems = totalItems;
       }
     );
+
+    this.selectDepartmentForm = this.formBuilder.group({
+      departmentId: [0, Validators.required],
+      hideRequired: this.hideRequiredControl,
+      floatLabel: this.floatLabelControl
+    });
+  }
+
+  get f() { return this.selectDepartmentForm.controls; }
+
+  onSubmit() {
+    this.router.navigate(['/courses'], { relativeTo: this.route });
+    this.submitted = true;
+    console.log("HAAAAALOOOO!!!");
+    if(this.selectDepartmentForm.invalid) {
+      return;
+    }
+
+    this.isLoading = true;
+    console.log("DEPARTMENT ID: "+ this.selectDepartmentForm.value.departmentId);
+    this.selectedDepartmentId = this.selectDepartmentForm.value.departmentId;
+    this.dataSource.loadCourses(this.selectedDepartmentId, '', 0, 3, 'asc','id');
   }
 
   ngAfterViewInit() {
@@ -74,6 +114,7 @@ export class CourseListComponent implements OnInit, AfterViewInit {
 
   loadCoursesPage() {
     this.dataSource.loadCourses(
+        this.selectedDepartmentId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,

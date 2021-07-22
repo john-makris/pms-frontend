@@ -1,4 +1,5 @@
 import {CollectionViewer, DataSource} from "@angular/cdk/collections";
+import { HttpParams } from "@angular/common/http";
 import {Observable, BehaviorSubject, of} from "rxjs";
 import {catchError, finalize, first} from "rxjs/operators";
 import { SnackbarData } from "../common/snackbars/snackbar-data.interface";
@@ -21,14 +22,16 @@ export class CoursesDataSource implements DataSource<Course> {
     constructor(private courseService: CourseService,
         private snackbarService: SnackbarService) { }
 
-    loadCourses(filter:string,
+    loadCourses(departmentId: number,
+                filter:string,
                 pageIndex:number,
                 pageSize:number,
                 sortDirection:string,
                 currentColumnDef:string) {
 
-        let params = this.createParams(
+        let params = this.createParams(departmentId,
             filter, pageIndex, pageSize, sortDirection, currentColumnDef);
+            console.log("PARAMS: "+params);
 
         this.loadingSubject.next(true);
 
@@ -54,16 +57,30 @@ export class CoursesDataSource implements DataSource<Course> {
         this.loadingSubject.complete();
     }
 
-    retrieveData(params: any) {
-        this.courseService.getAllCourses(params)
-        .pipe(
-            catchError(() => of([])),
-            finalize(() => this.loadingSubject.next(false))
-        )
-        .pipe(first())
-        .subscribe(response => {
-            this.checkData(response);
-        });
+    retrieveData(params: HttpParams) {
+        if(!params.has('id')) {
+            console.log("EXIST ID ?"+ params.has('id'));
+            this.courseService.getAllCourses(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe(response => {
+                this.checkData(response);
+            });
+        } else {
+            console.log("EXIST ID ?"+ params.has('id'));
+            this.courseService.getAllCoursesByDepartmentId(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe(response => {
+                this.checkData(response);
+            });
+        }
     }
 
     checkData(response: any) {
@@ -76,27 +93,40 @@ export class CoursesDataSource implements DataSource<Course> {
         }
     }
 
-    createParams(filter:string,
+    createParams(
+        departmentId: number,
+        filter:string,
         pageIndex:number,
         pageSize:number,
         sortDirection:string,
-        currentColumnDef:string): any {
-            let params: any = {};
+        currentColumnDef:string): HttpParams {
+
+            let params = new HttpParams();
+
+            if (departmentId) {
+                console.log("ID: "+departmentId);
+                params=params.set('id', departmentId);
+            }
 
             if (filter) {
-                params[`name`] = filter;
+                console.log("Filter: "+filter);
+                params=params.set('name', filter);
             }
     
             if (pageIndex) {
-                params[`page`] = pageIndex;
+                console.log("pageIndex: "+pageIndex);
+                params=params.set('page', departmentId);
             }
         
             if (pageSize) {
-                params[`size`] = pageSize;
+                console.log("pageSize: "+pageSize);
+                params=params.set('pageSize', departmentId);
             }
         
             if (sortDirection && currentColumnDef) {
-                params[`sort`] =  currentColumnDef+","+sortDirection;
+                params=params.set('sort', currentColumnDef+","+sortDirection);
+                console.log("SORT: "+currentColumnDef+","+sortDirection);
             }
+        return params;
     }
 }
