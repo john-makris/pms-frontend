@@ -67,6 +67,7 @@ export class CoursesDataSource implements DataSource<Course> {
             )
             .pipe(first())
             .subscribe(response => {
+                console.log("RESPONSE: "+response.courses.length);
                 this.checkData(response);
             });
         } else {
@@ -78,6 +79,7 @@ export class CoursesDataSource implements DataSource<Course> {
             )
             .pipe(first())
             .subscribe(response => {
+                console.log("RESPONSE: "+response.courses.length);
                 this.checkData(response);
             });
         }
@@ -115,12 +117,12 @@ export class CoursesDataSource implements DataSource<Course> {
     
             if (pageIndex) {
                 console.log("pageIndex: "+pageIndex);
-                params=params.set('page', departmentId);
+                params=params.set('page', pageIndex);
             }
         
             if (pageSize) {
                 console.log("pageSize: "+pageSize);
-                params=params.set('pageSize', departmentId);
+                params=params.set('pageSize', pageSize);
             }
         
             if (sortDirection && currentColumnDef) {

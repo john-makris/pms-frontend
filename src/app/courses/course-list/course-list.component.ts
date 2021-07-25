@@ -55,9 +55,14 @@ export class CourseListComponent implements OnInit, AfterViewInit {
       .subscribe(departments => {
         this.departments = departments;
       });
+    this.selectDepartmentForm = this.formBuilder.group({
+      departmentId: [0, Validators.required],
+      hideRequired: this.hideRequiredControl,
+      floatLabel: this.floatLabelControl
+    });
     this.dataSource = new CoursesDataSource(this.courseService, this.snackbarService);
 
-    this.dataSource.loadCourses(0, '', 0, 3, 'asc','id');
+    this.dataSource.loadCourses(this.selectDepartmentForm.value.departmentId, '', 0, 3, 'asc','id');
 
     this.dataSource.totalItemsState.subscribe(
       totalItems => {
@@ -65,11 +70,6 @@ export class CourseListComponent implements OnInit, AfterViewInit {
       }
     );
 
-    this.selectDepartmentForm = this.formBuilder.group({
-      departmentId: [0, Validators.required],
-      hideRequired: this.hideRequiredControl,
-      floatLabel: this.floatLabelControl
-    });
   }
 
   get f() { return this.selectDepartmentForm.controls; }
@@ -91,7 +91,6 @@ export class CourseListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
 
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
-
     fromEvent(this.input.nativeElement,'keyup')
         .pipe(
             debounceTime(150),
