@@ -5,6 +5,7 @@ import {catchError, finalize, first} from "rxjs/operators";
 import { Course } from "../../course.model";
 import { CourseService } from "../../course.service";
 import { PageDetail } from "../models/pageDetail.model";
+import { CoursesResponseData } from "../payload/response/coursesResponseData.interface";
 
 export class CoursesDataSource implements DataSource<Course> {
 
@@ -59,7 +60,7 @@ export class CoursesDataSource implements DataSource<Course> {
                 finalize(() => this.loadingSubject.next(false))
             )
             .pipe(first())
-            .subscribe(response => {
+            .subscribe((response: CoursesResponseData) => {
                 //console.log("RESPONSE !!!!!!! "+response);
                 this.checkData(response);
             });
@@ -71,14 +72,14 @@ export class CoursesDataSource implements DataSource<Course> {
                 finalize(() => this.loadingSubject.next(false))
             )
             .pipe(first())
-            .subscribe(response => {
+            .subscribe((response: CoursesResponseData) => {
                 //console.log("RESPONSE !!!!!!! "+response);
                 this.checkData(response);
             });
         }
     }
 
-    checkData(response: any) {
+    checkData(response: CoursesResponseData) {
         if(response!==null) {
             this.courseSubject.next(response.courses);
             console.log(response);
@@ -146,6 +147,5 @@ export class CoursesDataSource implements DataSource<Course> {
         this.loadingSubject.complete();
         this.pageDetailSubject.complete();
     }
-
 
 }
