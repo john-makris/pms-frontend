@@ -4,13 +4,14 @@ import { MatSort } from '@angular/material/sort';
 import { CourseService } from '../course.service';
 import { CoursesDataSource } from '../courses.datasource';
 import {debounceTime, distinctUntilChanged, tap, first, switchMap} from 'rxjs/operators';
-import {merge, fromEvent } from "rxjs";
+import {merge, fromEvent, Subscription } from "rxjs";
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DepartmentService } from 'src/app/departments/department.service';
 import { Department } from 'src/app/departments/department.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
+import { PageDetail } from '../pageDetail.model';
 
 @Component({
   selector: 'app-course-list',
@@ -29,11 +30,14 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedDepartmentId: number = 0;
 
   currentColumnDef: string = 'id';
-  totalItems!: number;
-  totalPages!: number;
-  itemsPerPage!: number;
-  currentPage!: number;
-  malakia: string = '';
+  totalItems: number = 0;
+  currentPageItems: number = 0;
+  currentPage: number = 0;
+  currentState: string = '';
+
+  snackbarSubscription!: Subscription;
+  pageDetailSubscription!: Subscription;
+  departmentsSubscription!: Subscription;
 
   displayedColumns = [
     'id',
@@ -44,7 +48,6 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('input') input!: ElementRef;
-  currentState!: SnackbarData;
 
   constructor(
     private router: Router,
@@ -71,57 +74,43 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataSource.loadCourses(this.selectDepartmentForm.value.departmentId, '', 0, 3, 'asc', this.currentColumnDef);
 
-    this.dataSource.totalItemsState.subscribe(
-      totalItems => {
-        this.totalItems = totalItems;
-      }
-    );
-
-    this.dataSource.itemsPerPageState.subscribe(
-      currentPageItems => {
-        this.itemsPerPage = currentPageItems;
-        //console.log("CURRENT PAGE ITEMS: "+this.itemsPerPage);
-      }
-    );
-
-    this.dataSource.currentPageState.subscribe(
-      (currentPage) => {
-        this.currentPage = currentPage;
-      }
-    );
-
-
-    this.dataSource.totalPagesState.pipe(
-      switchMap(async (totalPages) => {
-        if(this.malakia.includes('added')) {
-          console.log("HALLOOOOOOOO!!!!")
-            this.paginator.pageIndex = totalPages - 1;
+    this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
+      switchMap(async (pageDetail: PageDetail) => {
+        this.totalItems = pageDetail.totalItems;
+        this.currentPageItems = pageDetail.currentPageItems;
+        this.currentPage = pageDetail.currentPage;
+        //console.log("Entered to SwitchMap");
+        if(this.currentState.includes('added')) {
+          //console.log("I am inside switchmap added state");
+            this.paginator.pageIndex = pageDetail.totalPages - 1;
             this.refreshTable();
-            this.malakia = '';
+            this.currentState = '';
         }
       })
-    )
-    .subscribe();
+    ).subscribe();
     
-    this.snackbarService.snackbarState.subscribe(
+    this.snackbarSubscription = this.snackbarService.snackbarState.subscribe(
       (state: SnackbarData) => {
-        this.currentState = state;
-        if(state.message.search('added' || 'updated' || 'deleted')) {
-          this.malakia = state.message;
-          console.log('MALAKIA: '+this.malakia);
-          //this.paginator.pageIndex = 0;
+        this.currentState = state.message;
+        if(this.currentState.includes('added')) {
+          //console.log('Current State: '+this.currentState);
+          this.paginator.pageIndex = 0;
           this.refreshTable();
-          //console.log("TOTAL PAGES: "+this.totalPages);
-          if(this.malakia.includes('deleted') && this.itemsPerPage === 1) {
-            this.paginator.pageIndex = this.currentPage - 1;
-            this.refreshTable();
-          }
+        } else if(this.currentState.includes('deleted') && this.currentPageItems === 1) {
+          //console.log("I am inside Deleted state");
+          //console.log("CURRENT PAGE: "+this.currentPage);
+          this.paginator.pageIndex = this.currentPage - 1;
+          this.refreshTable();
+          this.currentState = '';
+        } else if(this.currentState.includes('updated')) {
+          this.paginator.pageIndex = this.currentPage;
+          this.refreshTable();
+        } else {
+          this.refreshTable();
         }
       }
     );
-    
   }
-
 
   get f() { return this.selectDepartmentForm.controls; }
 
@@ -171,7 +160,6 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
         tap(() => this.loadCoursesPage())
     )
     .subscribe();
-
   }
 
   loadCoursesPage() {
@@ -191,6 +179,9 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.departmentsSubscription.unsubscribe();
+    this.pageDetailSubscription.unsubscribe();
+    this.snackbarSubscription.unsubscribe();
   }
 
 }

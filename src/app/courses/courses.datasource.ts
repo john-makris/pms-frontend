@@ -4,26 +4,20 @@ import {Observable, BehaviorSubject, of} from "rxjs";
 import {catchError, finalize, first} from "rxjs/operators";
 import { Course } from "./course.model";
 import { CourseService } from "./course.service";
+import { PageDetail } from "./pageDetail.model";
 
 export class CoursesDataSource implements DataSource<Course> {
 
     private courseSubject = new BehaviorSubject<Course[]>([]);
 
-    private totalItemsSubject = new BehaviorSubject<number>(0);
+    private pageDetailSubject = new BehaviorSubject<PageDetail>({
+        currentPage: 0,
+        totalItems: 0,
+        totalPages: 0,
+        currentPageItems: 0
+    });
 
-    totalItemsState = this.totalItemsSubject.asObservable();
-
-    private itemsPerPageSubject = new BehaviorSubject<number>(0);
-
-    itemsPerPageState = this.itemsPerPageSubject.asObservable();
-
-    private totalPagesSubject = new BehaviorSubject<number>(0);
-
-    totalPagesState = this.totalPagesSubject.asObservable();
-
-    private currentPageSubject = new BehaviorSubject<number>(0);
-
-    currentPageState = this.currentPageSubject.asObservable();
+    pageDetailState = this.pageDetailSubject.asObservable();
 
     private loadingSubject = new BehaviorSubject<boolean>(false);
 
@@ -38,13 +32,13 @@ export class CoursesDataSource implements DataSource<Course> {
                 sortDirection:string,
                 currentColumnDef:string) {
 
-        console.log("LOAD COURSES PARAMETERS: ");
+        /*console.log("LOAD COURSES PARAMETERS: ");
         console.log("DEPARTMENT ID: "+departmentId);
         console.log("FILTER: "+filter);
         console.log("Page Index: "+pageIndex);
         console.log("Page Size: "+pageSize);
         console.log("Sort Direction: "+sortDirection);
-        console.log("Current Column Def: "+currentColumnDef);
+        console.log("Current Column Def: "+currentColumnDef);*/
 
 
         let params = this.createParams(departmentId,
@@ -88,14 +82,20 @@ export class CoursesDataSource implements DataSource<Course> {
         if(response!==null) {
             this.courseSubject.next(response.courses);
             console.log(response);
-            this.totalItemsSubject.next(response.totalItems);
-            this.totalPagesSubject.next(response.totalPages);
-            this.itemsPerPageSubject.next(response.courses.length);
-            this.currentPageSubject.next(response.currentPage);
+            const pageDetail: PageDetail = new PageDetail(
+                response.currentPage,
+                response.totalItems,
+                response.totalPages,
+                response.courses.length);
+            this.pageDetailSubject.next(pageDetail);
         } else {
             this.courseSubject.next([]);
-            this.totalItemsSubject.next(0);
-            this.totalPagesSubject.next(0);
+            this.pageDetailSubject.next({
+                currentPage: 0,
+                totalItems: 0,
+                totalPages: 0,
+                currentPageItems: 0
+            });
         }
     }
 
@@ -144,10 +144,7 @@ export class CoursesDataSource implements DataSource<Course> {
     disconnect(collectionViewer: CollectionViewer): void {
         this.courseSubject.complete();
         this.loadingSubject.complete();
-        this.totalItemsSubject.complete();
-        this.totalPagesSubject.complete();
-        this.currentPageSubject.complete();
-        this.itemsPerPageSubject.complete();
+        this.pageDetailSubject.complete();
     }
 
 
