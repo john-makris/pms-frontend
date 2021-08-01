@@ -21,6 +21,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatRippleModule } from '@angular/material/core';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
     imports: [
@@ -45,7 +46,8 @@ import { MatMenuModule } from '@angular/material/menu';
         MatSnackBarModule,
         MatGridListModule,
         MatRippleModule,
-        MatMenuModule
+        MatMenuModule,
+        MatDividerModule
     ],
     exports: [
         MatButtonModule, 
@@ -69,7 +71,8 @@ import { MatMenuModule } from '@angular/material/menu';
         MatSnackBarModule,
         MatGridListModule,
         MatRippleModule,
-        MatMenuModule
+        MatMenuModule,
+        MatDividerModule
     ]
 })
 export class MaterialModule {}

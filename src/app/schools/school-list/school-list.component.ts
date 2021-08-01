@@ -1,31 +1,33 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { throwError } from 'rxjs';
-import { Subscription } from 'rxjs';
-import { catchError, first } from 'rxjs/operators';
-import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
+import {debounceTime, distinctUntilChanged, startWith, tap, delay, first} from 'rxjs/operators';
+import {merge, fromEvent} from "rxjs";
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { School } from '../school.model';
 import { SchoolService } from '../school.service';
+import { SchoolsDataSource } from '../schools.datasource';
 
 @Component({
   selector: 'app-school-list',
   templateUrl: './school-list.component.html',
   styleUrls: ['./school-list.component.css']
 })
-export class SchoolListComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SchoolListComponent implements OnInit, AfterViewInit {
+
+  dataSource!: SchoolsDataSource;
+  currentColumnDef: string = 'id';
+  totalItems!: number;
+
   displayedColumns = [
     'id',
     'name',
     'location'
   ];
-  dataSource = new MatTableDataSource<School>();
-  private schoolsSubscription!: Subscription;
 
-  @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('input') input!: ElementRef;
 
   constructor(
     private schoolService: SchoolService,
@@ -33,52 +35,46 @@ export class SchoolListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if(this.dataSource.data.length === 0) {
-      console.log("Schools list is empty");
-      this.schoolService.getAllSchools().pipe(first())
-      .subscribe(schools => {
-        this.checkData(schools);
-      });
-    }
+    this.dataSource = new SchoolsDataSource(this.schoolService, this.snackbarService);
+    this.dataSource.loadSchools('', 0, 3, 'asc', 'id');
 
-    this.snackbarService.snackbarState.subscribe(
-      (state: SnackbarData) => {
-        if(state.message.search('added' || 'updated' || 'deleted')) {
-          console.log("Snackbar: " + state.message);
-          this.schoolService.getAllSchools()
-          .pipe(first())
-          .subscribe(schools => {
-            this.checkData(schools);
-          });
-        }
+    this.dataSource.totalItemsState.subscribe(
+      totalItems => {
+        this.totalItems = totalItems;
       }
     );
   }
 
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
+
+    this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
+    fromEvent(this.input.nativeElement,'keyup')
+        .pipe(
+            debounceTime(150),
+            distinctUntilChanged(),
+            tap(() => {
+                this.paginator.pageIndex = 0;
+
+                this.loadCoursesPage();
+            })
+        )
+        .subscribe();
+
+    merge(this.sort.sortChange, this.paginator.page)
+    .pipe(
+        tap(() => this.loadCoursesPage())
+    )
+    .subscribe();
+
   }
 
-  doFilter(filterValue: string) {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    console.log("School filter value: "+this.dataSource.filter);
-    console.log("School value after filtering"+this.dataSource.data);
-  }
-
-  ngOnDestroy() {
-    if (this.schoolsSubscription) {
-      this.schoolsSubscription.unsubscribe();
-    }
-  }
-
-  checkData(schools: School[]) {
-    if(schools===null) {
-      this.dataSource.data = [];
-      console.log(this.dataSource.data);
-    } else {
-      this.dataSource.data = schools;
-    }
+  loadCoursesPage() {
+    this.dataSource.loadSchools(
+        this.input.nativeElement.value,
+        this.paginator.pageIndex,
+        this.paginator.pageSize,
+        this.sort.direction,
+        this.currentColumnDef);
   }
 
 }

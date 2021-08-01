@@ -13,7 +13,7 @@ import { DepartmentService } from '../department.service';
   styleUrls: ['./department-detail.component.css']
 })
 export class DepartmentDetailComponent implements OnInit, OnDestroy{
-  id!: number;
+  /*id!: number;
   department!: Department;
   private ensureDialogSubscription!: Subscription;
   ensureDialogStatus!: boolean;
@@ -22,10 +22,10 @@ export class DepartmentDetailComponent implements OnInit, OnDestroy{
     private router: Router,
     private departmentService: DepartmentService,
     private snackbarService: SnackbarService,
-    private ensureDialogService: EnsureDialogService) { }
+    private ensureDialogService: EnsureDialogService) { }*/
 
   ngOnInit(): void {
-    this.route.params
+    /*this.route.params
       .subscribe(
         (params: Params) => {
           this.id = params['id'];
@@ -35,10 +35,10 @@ export class DepartmentDetailComponent implements OnInit, OnDestroy{
             this.department = x;
           });
       }
-    );
+    );*/
   }
 
-  editDepartment() {
+ /* editDepartment() {
     this.router.navigate(['/departments/edit/', this.id], { relativeTo: this.route });
   }
 
@@ -68,12 +68,12 @@ export class DepartmentDetailComponent implements OnInit, OnDestroy{
 
   onCancel() {
     this.router.navigate(['../../'], { relativeTo: this.route });
-  }
+  }*/
 
   ngOnDestroy() {
-    if(this.ensureDialogSubscription) {
-      this.ensureDialogSubscription.unsubscribe();
-    }
+    //if(this.ensureDialogSubscription) {
+    //  this.ensureDialogSubscription.unsubscribe();
+   // }
   }
 
 }

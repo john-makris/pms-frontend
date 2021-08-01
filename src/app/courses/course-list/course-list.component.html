@@ -40,7 +40,17 @@
     <div class="table">
         <div fxLayoutAlign="center">
             <mat-form-field fxFlex="40%">
-                <input matInput placeholder="Search courses" #input>
+                <div fxLayout="row">
+                    <input matInput placeholder="Search courses" [(ngModel)]="filterText" #input>
+                    <mat-icon matPrefix inline="true">search</mat-icon>
+                    <button 
+                        mat-button 
+                        *ngIf="input.value"
+                        matSuffix 
+                        mat-icon-button (click)="refreshTable()">
+                        <mat-icon inline="true">close</mat-icon>
+                    </button>
+                </div>
             </mat-form-field>
         </div>
 
@@ -49,17 +59,17 @@
             [dataSource]="dataSource" matSort matSortActive="id"
             matSortDirection="asc" matSortDisableClear>
             <ng-container matColumnDef="id">
-                <mat-header-cell *matHeaderCellDef mat-sort-header (click)="currentColumnDef='id'">ID</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
                 <mat-cell *matCellDef="let course">{{ course.id | number }}</mat-cell>
             </ng-container>
     
             <ng-container matColumnDef="name">
-                <mat-header-cell *matHeaderCellDef mat-sort-header (click)="currentColumnDef='name'">Name</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
                 <mat-cell *matCellDef="let course">{{ course.name }}</mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="semester">
-                <mat-header-cell *matHeaderCellDef mat-sort-header (click)="currentColumnDef='semester'">Semester</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Semester</mat-header-cell>
                 <mat-cell *matCellDef="let course">{{ course.semester }}</mat-cell>
             </ng-container>
     

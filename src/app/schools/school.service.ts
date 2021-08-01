@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { School } from "./school.model";
@@ -17,8 +17,8 @@ export class SchoolService {
 
     constructor(private http: HttpClient) { }
 
-    getAllSchools(): Observable<School[]> {
-        return this.http.get<School[]>(API_URL + 'all');
+    getAllSchools(params: HttpParams): Observable<any> {
+        return this.http.get<School[]>(API_URL + 'all/sorted', { params });
     }
 
     getSchoolById(schoolId: number): Observable<School> {

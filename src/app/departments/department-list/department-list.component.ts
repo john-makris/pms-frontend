@@ -15,7 +15,7 @@ import { DepartmentService } from '../department.service';
   styleUrls: ['./department-list.component.css']
 })
 export class DepartmentListComponent implements OnInit {
-  displayedColumns = [
+/*  displayedColumns = [
     'id',
     'name',
     'school'
@@ -29,9 +29,9 @@ export class DepartmentListComponent implements OnInit {
   constructor(
     private departmentService: DepartmentService,
     private snackbarService: SnackbarService) { }
-
+*/
   ngOnInit(): void {
-    if(this.dataSource.data.length === 0) {
+  /*  if(this.dataSource.data.length === 0) {
       console.log("Departments list is empty");
       this.departmentService.getAllDepartments()
       .pipe(first())
@@ -51,10 +51,10 @@ export class DepartmentListComponent implements OnInit {
           });
         }
       }
-    );
+    );*/
   }
 
-  ngAfterViewInit() {
+ /* ngAfterViewInit() {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
   }
@@ -80,5 +80,5 @@ export class DepartmentListComponent implements OnInit {
       this.dataSource.data = departments;
     }
   }
-
+*/
 }

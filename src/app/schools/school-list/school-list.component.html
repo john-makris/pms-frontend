@@ -10,15 +10,14 @@
     <div class="table">
         <div fxLayoutAlign="center">
             <mat-form-field fxFlex="40%">
-                <input matInput 
-                    type="text" 
-                    (keyup)="doFilter($any($event.target).value)" 
-                    placeholder="Filter">
+                <input matInput placeholder="Search schools" #input>
             </mat-form-field>
         </div>
 
 
-        <mat-table [dataSource]="dataSource" matSort>
+        <mat-table class="lessons-table mat-elevation-z8"
+            [dataSource]="dataSource" matSort matSortActive="id"
+            matSortDirection="asc" matSortDisableClear>
             <ng-container matColumnDef="id">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
                 <mat-cell *matCellDef="let element">{{ element.id | number }}</mat-cell>
@@ -44,7 +43,11 @@
             </mat-row>
         </mat-table>
     
-        <mat-paginator [pageSize]="3" [pageSizeOptions]="[3, 5]" showFirstLastButtons>
+        <mat-paginator
+            [length]="totalItems"
+            [pageSize]="5" 
+            [pageSizeOptions]="[3, 5]"
+            showFirstLastButtons>
         </mat-paginator>
     </div>
 </div>

@@ -20,7 +20,7 @@ export interface DepartmentData {
   styleUrls: ['./department-edit.component.css']
 })
 export class DepartmentEditComponent implements OnInit {
-  departmentForm!: FormGroup;
+  /*departmentForm!: FormGroup;
   id!: number;
   isAddMode!: boolean;
   isLoading: boolean = false;
@@ -38,10 +38,10 @@ export class DepartmentEditComponent implements OnInit {
     private departmentService: DepartmentService,
     private schoolService: SchoolService,
     private snackbarService: SnackbarService
-  ) { }
+  ) { }*/
 
   ngOnInit(): void {
-    this.id = this.route.snapshot.params['id'];
+    /*this.id = this.route.snapshot.params['id'];
     this.route.params
       .subscribe(
         (params: Params) => {
@@ -80,10 +80,10 @@ export class DepartmentEditComponent implements OnInit {
         schoolId: ['', Validators.required],
         hideRequired: this.hideRequiredControl,
         floatLabel: this.floatLabelControl
-      });
+      });*/
   }
 
-  get f() { return this.departmentForm.controls; }
+  /*get f() { return this.departmentForm.controls; }
 
   onSubmit() {
     this.submitted = true;
@@ -131,5 +131,5 @@ export class DepartmentEditComponent implements OnInit {
     this.router.navigate(['/departments'], { relativeTo: this.route});
   }
 
-
+*/
 }

@@ -40,6 +40,7 @@
                     <mat-error>Invalid or missing semester.</mat-error>
                 </mat-form-field>
                 <mat-form-field
+                    *ngIf="isAddMode"
                     appearance="outline"
                     [hideRequiredMarker]="hideRequiredControl.value"
                     [floatLabel]="floatLabelControl.value">

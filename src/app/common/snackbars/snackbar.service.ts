@@ -31,7 +31,7 @@ export class SnackbarService {
         _styleClass: string) {
             const message = _message;
             const action = 'Close';
-            const duration = 3000;
+            const duration = 1000;
             const styleClass = _styleClass;
 
         this.snackbarSubject.next({

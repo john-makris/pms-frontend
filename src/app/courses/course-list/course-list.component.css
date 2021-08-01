@@ -38,3 +38,10 @@
 .selectorContainer {
     padding-bottom: 1em;
 }
+
+.mat-icon-button {
+    height: 1em;
+    width: 1em;
+    font-size: 1em;
+    line-height: 1em;
+}
