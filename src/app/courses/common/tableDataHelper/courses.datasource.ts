@@ -2,9 +2,9 @@ import {CollectionViewer, DataSource} from "@angular/cdk/collections";
 import { HttpParams } from "@angular/common/http";
 import {Observable, BehaviorSubject, of} from "rxjs";
 import {catchError, finalize, first} from "rxjs/operators";
-import { Course } from "./course.model";
-import { CourseService } from "./course.service";
-import { PageDetail } from "./pageDetail.model";
+import { Course } from "../../course.model";
+import { CourseService } from "../../course.service";
+import { PageDetail } from "../models/pageDetail.model";
 
 export class CoursesDataSource implements DataSource<Course> {
 
@@ -41,7 +41,7 @@ export class CoursesDataSource implements DataSource<Course> {
         console.log("Current Column Def: "+currentColumnDef);*/
 
 
-        let params = this.createParams(departmentId,
+        let params: HttpParams = this.createParams(departmentId,
             filter, pageIndex, pageSize, sortDirection, currentColumnDef);
             console.log("PARAMS: "+params);
 

@@ -1,5 +1,5 @@
 export class PageDetail {
-    
+
     constructor(
         public currentPage: number,
         public totalItems: number,

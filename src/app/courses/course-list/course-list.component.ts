@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy, OnC
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { CourseService } from '../course.service';
-import { CoursesDataSource } from '../courses.datasource';
+import { CoursesDataSource } from '../common/tableDataHelper/courses.datasource';
 import {debounceTime, distinctUntilChanged, tap, first, switchMap} from 'rxjs/operators';
 import {merge, fromEvent, Subscription } from "rxjs";
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
@@ -11,7 +11,7 @@ import { DepartmentService } from 'src/app/departments/department.service';
 import { Department } from 'src/app/departments/department.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
-import { PageDetail } from '../pageDetail.model';
+import { PageDetail } from '../common/models/pageDetail.model';
 
 @Component({
   selector: 'app-course-list',
@@ -140,9 +140,10 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.sort.sortChange.subscribe(() => {
       this.currentColumnDef = this.sort.active;
-      console.log("SORT ACTIVE: "+this.sort.active);
+      //console.log("SORT ACTIVE: "+this.sort.active);
     //console.log("Sort changed "+this.sort.direction);
-      this.paginator.pageIndex = 0});
+      this.paginator.pageIndex = 0;
+    });
     fromEvent(this.input.nativeElement,'keyup')
         .pipe(
             debounceTime(150),

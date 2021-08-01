@@ -39,10 +39,15 @@
 
     <div class="table">
         <div fxLayoutAlign="center">
-            <mat-form-field fxFlex="40%">
+            <mat-form-field fxFlex="45%">
                 <div fxLayout="row">
-                    <input matInput placeholder="Search courses" [(ngModel)]="filterText" #input>
-                    <mat-icon matPrefix inline="true">search</mat-icon>
+                    <input
+                        matInput 
+                        placeholder="Search courses" 
+                        [(ngModel)]="filterText" #input>
+                    <mat-icon 
+                        matSuffix 
+                        inline="true">search</mat-icon>
                     <button 
                         mat-button 
                         *ngIf="input.value"

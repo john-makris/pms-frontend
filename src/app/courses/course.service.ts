@@ -1,17 +1,10 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
+import { Observable } from "rxjs";
+import { CourseRequestData } from "./common/payload/request/courseRequestData.interface";
 import { Course } from "./course.model";
 
 const API_URL = 'http://localhost:8080/pms/courses/';
-
-export interface CourseRequestData {
-    name: string,
-    semester: string,
-    department: {
-        id: number;
-    }
-}
 
 @Injectable({
     providedIn: 'root'
