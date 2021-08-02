@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { CourseRequestData } from "./common/payload/request/courseRequestData.interface";
 import { Course } from "./course.model";
 
@@ -10,6 +10,10 @@ const API_URL = 'http://localhost:8080/pms/courses/';
     providedIn: 'root'
 })
 export class CourseService {
+
+    private departmentIdSubject = new BehaviorSubject<number>(0);
+
+    departmentIdState = this.departmentIdSubject.asObservable();
 
     constructor(private http: HttpClient) { }
 
@@ -34,6 +38,7 @@ export class CourseService {
     }
 
     createCourse(courseData: CourseRequestData): Observable<Course> {
+        this.departmentIdSubject.next(courseData.department.id);
         return this.http.post<Course>(API_URL + 'create/', courseData);
     }
 

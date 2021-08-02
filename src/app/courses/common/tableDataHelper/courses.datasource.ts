@@ -117,7 +117,7 @@ export class CoursesDataSource implements DataSource<Course> {
 
             if (filter) {
                 //console.log("Filter: "+filter);
-                params=params.set('name', filter);
+                params=params.set('filter', filter);
             }
     
             if (pageIndex) {
