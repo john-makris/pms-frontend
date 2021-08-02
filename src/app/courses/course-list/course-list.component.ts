@@ -38,6 +38,7 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
   snackbarSubscription!: Subscription;
   pageDetailSubscription!: Subscription;
   departmentsSubscription!: Subscription;
+  departmentIdSubscription!: Subscription;
 
   displayedColumns = [
     'id',
@@ -74,6 +75,13 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataSource.loadCourses(this.selectDepartmentForm.value.departmentId, '', 0, 3, 'asc', this.currentColumnDef);
 
+    this.departmentIdSubscription = this.courseService.departmentIdState
+      .subscribe((departmentId: number) => {
+        if (this.selectedDepartmentId !== 0) {
+          this.selectedDepartmentId = departmentId;
+        }
+    });
+
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
         this.totalItems = pageDetail.totalItems;
@@ -94,6 +102,13 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentState = state.message;
         if(this.currentState.includes('added')) {
           //console.log('Current State: '+this.currentState);
+          this.selectDepartmentForm.setValue(
+            {
+              departmentId: this.selectedDepartmentId,
+              hideRequired: this.hideRequiredControl,
+              floatLabel: this.floatLabelControl
+            });
+          this.selectedDepartmentId = this.selectDepartmentForm.value.departmentId;
           this.paginator.pageIndex = 0;
           this.refreshTable();
         } else if(this.currentState.includes('deleted') && this.currentPageItems === 1) {
@@ -181,6 +196,7 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.departmentsSubscription.unsubscribe();
+    this.departmentIdSubscription.unsubscribe();
     this.pageDetailSubscription.unsubscribe();
     this.snackbarSubscription.unsubscribe();
   }
