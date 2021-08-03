@@ -3,7 +3,7 @@
     [ngClass.lt-md]="'min-container'"
     fxLayout>
     <form 
-        [formGroup]="schoolForm"
+        [formGroup]="departmentForm"
         (ngSubmit)="onSubmit()">
         <mat-card
             fxFlex.xs="19em"
@@ -65,7 +65,7 @@
                         <button 
                             type="submit" 
                             mat-raised-button color="primary" 
-                            [disabled]="schoolForm.invalid || isLoading">
+                            [disabled]="departmentForm.invalid || isLoading">
                             {{ isAddMode ? 'Save' : 'Update' }}
                         </button>
                         <button 
