@@ -18,7 +18,7 @@
 
 .table {
     margin-top: 1em;
-    max-width: 100%;
+    max-width: 70%;
 }
 
 .mat-column-id {
@@ -26,9 +26,18 @@
 }
 
 .mat-column-name {
-    max-width: 35%;
-    margin-right: 6%;}
+    max-width: 87%;
+    margin-left: 6%;
+}
 
-.mat-column-school {
-    max-width: 52%;
+.selectorContainer {
+    max-width: 70%;
+    padding-bottom: 1em;
+}
+
+.mat-icon-button {
+    height: 1em;
+    width: 1em;
+    font-size: 1em;
+    line-height: 1em;
 }
