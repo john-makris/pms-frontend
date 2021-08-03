@@ -17,7 +17,11 @@ export class SchoolService {
 
     constructor(private http: HttpClient) { }
 
-    getAllSchools(params: HttpParams): Observable<any> {
+    getAllSchools(): Observable<School[]> {
+        return this.http.get<School[]>(API_URL + 'all');
+    }
+
+    getAllPageSchools(params: HttpParams): Observable<any> {
         return this.http.get<School[]>(API_URL + 'all/sorted', { params });
     }
 

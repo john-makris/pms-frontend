@@ -11,7 +11,7 @@ import { DepartmentService } from 'src/app/departments/department.service';
 import { Department } from 'src/app/departments/department.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
-import { PageDetail } from '../common/models/pageDetail.model';
+import { PageDetail } from '../../common/models/pageDetail.model';
 
 @Component({
   selector: 'app-course-list',

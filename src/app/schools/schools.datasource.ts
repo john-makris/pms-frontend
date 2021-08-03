@@ -56,7 +56,7 @@ export class SchoolsDataSource implements DataSource<School> {
     }
 
     retrieveData(params: HttpParams) {
-            this.schoolService.getAllSchools(params)
+            this.schoolService.getAllPageSchools(params)
             .pipe(
                 catchError(() => of([])),
                 finalize(() => this.loadingSubject.next(false))

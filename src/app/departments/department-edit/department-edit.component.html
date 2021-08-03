@@ -1,9 +1,9 @@
-<!--<section 
+<section 
     [ngClass]="'container'"
     [ngClass.lt-md]="'min-container'"
     fxLayout>
     <form 
-        [formGroup]="departmentForm"
+        [formGroup]="schoolForm"
         (ngSubmit)="onSubmit()">
         <mat-card
             fxFlex.xs="19em"
@@ -24,12 +24,13 @@
                         formControlName="name">
                     </textarea>
                     <div matSuffix>
-                        <mat-icon>domain</mat-icon>
+                        <mat-icon>class</mat-icon>
                     </div>
                     <mat-hint>Please enter a valid name.</mat-hint>
                     <mat-error>Invalid or missing name.</mat-error>
                 </mat-form-field>
                 <mat-form-field
+                    *ngIf="isAddMode && allSchools"
                     appearance="outline"
                     [hideRequiredMarker]="hideRequiredControl.value"
                     [floatLabel]="floatLabelControl.value">
@@ -37,7 +38,8 @@
                         [(value)]="selectedSchoolId"
                         panelClass="mat-select-panel"
                         formControlName="schoolId">
-                        <mat-option>-- None --</mat-option>
+                        <mat-option
+                            [value]="0">-- None --</mat-option>
                         <mat-option 
                             *ngFor="let school of schools"
                             [value]="school.id">
@@ -63,7 +65,7 @@
                         <button 
                             type="submit" 
                             mat-raised-button color="primary" 
-                            [disabled]="departmentForm.invalid || isLoading">
+                            [disabled]="schoolForm.invalid || isLoading">
                             {{ isAddMode ? 'Save' : 'Update' }}
                         </button>
                         <button 
@@ -76,4 +78,4 @@
             </mat-card-actions>
         </mat-card>
     </form>
-</section>-->
+</section>

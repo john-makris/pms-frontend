@@ -17,12 +17,16 @@ export class CourseService {
 
     constructor(private http: HttpClient) { }
 
-    getAllCourses(params: HttpParams): Observable<any> {
+    getAllPageCourses(params: HttpParams): Observable<any> {
         return this.http.get<Course[]>(API_URL + 'all/paginated_sorted_filtered', { params });
     }
 
-    getAllCoursesByDepartmentId(params: HttpParams): Observable<any> {
+    getAllPageCoursesByDepartmentId(params: HttpParams): Observable<any> {
         return this.http.get<Course[]>(API_URL + 'per_department/all/paginated_sorted_filtered', { params });
+    }
+
+    getAllCourses(): Observable<Course[]> {
+        return this.http.get<Course[]>(API_URL + 'all');
     }
 
     getCourseById(courseId: number): Observable<Course> {
