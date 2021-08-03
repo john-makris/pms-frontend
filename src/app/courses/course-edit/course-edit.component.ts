@@ -108,6 +108,8 @@ export class CourseEditComponent implements OnInit, OnDestroy{
       }
     };
 
+    this.courseForm.reset();
+
     if (this.isAddMode) {
       this.createCourse(courseData);
     } else {

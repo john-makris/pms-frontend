@@ -11,27 +11,28 @@ export class SnackbarService {
     constructor(private snackbar: MatSnackBar) { }
 
     success(_message: string) {
-        this.showSnackbar(_message, 'success');
+        this.showSnackbar(_message, 'success', 1000);
     }
 
     error(_message: string) {
-        this.showSnackbar(_message, 'danger');
+        this.showSnackbar(_message, 'danger', 3000);
     }
 
     info(_message: string) {
-        this.showSnackbar(_message, 'info');
+        this.showSnackbar(_message, 'info', 1000);
     }
 
     warn(_message: string) {
-        this.showSnackbar(_message, 'warning');
+        this.showSnackbar(_message, 'warning', 1000);
     }
 
     showSnackbar(
         _message: string,
-        _styleClass: string) {
+        _styleClass: string,
+        _duration: number) {
             const message = _message;
             const action = 'Close';
-            const duration = 1000;
+            const duration = _duration;
             const styleClass = _styleClass;
 
         this.snackbarSubject.next({
