@@ -40,7 +40,7 @@
                     <mat-error>Invalid or missing semester.</mat-error>
                 </mat-form-field>
                 <mat-form-field
-                    *ngIf="isAddMode"
+                    *ngIf="isAddMode && allDepartments"
                     appearance="outline"
                     [hideRequiredMarker]="hideRequiredControl.value"
                     [floatLabel]="floatLabelControl.value">
@@ -48,7 +48,8 @@
                         [(value)]="selectedDepartmentId"
                         panelClass="mat-select-panel"
                         formControlName="departmentId">
-                        <mat-option>-- None --</mat-option>
+                        <mat-option
+                            [value]="0">-- None --</mat-option>
                         <mat-option 
                             *ngFor="let department of departments"
                             [value]="department.id">

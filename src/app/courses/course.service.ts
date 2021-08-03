@@ -11,7 +11,7 @@ const API_URL = 'http://localhost:8080/pms/courses/';
 })
 export class CourseService {
 
-    private departmentIdSubject = new BehaviorSubject<number>(0);
+    departmentIdSubject = new BehaviorSubject<number>(0);
 
     departmentIdState = this.departmentIdSubject.asObservable();
 
@@ -38,7 +38,6 @@ export class CourseService {
     }
 
     createCourse(courseData: CourseRequestData): Observable<Course> {
-        this.departmentIdSubject.next(courseData.department.id);
         return this.http.post<Course>(API_URL + 'create/', courseData);
     }
 

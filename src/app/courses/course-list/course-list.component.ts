@@ -23,17 +23,19 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
   selectDepartmentForm!: FormGroup;
   hideRequiredControl = new FormControl(false);
   floatLabelControl = new FormControl('auto');
+
   isLoading: boolean = false;
   submitted: boolean = false;
+  
   dataSource!: CoursesDataSource;
   departments!: Department[];
   selectedDepartmentId: number = 0;
 
-  currentColumnDef: string = 'id';
   totalItems: number = 0;
-  currentPageItems: number = 0;
   currentPage: number = 0;
-  currentState: string = '';
+  currentPageItems: number = 0;
+  currentColumnDef: string = 'id';
+  currentActivityState: string = '';
 
   snackbarSubscription!: Subscription;
   pageDetailSubscription!: Subscription;
@@ -60,27 +62,24 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.departmentService.getAllDepartments()
+    this.departmentsSubscription = this.departmentService.getAllDepartments()
       .pipe(first())
       .subscribe(departments => {
         this.departments = departments;
       });
     this.selectDepartmentForm = this.formBuilder.group({
-      departmentId: [0, Validators.required],
+      departmentId: [this.selectedDepartmentId, Validators.required],
       hideRequired: this.hideRequiredControl,
       floatLabel: this.floatLabelControl
     });
 
+    console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
+
+    this.courseService.departmentIdSubject.next(this.selectedDepartmentId);
+
     this.dataSource = new CoursesDataSource(this.courseService);
 
     this.dataSource.loadCourses(this.selectDepartmentForm.value.departmentId, '', 0, 3, 'asc', this.currentColumnDef);
-
-    this.departmentIdSubscription = this.courseService.departmentIdState
-      .subscribe((departmentId: number) => {
-        if (this.selectedDepartmentId !== 0) {
-          this.selectedDepartmentId = departmentId;
-        }
-    });
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -88,19 +87,19 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentPageItems = pageDetail.currentPageItems;
         this.currentPage = pageDetail.currentPage;
         //console.log("Entered to SwitchMap");
-        if(this.currentState.includes('added')) {
+        if(this.currentActivityState.includes('added')) {
           //console.log("I am inside switchmap added state");
             this.paginator.pageIndex = pageDetail.totalPages - 1;
             this.refreshTable();
-            this.currentState = '';
+            this.currentActivityState = '';
         }
       })
     ).subscribe();
     
     this.snackbarSubscription = this.snackbarService.snackbarState.subscribe(
       (state: SnackbarData) => {
-        this.currentState = state.message;
-        if(this.currentState.includes('added')) {
+        this.currentActivityState = state.message;
+        if(this.currentActivityState.includes('added')) {
           //console.log('Current State: '+this.currentState);
           this.selectDepartmentForm.setValue(
             {
@@ -111,13 +110,13 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
           this.selectedDepartmentId = this.selectDepartmentForm.value.departmentId;
           this.paginator.pageIndex = 0;
           this.refreshTable();
-        } else if(this.currentState.includes('deleted') && this.currentPageItems === 1) {
+        } else if(this.currentActivityState.includes('deleted') && this.currentPageItems === 1) {
           //console.log("I am inside Deleted state");
           //console.log("CURRENT PAGE: "+this.currentPage);
           this.paginator.pageIndex = this.currentPage - 1;
           this.refreshTable();
-          this.currentState = '';
-        } else if(this.currentState.includes('updated')) {
+          this.currentActivityState = '';
+        } else if(this.currentActivityState.includes('updated')) {
           this.paginator.pageIndex = this.currentPage;
           this.refreshTable();
         } else {
@@ -144,12 +143,11 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.paginator.pageSize;
     this.sort.direction='asc'
     this.currentColumnDef;
+    console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
+    this.courseService.departmentIdSubject.next(this.selectedDepartmentId);
 
-    if (this.input.nativeElement.value === '') {
-      this.loadCoursesPage();
-    } else {
-      this.refreshTable();
-    }
+
+    this.refreshTable();
   }
 
   ngAfterViewInit() {
@@ -189,14 +187,17 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   
   refreshTable() {
-    this.input.nativeElement.value='';
     //console.log("INPUT VALUE: "+this.input.nativeElement.value);
-    this.loadCoursesPage();
+    if (this.input.nativeElement.value === '') {
+      this.loadCoursesPage();
+    } else {
+      this.input.nativeElement.value='';
+      this.loadCoursesPage();
+    }
   }
 
   ngOnDestroy(): void {
     this.departmentsSubscription.unsubscribe();
-    this.departmentIdSubscription.unsubscribe();
     this.pageDetailSubscription.unsubscribe();
     this.snackbarSubscription.unsubscribe();
   }
