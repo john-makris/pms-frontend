@@ -1,8 +1,11 @@
 <div 
     [ngClass]="'container'"
     [ngClass.lt-sm]="'min-container'"
-    fxFlex="40em"
-    fxFlex.lt-sm="calc(20em)"
+    fxFlex="30em"
+    fxFlex.gt-md="30em"
+    fxFlex.md="30em"
+    fxFlex.lt-md="30em"
+    fxFlex.lt-sm="20em"
 >
     <div class="selectorContainer">
         <form fxLayout="column"
@@ -39,7 +42,7 @@
 
     <div class="table">
         <div fxLayoutAlign="center">
-            <mat-form-field fxFlex="50%">
+            <mat-form-field fxFlex="60%">
                 <div fxLayout="row">
                     <input
                         matInput 

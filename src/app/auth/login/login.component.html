@@ -34,7 +34,7 @@
                         placeholder="Password"
                         formControlName="password">
                         <span fxLayout="row" matSuffix>
-                            <button mat-icon-button (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                            <button type="button" mat-icon-button (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                                 <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                             </button>                   
                             <mat-icon style="margin-top:'5px'">lock</mat-icon>

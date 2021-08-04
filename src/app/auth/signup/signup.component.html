@@ -50,7 +50,7 @@
                     <mat-hint align="end">{{ passwordInput.value?.length }} / 6</mat-hint>
                     <mat-error>Has to be at least 6 characters long.</mat-error>
                     <span fxLayout="row" matSuffix>
-                        <button mat-icon-button (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                        <button type="button" mat-icon-button (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                             <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                         </button>
                         <mat-icon style="margin-top:'5px'">lock</mat-icon>
