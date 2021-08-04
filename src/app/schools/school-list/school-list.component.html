@@ -1,36 +1,50 @@
 <div 
     [ngClass]="'container'"
     [ngClass.lt-sm]="'min-container'"
-    fxFlex.lt-sm="calc(20em)"    
+    fxFlex="30em"
+    fxFlex.gt-md="30em"
+    fxFlex.md="30em"
+    fxFlex.lt-md="30em"
+    fxFlex.lt-sm="20em"  
 >
     <a routerLink="add" 
        mat-raised-button
-       color="primary">Add School</a>
+       color="primary">Add School</a> 
 
-    <div class="table">
-        <div fxLayoutAlign="center">
-            <mat-form-field fxFlex="40%">
-                <input matInput placeholder="Search schools" #input>
-            </mat-form-field>
-        </div>
+       <div class="table">
+            <div fxLayoutAlign="center">
+                <mat-form-field fxFlex="60%">
+                    <div fxLayout="row">
+                        <input
+                            matInput
+                            placeholder="Search schools"
+                            [(ngModel)]="filterText" #input>
+                        <mat-icon 
+                            matSuffix 
+                            inline="true">search</mat-icon>
+                        <button 
+                            mat-button 
+                            *ngIf="input.value"
+                            matSuffix 
+                            mat-icon-button (click)="refreshTable()">
+                            <mat-icon inline="true">close</mat-icon>
+                        </button>
+                    </div>
+                </mat-form-field>
+            </div>
 
 
-        <mat-table class="lessons-table mat-elevation-z8"
+        <mat-table class="mat-elevation-z8"
             [dataSource]="dataSource" matSort matSortActive="id"
             matSortDirection="asc" matSortDisableClear>
             <ng-container matColumnDef="id">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
-                <mat-cell *matCellDef="let element">{{ element.id | number }}</mat-cell>
+                <mat-cell *matCellDef="let school">{{ school.id | number }}</mat-cell>
             </ng-container>
     
             <ng-container matColumnDef="name">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-                <mat-cell *matCellDef="let element">{{ element.name }}</mat-cell>
-            </ng-container>
-    
-            <ng-container matColumnDef="location">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Location</mat-header-cell>
-                <mat-cell *matCellDef="let element">{{ element.location }}</mat-cell>
+                <mat-cell *matCellDef="let school">{{ school.name }}</mat-cell>
             </ng-container>
     
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -45,7 +59,7 @@
     
         <mat-paginator
             [length]="totalItems"
-            [pageSize]="5" 
+            [pageSize]="3" 
             [pageSizeOptions]="[3, 5]"
             showFirstLastButtons>
         </mat-paginator>

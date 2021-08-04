@@ -42,7 +42,6 @@ export class DepartmentListComponent implements OnInit, AfterViewInit, OnDestroy
   snackbarSubscription!: Subscription;
   pageDetailSubscription!: Subscription;
   schoolsSubscription!: Subscription;
-  schoolIdSubscription!: Subscription;
 
   displayedColumns = [
     'id',
@@ -146,7 +145,6 @@ export class DepartmentListComponent implements OnInit, AfterViewInit, OnDestroy
     this.currentColumnDef;
     console.log("SCHOOL ID: "+this.selectedSchoolId);
     this.departmentService.schoolIdSubject.next(this.selectedSchoolId);
-
 
     this.refreshTable();
   }
