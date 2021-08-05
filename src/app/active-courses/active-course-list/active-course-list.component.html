@@ -1,1 +1,104 @@
-<p>active-course-list works!</p>
+<div 
+    [ngClass]="'container'"
+    [ngClass.lt-sm]="'min-container'"
+    fxFlex="40em"
+    fxFlex.lt-sm="calc(20em)"
+>
+    <div class="selectorContainer">
+        <form fxLayout="column"
+        [formGroup]="selectCourseForm">
+            <mat-form-field
+                appearance="outline"
+                [hideRequiredMarker]="hideRequiredControl.value"
+                [floatLabel]="floatLabelControl.value">
+                <mat-select
+                    [(value)]="selectedCourseId"
+                    panelClass="mat-select-panel"
+                    formControlName="courseId">
+                    <mat-option
+                        [value]="0"
+                        (click)="onSubmit()">-- All Courses --</mat-option>
+                    <mat-option 
+                        *ngFor="let course of courses"
+                        [value]="course.id"
+                        (click)="onSubmit()">
+                        <p>
+                            {{ course.name }}
+                        </p>
+                    </mat-option>
+                </mat-select>
+                <mat-label><mat-icon>domain</mat-icon> <b> Course</b></mat-label>
+                <mat-hint>Choose Course</mat-hint>
+            </mat-form-field>
+        </form>
+    </div>
+
+    <a routerLink="add"
+       mat-raised-button
+       color="primary">Add Active Course</a>
+
+    <div class="table-container">
+        <div fxLayoutAlign="center">
+            <mat-form-field fxFlex="70%">
+                <div fxLayout="row">
+                    <input
+                        matInput 
+                        placeholder="Search active courses" 
+                        [(ngModel)]="filterText" #input>
+                    <mat-icon 
+                        matSuffix 
+                        inline="true">search</mat-icon>
+                    <button 
+                        mat-button 
+                        *ngIf="input.value"
+                        matSuffix 
+                        mat-icon-button (click)="clearInput()">
+                        <mat-icon inline="true">close</mat-icon>
+                    </button>
+                </div>
+            </mat-form-field>
+        </div>
+
+        <div class="mat-elevation-z8">
+            <mat-table
+                [dataSource]="dataSource" matSort matSortActive="id"
+                matSortDirection="asc" matSortDisableClear>
+                <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+                    <mat-cell *matCellDef="let activeCourse">{{ activeCourse.id | number }}</mat-cell>
+                </ng-container>
+        
+                <ng-container matColumnDef="maxTheories">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Max Theories</mat-header-cell>
+                    <mat-cell *matCellDef="let activeCourse">{{ activeCourse.maxTheoryLectures }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="maxLabs">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Max Labs</mat-header-cell>
+                    <mat-cell *matCellDef="let activeCourse">{{ activeCourse.maxLabLectures }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+                    <mat-cell *matCellDef="let activeCourse">{{ activeCourse.status }}</mat-cell>
+                </ng-container>
+        
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row
+                    *matRowDef="let row; columns: displayedColumns;"
+                    routerLink="detail/{{row.id}}"
+                    routerLinkActive="active"
+                    class="table-row-style"
+                    matRipple>
+                </mat-row>
+            </mat-table>
+        
+            <mat-paginator
+                [length]="totalItems"
+                [pageSize]="3" 
+                [pageSizeOptions]="[3, 5]"
+                showFirstLastButtons>
+            </mat-paginator>
+        </div>
+    </div>
+</div>
