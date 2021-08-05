@@ -1,0 +1,20 @@
+.container {
+    /*border: 2px solid black;*/
+    padding-top: 4rem;
+    padding-left: 8rem;
+    padding-right: 2rem;
+    padding-bottom: 4rem;
+}
+
+.medium-container {
+    /*border: 2px solid black;*/
+    padding-top: 4rem;
+    padding-left: 4rem;
+    padding-right: 0rem;
+    padding-bottom: 4rem;
+}
+
+.min-container {
+    padding: 0rem;
+    min-width: min-content;
+}
