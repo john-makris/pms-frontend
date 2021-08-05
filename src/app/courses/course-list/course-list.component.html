@@ -37,7 +37,7 @@
        mat-raised-button
        color="primary">Add Course</a>
 
-    <div class="table">
+    <div class="table-container">
         <div fxLayoutAlign="center">
             <mat-form-field fxFlex="45%">
                 <div fxLayout="row">
@@ -59,40 +59,41 @@
             </mat-form-field>
         </div>
 
+        <div class="mat-elevation-z8">
+            <mat-table
+                [dataSource]="dataSource" matSort matSortActive="id"
+                matSortDirection="asc" matSortDisableClear>
+                <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+                    <mat-cell *matCellDef="let course">{{ course.id | number }}</mat-cell>
+                </ng-container>
+        
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+                    <mat-cell *matCellDef="let course">{{ course.name }}</mat-cell>
+                </ng-container>
 
-        <mat-table class="mat-elevation-z8"
-            [dataSource]="dataSource" matSort matSortActive="id"
-            matSortDirection="asc" matSortDisableClear>
-            <ng-container matColumnDef="id">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
-                <mat-cell *matCellDef="let course">{{ course.id | number }}</mat-cell>
-            </ng-container>
-    
-            <ng-container matColumnDef="name">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-                <mat-cell *matCellDef="let course">{{ course.name }}</mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="semester">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Semester</mat-header-cell>
-                <mat-cell *matCellDef="let course">{{ course.semester }}</mat-cell>
-            </ng-container>
-    
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row
-                *matRowDef="let row; columns: displayedColumns;"
-                routerLink="detail/{{row.id}}"
-                routerLinkActive="active"
-                class="table-row-style"
-                matRipple>
-            </mat-row>
-        </mat-table>
-    
-        <mat-paginator
-            [length]="totalItems"
-            [pageSize]="3" 
-            [pageSizeOptions]="[3, 5]"
-            showFirstLastButtons>
-        </mat-paginator>
+                <ng-container matColumnDef="semester">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Semester</mat-header-cell>
+                    <mat-cell *matCellDef="let course">{{ course.semester }}</mat-cell>
+                </ng-container>
+        
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row
+                    *matRowDef="let row; columns: displayedColumns;"
+                    routerLink="detail/{{row.id}}"
+                    routerLinkActive="active"
+                    class="table-row-style"
+                    matRipple>
+                </mat-row>
+            </mat-table>
+        
+            <mat-paginator
+                [length]="totalItems"
+                [pageSize]="3" 
+                [pageSizeOptions]="[3, 5]"
+                showFirstLastButtons>
+            </mat-paginator>
+        </div>
     </div>
 </div>

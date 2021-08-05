@@ -16,9 +16,8 @@
     background-color: whitesmoke;
 }
 
-.table {
+.table-container {
     margin-top: 1em;
-    width: 100%;
 }
 
 .mat-column-id {
