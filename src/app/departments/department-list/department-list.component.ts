@@ -190,9 +190,13 @@ export class DepartmentListComponent implements OnInit, AfterViewInit, OnDestroy
     if (this.input.nativeElement.value === '') {
       this.loadDepartmentsPage();
     } else {
-      this.input.nativeElement.value='';
-      this.loadDepartmentsPage();
+      this.clearInput();
     }
+  }
+
+  clearInput() {
+    this.input.nativeElement.value='';
+    this.loadDepartmentsPage();
   }
 
   ngOnDestroy(): void {

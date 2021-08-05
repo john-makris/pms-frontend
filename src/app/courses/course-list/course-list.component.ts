@@ -191,9 +191,13 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.input.nativeElement.value === '') {
       this.loadCoursesPage();
     } else {
-      this.input.nativeElement.value='';
-      this.loadCoursesPage();
+      this.clearInput();
     }
+  }
+
+  clearInput() {
+    this.input.nativeElement.value='';
+    this.loadCoursesPage();
   }
 
   ngOnDestroy(): void {

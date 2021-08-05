@@ -128,9 +128,13 @@ export class SchoolListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.input.nativeElement.value === '') {
       this.loadSchoolsPage();
     } else {
-      this.input.nativeElement.value='';
-      this.loadSchoolsPage();
+      this.clearInput();
     }
+  }
+
+  clearInput() {
+    this.input.nativeElement.value='';
+    this.loadSchoolsPage();
   }
 
   ngOnDestroy(): void {
