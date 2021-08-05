@@ -19,6 +19,10 @@
         <mat-icon>book</mat-icon>
         <span class="nav-caption">Courses</span>
     </a>
+    <a mat-list-item routerLink="/active-courses" (click)="onClose()" *ngIf="isAuth">
+        <mat-icon>bookmark_border</mat-icon>
+        <span class="nav-caption">Active Courses</span>
+    </a>
     <mat-list-item>
         <button mat-icon-button (click)="onLogout()" *ngIf="isAuth">
             <mat-icon>eject</mat-icon>
