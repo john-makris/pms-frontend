@@ -17,6 +17,7 @@ import { ErrorInterceptor } from './common/interceptors/error.interceptor';
 import { DialogsModule } from './common/dialogs/dialogs.module';
 import { DepartmentsModule } from './departments/departments.module';
 import { CoursesModule } from './courses/courses.module';
+import { ActiveCoursesModule } from './active-courses/active-courses.module';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { CoursesModule } from './courses/courses.module';
     DialogsModule,
     SchoolsModule,
     DepartmentsModule,
-    CoursesModule
+    CoursesModule,
+    ActiveCoursesModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
