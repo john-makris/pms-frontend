@@ -1,17 +1,14 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { ActivatedRoute, Router } from '@angular/router';
-import { fromEvent, merge, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/operators';
-import { PageDetail } from 'src/app/common/models/pageDetail.model';
-import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
+import {debounceTime, distinctUntilChanged, tap, switchMap} from 'rxjs/operators';
+import {merge, fromEvent, Subscription } from "rxjs";
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
-import { Course } from 'src/app/courses/course.model';
+import { FormControl } from '@angular/forms';
+import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
+import { PageDetail } from '../../common/models/pageDetail.model';
+import { CoursesDataSource } from 'src/app/courses/common/tableDataHelper/courses.datasource';
 import { CourseService } from 'src/app/courses/course.service';
-import { ActiveCourseService } from '../active-course.service';
-import { ActiveCoursesDataSource } from '../common/tableDataHelper/activeCourses.datasource';
 
 @Component({
   selector: 'app-active-course-list',
@@ -19,17 +16,10 @@ import { ActiveCoursesDataSource } from '../common/tableDataHelper/activeCourses
   styleUrls: ['./active-course-list.component.css']
 })
 export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestroy {
-
-  selectCourseForm!: FormGroup;
   hideRequiredControl = new FormControl(false);
   floatLabelControl = new FormControl('auto');
-
-  isLoading: boolean = false;
-  submitted: boolean = false;
   
-  dataSource!: ActiveCoursesDataSource;
-  courses!: Course[];
-  selectedCourseId: number = 0;
+  dataSource!: CoursesDataSource;
 
   totalItems: number = 0;
   currentPage: number = 0;
@@ -39,14 +29,11 @@ export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestr
 
   snackbarSubscription!: Subscription;
   pageDetailSubscription!: Subscription;
-  coursesSubscription!: Subscription;
-  courseIdSubscription!: Subscription;
 
   displayedColumns = [
     'id',
-    'maxLabs',
-    'maxTheories',
-    'status'
+    'name',
+    'active-course'
   ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -54,33 +41,15 @@ export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestr
   @ViewChild('input') input!: ElementRef;
 
   constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private formBuilder: FormBuilder,
     private courseService: CourseService,
-    private snackbarService: SnackbarService,
-    private activeCourseService: ActiveCourseService) {}
+    private snackbarService: SnackbarService) {}
 
 
   ngOnInit(): void {
-    this.coursesSubscription = this.courseService.getAllCourses()
-      .pipe(first())
-      .subscribe(courses => {
-        this.courses = courses;
-      });
-    this.selectCourseForm = this.formBuilder.group({
-      courseId: [this.selectedCourseId, Validators.required],
-      hideRequired: this.hideRequiredControl,
-      floatLabel: this.floatLabelControl
-    });
 
-    console.log("COURSE ID: "+this.selectedCourseId);
+    this.dataSource = new CoursesDataSource(this.courseService);
 
-    this.activeCourseService.courseIdSubject.next(this.selectedCourseId);
-
-    this.dataSource = new ActiveCoursesDataSource(this.activeCourseService);
-
-    this.dataSource.loadActiveCourses(this.selectCourseForm.value.courseId, '', 0, 3, 'asc', this.currentColumnDef);
+    this.dataSource.loadCourses(0, '', 0, 3, 'asc', this.currentColumnDef);
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -102,13 +71,6 @@ export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestr
         this.currentActivityState = state.message;
         if(this.currentActivityState.includes('added')) {
           //console.log('Current State: '+this.currentState);
-          this.selectCourseForm.setValue(
-            {
-              courseId: this.selectedCourseId,
-              hideRequired: this.hideRequiredControl,
-              floatLabel: this.floatLabelControl
-            });
-          this.selectedCourseId = this.selectCourseForm.value.courseId;
           this.paginator.pageIndex = 0;
           this.refreshTable();
         } else if(this.currentActivityState.includes('deleted') && this.currentPageItems === 1) {
@@ -127,28 +89,8 @@ export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestr
     );
   }
 
-  get f() { return this.selectCourseForm.controls; }
-
-  onSubmit() {
-    this.router.navigate(['/active-courses'], { relativeTo: this.route });
-    this.submitted = true;
-    //console.log("HAAAAALOOOO!!!");
-    if(this.selectCourseForm.invalid) {
-      return;
-    }
-
-    this.isLoading = true;
-    //console.log("COURSE ID: "+ this.selectDepartmentForm.value.courseId);
-    this.selectedCourseId = this.selectCourseForm.value.courseId;
-    this.paginator.pageIndex = 0;
-    this.paginator.pageSize;
-    this.sort.direction='asc'
-    this.currentColumnDef;
-    console.log("COURSE ID: "+this.selectedCourseId);
-    this.activeCourseService.courseIdSubject.next(this.selectedCourseId);
-
-
-    this.refreshTable();
+  print() {
+    console.log('haha');
   }
 
   ngAfterViewInit() {
@@ -165,21 +107,21 @@ export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestr
             tap(() => {
                 this.paginator.pageIndex = 0;
 
-                this.loadActiveCoursesPage();
+                this.loadCoursesPage();
             })
         )
         .subscribe();
 
     merge(this.sort.sortChange, this.paginator.page)
     .pipe(
-        tap(() => this.loadActiveCoursesPage())
+        tap(() => this.loadCoursesPage())
     )
     .subscribe();
   }
 
-  loadActiveCoursesPage() {
-    this.dataSource.loadActiveCourses(
-        this.selectedCourseId,
+  loadCoursesPage() {
+    this.dataSource.loadCourses(
+        0,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,
@@ -190,7 +132,7 @@ export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestr
   refreshTable() {
     //console.log("INPUT VALUE: "+this.input.nativeElement.value);
     if (this.input.nativeElement.value === '') {
-      this.loadActiveCoursesPage();
+      this.loadCoursesPage();
     } else {
       this.clearInput();
     }
@@ -198,11 +140,10 @@ export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestr
 
   clearInput() {
     this.input.nativeElement.value='';
-    this.loadActiveCoursesPage();
+    this.loadCoursesPage();
   }
 
   ngOnDestroy(): void {
-    this.coursesSubscription.unsubscribe();
     this.pageDetailSubscription.unsubscribe();
     this.snackbarSubscription.unsubscribe();
   }

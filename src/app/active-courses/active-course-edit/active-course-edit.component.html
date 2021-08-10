@@ -1,1 +1,60 @@
-<p>active-course-edit works!</p>
+<section 
+    [ngClass]="'container'"
+    [ngClass.lt-md]="'min-container'"
+    fxLayout>
+    <form 
+        [formGroup]="activeCourseForm"
+        (ngSubmit)="onSubmit()">
+        <mat-card
+            class="mat-elevation-z8"
+            fxFlex.xs="19em"
+            fxFlex="22em">
+            <mat-card-title fxLayoutAlign="center">
+                <h1 *ngIf="isAddMode">Add Active Course</h1>
+                <h1 *ngIf="!isAddMode">Edit Active Course</h1>
+            </mat-card-title>
+            <mat-card-content fxLayout="column" 
+            fxLayoutAlign="center">
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Academic Year</mat-label>
+                    <textarea 
+                        type="text"
+                        matInput 
+                        placeholder="Academic Year"
+                        formControlName="academicYear">
+                    </textarea>
+                    <div matSuffix>
+                        <mat-icon>class</mat-icon>
+                    </div>
+                    <mat-hint>Please enter a valid academic year.</mat-hint>
+                    <mat-error>Invalid or missing academic year.</mat-error>
+                </mat-form-field>
+
+                <div fxLayoutAlign="center">
+                    <mat-spinner *ngIf="isLoading"></mat-spinner>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div
+                    *ngIf="!isLoading"
+                    class="form-actions"
+                    fxLayout="row"
+                    fxLayoutAlign="start">
+                        <button 
+                            type="submit" 
+                            mat-raised-button color="primary" 
+                            [disabled]="activeCourseForm.invalid || isLoading">
+                            {{ isAddMode ? 'Save' : 'Update' }}
+                        </button>
+                        <button 
+                            type="button" 
+                            mat-button color="primary" 
+                            (click)="onCancel()">
+                            Cancel
+                        </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </form>
+</section>

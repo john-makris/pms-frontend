@@ -11,11 +11,6 @@
     padding-right: 0.5em;
 }
 
-.table-row-style:hover {
-    cursor: pointer;
-    background-color: whitesmoke;
-}
-
 .table-container {
     margin-top: 1em;
 }
@@ -24,28 +19,29 @@
     max-width: 13%;
 }
 
-.mat-column-maxTheories {
-    max-width: 20%;
+.mat-column-name {
+    max-width: 40%;
     margin-right: 6%;
 }
 
-.mat-column-maxLabs {
-    max-width: 20%;
-    margin-right: 6%;
-}
-
-.mat-column-status {
+.mat-column-active-course {
     max-width: 47%;
-
 }
 
 .selectorContainer {
     padding-bottom: 1em;
 }
 
-.mat-icon-button {
-    height: 1em;
+.mat-raised-button, .mat-button {
+    height: 2em;
     width: 1em;
     font-size: 1em;
-    line-height: 1em;
+    line-height: 2em;
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+}
+
+.table-row-style:hover {
+    cursor: pointer;
+    background-color: whitesmoke;
 }

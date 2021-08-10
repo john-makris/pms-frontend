@@ -10,7 +10,7 @@ const routes: Routes = [
         path: '', component: ActiveCoursesComponent,
         canActivate: [AuthGuard],
         children: [
-            { path: 'add', component: ActiveCourseEditComponent },
+            { path: 'add/:id', component: ActiveCourseEditComponent },
             { path: 'detail/:id', component: ActiveCourseDetailComponent },
             { path: 'edit/:id', component: ActiveCourseEditComponent }
         ]

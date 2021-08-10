@@ -33,6 +33,10 @@ export class ActiveCourseService {
         return this.http.get<ActiveCourse>(API_URL + activeCourseId);
     }
 
+    getActiveCourseByCourseId(courseId: number): Observable<ActiveCourse> {
+        return this.http.get<ActiveCourse>(API_URL + 'course/' + courseId);
+    }
+
     deleteAllActiveCourses(): Observable<ActiveCourse[]> {
         return this.http.delete<ActiveCourse[]>(API_URL + 'delete/all')
     }
