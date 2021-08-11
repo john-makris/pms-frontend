@@ -20,22 +20,21 @@
 }
 
 .mat-column-name {
-    max-width: 42%;
-    margin-right: 6%;
-}
-
-.mat-column-semester {
-    max-width: 20%;
-    margin-right: 6%;
-}
-
-.mat-column-academicYear {
-    max-width: 25%;
+    max-width: 87%;
     margin-right: 6%;
 }
 
 .selectorContainer {
     padding-bottom: 1em;
+}
+
+.mat-raised-button, .mat-button {
+    height: 2em;
+    width: 1em;
+    font-size: 1em;
+    line-height: 2em;
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
 }
 
 .table-row-style:hover {

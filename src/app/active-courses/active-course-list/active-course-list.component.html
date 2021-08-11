@@ -2,15 +2,19 @@
     [ngClass]="'container'"
     [ngClass.lt-sm]="'min-container'"
     fxFlex="40em"
-    fxFlex.lt-sm="calc(20em)">
+    fxFlex.lt-sm="calc(20em)"
+>
+    <a routerLink="add"
+       mat-raised-button
+       color="primary">Add Active Course</a>
 
     <div class="table-container">
         <div fxLayoutAlign="center">
-            <mat-form-field fxFlex="60%">
+            <mat-form-field fxFlex="45%">
                 <div fxLayout="row">
                     <input
                         matInput 
-                        placeholder="Search course name" 
+                        placeholder="Search active courses"
                         [(ngModel)]="filterText" #input>
                     <mat-icon 
                         matSuffix 
@@ -32,28 +36,31 @@
                 matSortDirection="asc" matSortDisableClear>
                 <ng-container matColumnDef="id">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
-                    <mat-cell *matCellDef="let course">{{ course.id | number }}</mat-cell>
+                    <mat-cell *matCellDef="let activeCourse">{{ activeCourse.id | number }}</mat-cell>
                 </ng-container>
         
                 <ng-container matColumnDef="name">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Course Name</mat-header-cell>
-                    <mat-cell *matCellDef="let course">{{ course.name }}</mat-cell>
-                </ng-container>
-        
-                <ng-container matColumnDef="active-course">
-                    <mat-header-cell *matHeaderCellDef>Active Course</mat-header-cell>
-                    <mat-cell *matCellDef="let course">
-                        <div fxLayoutGap="0.5em">
-                            <a routerLink="add/{{course.id}}" mat-raised-button color="primary">Add</a>
-                            <a routerLink="detail/{{course.id}}" mat-raised-button >View</a>
-                        </div>
-                    </mat-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+                    <mat-cell *matCellDef="let activeCourse">{{ activeCourse.course.name }}</mat-cell>
                 </ng-container>
 
+                <ng-container matColumnDef="semester">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Semester</mat-header-cell>
+                    <mat-cell *matCellDef="let activeCourse">{{ activeCourse.course.semester }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="academicYear">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Academic Year</mat-header-cell>
+                    <mat-cell *matCellDef="let activeCourse">{{ activeCourse.academicYear }}</mat-cell>
+                </ng-container>
+        
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row
                     *matRowDef="let row; columns: displayedColumns;"
-                    class="table-row-style">
+                    routerLink="detail/{{row.id}}"
+                    routerLinkActive="active"
+                    class="table-row-style"
+                    matRipple>
                 </mat-row>
             </mat-table>
         

@@ -22,7 +22,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatRippleModule } from '@angular/material/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
-
+import { MatExpansionModule } from '@angular/material/expansion';
 @NgModule({
     imports: [
         MatButtonModule, 
@@ -47,7 +47,8 @@ import { MatDividerModule } from '@angular/material/divider';
         MatGridListModule,
         MatRippleModule,
         MatMenuModule,
-        MatDividerModule
+        MatDividerModule,
+        MatExpansionModule
     ],
     exports: [
         MatButtonModule, 
@@ -72,7 +73,8 @@ import { MatDividerModule } from '@angular/material/divider';
         MatGridListModule,
         MatRippleModule,
         MatMenuModule,
-        MatDividerModule
+        MatDividerModule,
+        MatExpansionModule
     ]
 })
 export class MaterialModule {}

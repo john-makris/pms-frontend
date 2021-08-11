@@ -5,13 +5,15 @@ import { ActiveCourseEditComponent } from "./active-course-edit/active-course-ed
 import { ActiveCourseListComponent } from "./active-course-list/active-course-list.component";
 import { ActiveCoursesRoutingModule } from "./active-courses-routing.module";
 import { ActiveCoursesComponent } from "./active-courses.component";
+import { CourseAccordionComponent } from "./active-course-list/course-accordion/course-accordion.component";
 
 @NgModule({
     declarations: [
         ActiveCoursesComponent,
         ActiveCourseDetailComponent,
         ActiveCourseListComponent,
-        ActiveCourseEditComponent
+        ActiveCourseEditComponent,
+        CourseAccordionComponent
     ],
     imports: [
         SharedModule,
