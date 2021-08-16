@@ -21,3 +21,11 @@ mat-form-field {
 mat-card-actions {
     margin-left: 0.4em;
 }
+
+.mat-radio-button ~ .mat-radio-button {
+    margin-left: 1em;
+}
+
+.radio-container {
+    padding-left: 0.5em;
+}

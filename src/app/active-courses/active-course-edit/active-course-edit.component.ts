@@ -1,12 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, MaxValidator, Validators } from '@angular/forms';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
+import { CoursesDataSource } from 'src/app/courses/common/tableDataHelper/courses.datasource';
+import { CourseService } from 'src/app/courses/course.service';
 import { ActiveCourse } from '../active-course.model';
 import { ActiveCourseService } from '../active-course.service';
 import { ActiveCourseRequestData } from '../common/payload/request/activeCourseRequestData.interface';
+import { CourseSelectDialogComponent } from './dialogs/course-select-dialog/course-select-dialog.component';
+import { CourseSelectDialogService } from './services/course-select-dialog.service';
 
 @Component({
   selector: 'app-active-course-edit',
@@ -20,6 +25,9 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   submitted: boolean = false;
 
+  currentActiveCourse!: ActiveCourse;
+  selectedAcademicYear: string = '';
+
   hideRequiredControl = new FormControl(false);
   floatLabelControl = new FormControl('auto');
 
@@ -32,6 +40,7 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
+    private courseSelectDialogService: CourseSelectDialogService,
     private activeCourseService: ActiveCourseService,
     private snackbarService: SnackbarService
   ) { }
@@ -42,12 +51,12 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
       .subscribe(
         (params: Params) => {
           this.id = params['id'];
-          // !!! observable sto service gia addMode otan patas add
           this.isAddMode = params['id'] == null;
           if(!this.isAddMode) {
             this.activeCourseSubscription = this.activeCourseService.getActiveCourseByCourseId(this.id)
               .pipe(first())
               .subscribe((currentActiveCourseData: ActiveCourse) => {
+                this.currentActiveCourse = currentActiveCourseData;
                 this.activeCourseForm.patchValue({
                   academicYear: currentActiveCourseData.academicYear,
                   maxTheoryLectures: currentActiveCourseData.maxTheoryLectures,
@@ -55,24 +64,31 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
                   teachingStuff: currentActiveCourseData.teachingStuff,
                   students: currentActiveCourseData.students,
                   status: currentActiveCourseData.status,
-                  course: currentActiveCourseData.course.id,
+                  courseId: currentActiveCourseData.course.id
                 });
+                this.selectedAcademicYear = currentActiveCourseData.academicYear;
               });
           }
         }
       );
         console.log("BEFORE FORM INITIALIZATION: ");
-      this.activeCourseForm = this.formBuilder.group({
-        academicYear: ['', Validators.required],
-        maxTheoryLectures: [0, Validators.required],
-        maxLabLectures: [0, Validators.required],
-        teachingStuff: [null, Validators.required],
-        students: [null, Validators.required],
-        status: [false, Validators.required],
-        course: [null, Validators.required],
-        hideRequired: this.hideRequiredControl,
-        floatLabel: this.floatLabelControl
-      });
+        this.activeCourseForm = this.formBuilder.group({
+          academicYear: [this.selectedAcademicYear, Validators.required],
+          maxTheoryLectures: [null, Validators.required],
+          maxLabLectures: [null, Validators.required],
+          status: [false, Validators.required],
+          teachingStuff: [null, Validators.required],
+          students: [null, Validators.required],
+          courseId: [0, Validators.required],
+          hideRequired: this.hideRequiredControl,
+          floatLabel: this.floatLabelControl
+        });
+
+        this.courseSelectDialogService.courseSelectDialogState
+          .subscribe((_courseId: number) => {
+            console.log("CATCH ID: "+_courseId);
+            this.activeCourseForm.patchValue({courseId: _courseId});
+        });
   }
 
   get f() { return this.activeCourseForm.controls; }
@@ -92,7 +108,9 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
       teachingStuff: this.activeCourseForm.value.teachingStuff,
       students: this.activeCourseForm.value.students,
       status: this.activeCourseForm.value.status,
-      course: this.activeCourseForm.value.course
+      course: {
+        id: this.activeCourseForm.value.course.id
+      }
     };
 
     this.activeCourseForm.reset();
@@ -122,6 +140,14 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
         this.router.navigate(['../../'], { relativeTo: this.route});
       })
       .add(() => this.isLoading = false);
+  }
+
+  selectCourse() {
+    this.courseSelectDialogService.selectCourse(this.activeCourseForm.value.courseId);
+  }
+
+  onFileSelected() {
+    
   }
 
   onCancel() {

@@ -15,6 +15,6 @@ export class ErrorInterceptor implements HttpInterceptor {
             this.snackbarService.error(err.error.message);
             console.error(err);
             return throwError(error);
-        }))
+        }));
     }
 }

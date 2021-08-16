@@ -23,6 +23,8 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatRadioModule } from '@angular/material/radio';
+
 @NgModule({
     imports: [
         MatButtonModule, 
@@ -48,7 +50,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
         MatRippleModule,
         MatMenuModule,
         MatDividerModule,
-        MatExpansionModule
+        MatExpansionModule,
+        MatRadioModule
     ],
     exports: [
         MatButtonModule, 
@@ -74,7 +77,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
         MatRippleModule,
         MatMenuModule,
         MatDividerModule,
-        MatExpansionModule
+        MatExpansionModule,
+        MatRadioModule
     ]
 })
 export class MaterialModule {}

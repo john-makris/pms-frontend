@@ -20,7 +20,7 @@ export class EnsureDialogService {
         dialogRef.afterClosed().subscribe(result => {
             console.log(`Dialog result: ${result}`);
             this.ensureDialogSubject.next(result);
-        })
+        });
     }
 
 }

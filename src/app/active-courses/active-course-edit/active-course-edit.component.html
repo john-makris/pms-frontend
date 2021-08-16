@@ -17,19 +17,87 @@
             fxLayoutAlign="center">
 
                 <mat-form-field appearance="outline">
-                    <mat-label>Academic Year</mat-label>
-                    <textarea 
-                        type="text"
-                        matInput 
-                        placeholder="Academic Year"
-                        formControlName="academicYear">
-                    </textarea>
+                    <mat-label> Select Academic Year</mat-label>
+                    <mat-select 
+                        formControlName="academicYear"
+                        [(value)]="selectedAcademicYear">
+                        <mat-option>None</mat-option>
+                        <mat-option value="2020 - 2021">2020 - 2021</mat-option>
+                        <mat-option value="2021 - 2022">2021 - 2022</mat-option>
+                      </mat-select>
                     <div matSuffix>
-                        <mat-icon>class</mat-icon>
+                        <mat-icon>date_range</mat-icon>
                     </div>
                     <mat-hint>Please enter a valid academic year.</mat-hint>
                     <mat-error>Invalid or missing academic year.</mat-error>
                 </mat-form-field>
+
+                <mat-form-field 
+                    appearance="outline">
+                    <mat-label>Max Theories</mat-label>
+                    <input 
+                        matInput 
+                        type="number" 
+                        placeholder="Ex. 12" 
+                        formControlName="maxTheoryLectures"
+                        min="1"
+                        max="12">
+                    <span matSuffix>
+                        <mat-icon>note_add</mat-icon>
+                    </span>
+                    <mat-error *ngIf="activeCourseForm.value.maxTheoryLectures > 12">Cannot set more than 12</mat-error>
+                    <mat-error *ngIf="activeCourseForm.value.maxTheoryLectures < 1">Cannot set less than 1</mat-error>
+                </mat-form-field>
+
+                <mat-form-field 
+                    appearance="outline">
+                    <mat-label>Max Labs</mat-label>
+                    <input 
+                        matInput 
+                        type="number" 
+                        placeholder="Ex. 12" 
+                        formControlName="maxLabLectures"
+                        min="1"
+                        max="12">
+                    <span matSuffix>
+                        <mat-icon>construction</mat-icon>
+                    </span>
+                    <mat-error *ngIf="activeCourseForm.value.maxLabLectures > 12">Cannot set more than 12</mat-error>
+                    <mat-error *ngIf="activeCourseForm.value.maxLabLectures < 1">Cannot set less than 1</mat-error>
+                </mat-form-field>
+
+                <div 
+                    fxLayoutGap="1em"
+                    fxLayout="column">
+                    <mat-radio-group
+                        formControlName="status">
+                        <div class="radio-container">
+                            <mat-radio-button [value]=true>Active</mat-radio-button>
+                            <mat-radio-button [value]=false>Inactive</mat-radio-button>
+                        </div>
+                    </mat-radio-group>
+                    <!-- Course -->
+                    <mat-label>Selected Course: Name of the course</mat-label>
+                    <button
+                        mat-raised-button color="primary"
+                        (click)="selectCourse()">
+                        Course</button>
+                        <p>{{ activeCourseForm.value.courseId }}</p>
+                    <!-- Teachers -->
+                    <button
+                        mat-raised-button color="primary">
+                        Teaching Stuff</button>
+                    <!-- Students -->
+                    <button 
+                        type="button" 
+                        mat-raised-button 
+                        (click)="fileInput.click()">Choose File
+                    </button>
+                    <input 
+                        hidden 
+                        (change)="onFileSelected($event)" 
+                        #fileInput type="file">
+                </div>
 
                 <div fxLayoutAlign="center">
                     <mat-spinner *ngIf="isLoading"></mat-spinner>
@@ -38,7 +106,6 @@
             <mat-card-actions>
                 <div
                     *ngIf="!isLoading"
-                    class="form-actions"
                     fxLayout="row"
                     fxLayoutAlign="start">
                         <button 
