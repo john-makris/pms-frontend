@@ -77,7 +77,7 @@ export class AuthService {
         if (!userData) {
             return;
         }
-
+        
         const loadedUser = new User(
           userData.id,
           userData.username,

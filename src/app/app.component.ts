@@ -13,6 +13,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.authService.autoLogin();
+    // kalese tin autoLogout me tin timi pou 8a allazei synexeia kai kane unsumscribe otan teleiwsei i istoria.
   }
 
 }
