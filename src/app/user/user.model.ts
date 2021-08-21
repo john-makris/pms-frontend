@@ -5,14 +5,23 @@ export class User {
       public username: string,
       public email: string,
       public roles: Array<string>,
-      private _token: string,
-      private _tokenExpirationDate: Date
+      public _accessToken: string,
+      private _tokenExpirationDate: Date,
+      private _refreshToken: string,
+      private _refreshTokenExpirationDate: Date
     ) {}
   
-    get token() {
-      if(!this._tokenExpirationDate || new Date() > this._tokenExpirationDate) {
+    get accessToken() {
+      if(!this._tokenExpirationDate || new Date() > new Date(this._tokenExpirationDate)) {
         return null;
       }
-      return this._token;
+      return this._accessToken;
+    }
+
+    get refreshToken() {
+      if(!this._refreshTokenExpirationDate || new Date() > new Date(this._refreshTokenExpirationDate)) {
+        return null;
+      }
+      return this._refreshToken;
     }
 }

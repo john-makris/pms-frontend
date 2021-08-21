@@ -4,6 +4,7 @@ import { catchError, tap } from "rxjs/operators";
 import { BehaviorSubject, throwError } from 'rxjs';
 import { Router } from "@angular/router";
 import { User } from "../user/user.model";
+import { TokenStorageService } from "./token-storage.service";
 
 const AUTH_API = 'http://localhost:8080/pms/auth/';
 
@@ -19,21 +20,33 @@ export interface AuthRequestData {
 
 export interface AuthResponseData {
     id: number;
-    accessToken: string;
-    type: string;
-    jwtExpirationMs: number;
     username: string;
     email: string;
     roles: Array<string>;
+    tokenType: string;
+    accessToken: string;
+    accessTokenExpiryDate: Date;
+    refreshToken: string;
+    refreshTokenExpiryDate: Date;
+}
+
+export interface TokenRefreshResponse {
+    tokenType: string;
+    accessToken: string;
+    accessTokenExpiryDate: Date;
+	refreshToken: string;
+	refreshTokenExpiryDate: Date;
 }
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
+    isAutoLogin: boolean = false;
     user = new BehaviorSubject<User | null>(null);
     private tokenExpirationTimer: any;
 
     constructor(private http: HttpClient,
-        private router: Router) {}
+        private router: Router,
+        private tokenStorageService: TokenStorageService) {}
 
     signup(username: string, email: string, password: string) {
         return this.http.post<string>(AUTH_API + 'signup', {
@@ -51,28 +64,89 @@ export class AuthService {
         }, httpOptions).pipe(
             catchError(this.handleError),
             tap(resData => {
-              console.log(resData.jwtExpirationMs);
+              console.log(resData.accessTokenExpiryDate);
                 this.handleAuthentication(
                   resData.id,
                   resData.username,
                   resData.email,
                   resData.roles,
                   resData.accessToken,
-                  resData.jwtExpirationMs
+                  resData.accessTokenExpiryDate,
+                  resData.refreshToken,
+                  resData.refreshTokenExpiryDate
                 );
             })
         );
     }
 
+    refreshToken(token: string) {
+        return this.http.post<TokenRefreshResponse>(AUTH_API + 'refreshtoken', {
+          refreshToken: token
+        }, httpOptions).pipe(
+            catchError(this.handleError),
+            tap(refreshTokenData => {
+            console.log("Refresh Token Expiry Date: "+ (new Date(refreshTokenData.refreshTokenExpiryDate).getTime() - new Date().getTime()));
+            //this.handleRefreshTokenAuthentication(refreshTokenData);
+          })
+        );
+    }
+
+    handleRefreshTokenAuthentication(
+        refreshTokenData: TokenRefreshResponse
+        ) {
+        // get each data
+        const accessToken: string = refreshTokenData.accessToken;
+        console.log("REFRESH TOKEN STUFF");
+        console.log("Access Token: " + accessToken);
+        const accessTokenExpiryDate: Date = refreshTokenData.accessTokenExpiryDate;
+        console.log("accessTokenExpiryDate: " + accessTokenExpiryDate);
+        const refreshToken: string = refreshTokenData.refreshToken;
+        console.log("refreshToken: " + refreshToken);
+        const refreshTokenExpiryDate: Date = refreshTokenData.refreshTokenExpiryDate;
+        console.log("refreshTokenExpiryDate: " + refreshTokenExpiryDate);
+
+        // get user
+        const userData = this.tokenStorageService.getUser();
+
+        if (!userData) {
+            return;
+        }
+
+        console.log("accessTokenExpiryDate :", accessTokenExpiryDate);
+
+        const accessTokenExpirationDate = new Date(accessTokenExpiryDate);
+        //const accessTokenExpirationDuration = accessTokenExpirationDate.getTime() - new Date().getTime();
+
+        const refreshTokenExpirationDate = new Date(refreshTokenExpiryDate);
+        const refreshTokenExpirationDuration = refreshTokenExpirationDate.getTime() - new Date().getTime();
+
+        console.log("accessTokenExpirationDate :" + accessTokenExpirationDate);
+        console.log("CURRENT TIME :", new Date().getTime());
+
+        const user = new User(
+            userData.id,
+            userData.username,
+            userData.email,
+            userData.roles,
+            accessToken,
+            accessTokenExpirationDate,
+            refreshToken,
+            refreshTokenExpirationDate
+        );
+
+        this.user.next(user);
+        console.log("To token ligei se: "+refreshTokenExpirationDuration);
+        //localStorage.setItem('userData', JSON.stringify(user));
+        this.tokenStorageService.saveToken(accessToken, user);
+        this.tokenStorageService.saveRefreshToken(refreshToken);
+        this.tokenStorageService.saveUser(user);
+        // save valid
+        this.tokenStorageService.saveValid(refreshTokenExpirationDuration);
+        this.autoLogout(refreshTokenExpirationDuration);
+  }
+
     autoLogin() {
-        const userData: {
-          id: number,
-          username: string,
-          email: string,
-          roles: Array<string>,
-          _token: string,
-          _tokenExpirationDate: string
-        } = JSON.parse(localStorage.getItem('userData')!);
+        const userData = this.tokenStorageService.getUser();
 
         if (!userData) {
             return;
@@ -83,33 +157,39 @@ export class AuthService {
           userData.username,
           userData.email,
           userData.roles,
-          userData._token,
-          new Date(userData._tokenExpirationDate)
+          userData._accessToken,
+          new Date(userData._tokenExpirationDate),
+          userData._refreshToken,
+          new Date(userData._refreshTokenExpirationDate),
         );
 
-        if (loadedUser.token) {
+        if (loadedUser.accessToken) {
+            console.log("Inside login loadedUser: "+loadedUser.username);
             this.user.next(loadedUser);
-            const expirationDuration =
-                new Date(userData._tokenExpirationDate).getTime() -
+            const refreshTokenExpirationDuration =
+                new Date(userData._refreshTokenExpirationDate).getTime() -
                 new Date().getTime();
-                console.log("expirationDuration: " + expirationDuration);
-            this.autoLogout(expirationDuration);
+                console.log("Eimai mesa sto auto-login !");
+                console.log("refreshTokenExpirationDuration: " + refreshTokenExpirationDuration);
+            // save valid
+            this.tokenStorageService.saveValid(refreshTokenExpirationDuration);
+            this.autoLogout(refreshTokenExpirationDuration);
         }
     }
 
     logout() {
         this.user.next(null);
         this.router.navigate(['/login']);
-        localStorage.removeItem('userData');
-        if (this.tokenExpirationTimer) {
-            clearTimeout(this.tokenExpirationTimer);
-        }
-        this.tokenExpirationTimer = null;
+        //localStorage.removeItem('userData');
+        this.tokenStorageService.signOut();
+        this.clearTimer();
     }
 
     autoLogout(expirationDuration: number) {
-        console.log(expirationDuration);
+        console.log("Mesa sto autoLogout: "+expirationDuration);
+        this.clearTimer();
         this.tokenExpirationTimer = setTimeout(() => {
+            console.log("ELIKSA");
             this.logout();
         }, expirationDuration);
     }
@@ -119,29 +199,41 @@ export class AuthService {
         username: string,
         email: string,
         roles: Array<string>,
-        token: string,
-        expiresInMs: number) {
+        accessToken: string,
+        accessTokenExpiryDate: Date,
+        refreshToken: string,
+        refreshTokenExpiryDate: Date
+        ) {
           console.log("id: ", id);
-          console.log("expiresInMs :", expiresInMs);
+          console.log("accessTokenExpiryDate :", accessTokenExpiryDate);
 
-      const expirationDate = new Date(
-        new Date().getTime() + expiresInMs
-      );
-      console.log("expirationDate :" + expirationDate);
+      const accessTokenExpirationDate = new Date(accessTokenExpiryDate);
+      // const accessTokenExpirationDuration = accessTokenExpirationDate.getTime() - new Date().getTime();
+
+      const refreshTokenExpirationDate = new Date(refreshTokenExpiryDate);
+      const refreshTokenExpirationDuration = refreshTokenExpirationDate.getTime() - new Date().getTime();
+
+      console.log("accessTokenExpirationDate :" + accessTokenExpirationDate);
       console.log("CURRENT TIME :", new Date().getTime());
-      console.log("expiresInMs :", expiresInMs);
 
       const user = new User(
         id,
         username,
         email,
         roles,
-        token,
-        expirationDate
+        accessToken,
+        accessTokenExpirationDate,
+        refreshToken,
+        refreshTokenExpirationDate
       );
         this.user.next(user);
-        this.autoLogout(expiresInMs);
-        localStorage.setItem('userData', JSON.stringify(user));
+        //localStorage.setItem('userData', JSON.stringify(user));
+        this.tokenStorageService.saveToken(accessToken, user);
+        this.tokenStorageService.saveRefreshToken(refreshToken);
+        this.tokenStorageService.saveUser(user);
+        // save valid
+        this.tokenStorageService.saveValid(refreshTokenExpirationDuration);
+        this.autoLogout(refreshTokenExpirationDuration);
   }
 
   private handleError(errorRes: HttpErrorResponse) {
@@ -157,5 +249,12 @@ export class AuthService {
     }
     // throw an error observable named errorMessage
     return throwError(errorMessage);
+  }
+
+  clearTimer() {
+    if (this.tokenExpirationTimer) {
+        clearTimeout(this.tokenExpirationTimer);
+    }
+    this.tokenExpirationTimer = null;
   }
 }
