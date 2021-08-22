@@ -23,8 +23,8 @@
         <mat-icon>bookmark_border</mat-icon>
         <span class="nav-caption">Active Courses</span>
     </a>
-    <mat-list-item>
-        <button mat-icon-button (click)="onLogout()" *ngIf="isAuth">
+    <mat-list-item *ngIf="isAuth">
+        <button mat-icon-button (click)="onLogout()">
             <mat-icon>eject</mat-icon>
             <span class="nav-caption">Logout</span>
         </button>

@@ -12,7 +12,7 @@ const VALID = 'logged-in-lifetime';
 export class TokenStorageService {
   constructor() { }
 
-  signOut(): void {
+  clearLocalStorage(): void {
     localStorage.clear();
   }
 
@@ -24,7 +24,7 @@ export class TokenStorageService {
       this.saveUser(user);
       console.log("User Access Token: "+user.accessToken);
   }
-  //- Mporei na xrisimopoihthei ka8e fora poy ananeonetai me expirationDuration anti gia expiresIn
+  //+ Mporei na xrisimopoihthei ka8e fora poy ananeonetai me expirationDuration anti gia expiresIn
   public saveValid(expirationDuration: number) {
     localStorage.setItem(VALID, expirationDuration.toString());
   }
@@ -51,7 +51,7 @@ export class TokenStorageService {
     localStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 
-  //-
+  //+
   public getUser(): any {
     const userData: {
         id: number,

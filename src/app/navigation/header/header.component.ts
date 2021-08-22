@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
+import { LogOutRequest } from 'src/app/auth/logOutRequest.model';
 import { User } from 'src/app/user/user.model';
 
 @Component({
@@ -12,7 +14,6 @@ import { User } from 'src/app/user/user.model';
 export class HeaderComponent implements OnInit, OnDestroy {
   @Output() sidenavToggle = new EventEmitter<void>();
   isAuth: boolean = false;
-  private userSubscription!: Subscription;
   user!: User;
 
   private roles!: string[];
@@ -20,6 +21,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   showProfessorFearures = false;
   showStudentFearures = false;
   username!: string;
+
+  private userSubscription!: Subscription;
+  private deleteRefreshTokenSubscription!: Subscription;
 
   constructor(private authService: AuthService) { }
 
@@ -46,11 +50,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   
     onLogout(): void {
-      this.authService.logout();
+      this.deleteRefreshTokenSubscription = this.authService.deleteRefreshToken(this.user.id).subscribe(
+        (data: any) => {
+          console.log("Header Log out Message: "+data.message);
+        }
+      );
+      this.authService.manualLogout();
     }
   
     ngOnDestroy() {
-      this.userSubscription.unsubscribe();
+      if (this.userSubscription) {
+        this.userSubscription.unsubscribe();
+      }
+      if (this.deleteRefreshTokenSubscription) {
+        this.deleteRefreshTokenSubscription.unsubscribe();
+      }
     }
 
     onToggleSidenav() {

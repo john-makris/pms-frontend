@@ -11,7 +11,6 @@ import { User } from 'src/app/user/user.model';
 export class SidenavListComponent implements OnInit {
   @Output() closeSidenav = new EventEmitter<void>();
   isAuth: boolean = false;
-  private userSubscription!: Subscription;
   user!: User;
 
   private roles!: string[];
@@ -19,6 +18,9 @@ export class SidenavListComponent implements OnInit {
   showProfessorFearures = false;
   showStudentFearures = false;
   username!: string;
+
+  private userSubscription!: Subscription;
+  private deleteRefreshTokenSubscription!: Subscription;
 
   constructor(private authService: AuthService) { }
 
@@ -49,12 +51,22 @@ export class SidenavListComponent implements OnInit {
     }
 
     onLogout(): void {
-      this.authService.logout();
+      this.deleteRefreshTokenSubscription = this.authService.deleteRefreshToken(this.user.id).subscribe(
+        (data: any) => {
+          console.log("Header Log out Message: "+data.message);
+        }
+      );
+      this.authService.manualLogout();
       this.onClose();
     }
   
     ngOnDestroy() {
-      this.userSubscription.unsubscribe();
+      if (this.userSubscription) {
+        this.userSubscription.unsubscribe();
+      }
+      if (this.deleteRefreshTokenSubscription) {
+        this.deleteRefreshTokenSubscription.unsubscribe();
+      }
     }
 
 }

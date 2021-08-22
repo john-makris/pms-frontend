@@ -2,7 +2,8 @@ import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { catchError, filter, switchMap, take } from "rxjs/operators";
-import { AuthService, TokenRefreshResponse } from "./auth.service";
+import { AuthService } from "./auth.service";
+import { TokenRefreshResponse } from "./common/response/tokenRefreshResponse.interface";
 import { TokenStorageService } from "./token-storage.service";
 
 const TOKEN_HEADER_KEY = 'Authorization';
@@ -53,7 +54,7 @@ export class AuthInterceptorService implements HttpInterceptor {
               catchError((err) => {
                 this.isRefreshing = false;
                 
-                this.authService.logout();
+                this.authService.manualLogout();
                 return throwError(err);
               })
             );

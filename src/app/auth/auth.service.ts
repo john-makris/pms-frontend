@@ -5,6 +5,9 @@ import { BehaviorSubject, throwError } from 'rxjs';
 import { Router } from "@angular/router";
 import { User } from "../user/user.model";
 import { TokenStorageService } from "./token-storage.service";
+import { AuthResponseData } from "./common/response/authResponseData.interface";
+import { TokenRefreshResponse } from "./common/response/tokenRefreshResponse.interface";
+
 
 const AUTH_API = 'http://localhost:8080/pms/auth/';
 
@@ -12,35 +15,13 @@ const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
-export interface AuthRequestData {
-    username: string;
-    email?: string;
-    password: string;
-}
-
-export interface AuthResponseData {
-    id: number;
-    username: string;
-    email: string;
-    roles: Array<string>;
-    tokenType: string;
-    accessToken: string;
-    accessTokenExpiryDate: Date;
-    refreshToken: string;
-    refreshTokenExpiryDate: Date;
-}
-
-export interface TokenRefreshResponse {
-    tokenType: string;
-    accessToken: string;
-    accessTokenExpiryDate: Date;
-	refreshToken: string;
-	refreshTokenExpiryDate: Date;
-}
-
 @Injectable({providedIn: 'root'})
 export class AuthService {
-    isAutoLogin: boolean = false;
+
+    private logOutSubject = new BehaviorSubject<boolean>(false);
+
+    logout$ = this.logOutSubject.asObservable();
+
     user = new BehaviorSubject<User | null>(null);
     private tokenExpirationTimer: any;
 
@@ -135,7 +116,7 @@ export class AuthService {
         );
 
         this.user.next(user);
-        console.log("To token ligei se: "+refreshTokenExpirationDuration);
+        console.log("Token expires in: "+refreshTokenExpirationDuration);
         //localStorage.setItem('userData', JSON.stringify(user));
         this.tokenStorageService.saveToken(accessToken, user);
         this.tokenStorageService.saveRefreshToken(refreshToken);
@@ -169,7 +150,7 @@ export class AuthService {
             const refreshTokenExpirationDuration =
                 new Date(userData._refreshTokenExpirationDate).getTime() -
                 new Date().getTime();
-                console.log("Eimai mesa sto auto-login !");
+                console.log("I am inside auto-login !");
                 console.log("refreshTokenExpirationDuration: " + refreshTokenExpirationDuration);
             // save valid
             this.tokenStorageService.saveValid(refreshTokenExpirationDuration);
@@ -177,21 +158,32 @@ export class AuthService {
         }
     }
 
-    logout() {
+    systemLogout() {
+        this.manualLogout();
+        this.logOutSubject.next(false);
+    }
+
+    manualLogout() {
         this.user.next(null);
         this.router.navigate(['/login']);
         //localStorage.removeItem('userData');
-        this.tokenStorageService.signOut();
+        this.tokenStorageService.clearLocalStorage();
         this.clearTimer();
     }
 
     autoLogout(expirationDuration: number) {
-        console.log("Mesa sto autoLogout: "+expirationDuration);
+        console.log("Inside autoLogout: "+expirationDuration);
         this.clearTimer();
         this.tokenExpirationTimer = setTimeout(() => {
-            console.log("ELIKSA");
-            this.logout();
+            console.log("APP EXPIRED");
+            this.logOutSubject.next(true);
         }, expirationDuration);
+    }
+
+    deleteRefreshToken(userId: number) {
+        console.log("I am inside deleteRefreshToken: "+userId);
+
+        return this.http.delete<any>(AUTH_API + 'logout/'+ userId, httpOptions);
     }
 
     private handleAuthentication(

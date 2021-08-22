@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { AuthService, TokenRefreshResponse } from './auth/auth.service';
+import { AuthService } from './auth/auth.service';
+import { TokenRefreshResponse } from './auth/common/response/tokenRefreshResponse.interface';
 import { TokenStorageService } from './auth/token-storage.service';
 
 @Component({
@@ -10,13 +11,18 @@ import { TokenStorageService } from './auth/token-storage.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'pms-frontend';
-  refreshTokenSubscription!: Subscription;
+  refreshTokenExpirationDate!: Date;
+
+  private refreshTokenSubscription!: Subscription;
+  private logoutSubscription!: Subscription;
+  private deleteRefreshTokenSubscription!: Subscription;
 
   constructor(private authService: AuthService,
     private tokenStorageService: TokenStorageService) {}
 
   ngOnInit() {
     const currentUser = this.tokenStorageService.getUser();
+    console.log("APP COMPONENT currentUser: "+currentUser);
     this.authService.user.next(currentUser);
     
     const refreshToken = this.tokenStorageService.getRefreshToken();
@@ -28,6 +34,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.refreshTokenSubscription = this.authService.refreshToken(refreshToken).subscribe(
         (refreshTokenData: TokenRefreshResponse) => {
           if (refreshTokenData) {
+            this.refreshTokenExpirationDate = refreshTokenData.refreshTokenExpiryDate;
             this.authService.handleRefreshTokenAuthentication(refreshTokenData);
             console.log("AUTOLOGIN DATA: " + (new Date(refreshTokenData.refreshTokenExpiryDate).getTime()- new Date().getTime()));
             this.authService.autoLogin();
@@ -38,11 +45,34 @@ export class AppComponent implements OnInit, OnDestroy {
       console.log("Mpika sto else xoris refresh");
       this.authService.autoLogin();
     }
+
+    this.logoutSubscription = this.authService.logout$.subscribe(
+      (status: boolean) => {
+        if (status) {
+          console.log("It's time to LOG OUT ! "+this.tokenStorageService.getUser().id);
+          this.deleteRefreshTokenSubscription = this.authService.deleteRefreshToken(this.tokenStorageService.getUser().id).subscribe(
+            (data: any) => {
+              console.log("Message: "+data.message);
+            }
+          );
+          this.authService.systemLogout();
+        }
+      }
+    );
+
   }
 
   ngOnDestroy(): void {
     console.log("APP COMPONENT DESTROY");
-    this.refreshTokenSubscription.unsubscribe();
+    if (this.refreshTokenSubscription) {
+      this.refreshTokenSubscription.unsubscribe();
+    }
+    if (this.logoutSubscription) {
+      this.logoutSubscription.unsubscribe();
+    }
+    if (this.deleteRefreshTokenSubscription) {
+      this.deleteRefreshTokenSubscription.unsubscribe();
+    }
   }
 
 }
