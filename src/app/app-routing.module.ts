@@ -5,6 +5,11 @@ import { WelcomeComponent } from './welcome/welcome.component';
 
 const routes: Routes = [
   { path: '', component: WelcomeComponent },
+  { path: 'users',
+  loadChildren: () => import('./users/users.module')
+    .then(m => m.UsersModule),
+    canLoad: [AuthGuard]
+  },
   { path: 'schools',
   loadChildren: () => import('./schools/schools.module')
     .then(m => m.SchoolsModule),

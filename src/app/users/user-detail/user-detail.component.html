@@ -1,0 +1,70 @@
+<section
+    [ngClass]="'container'"
+    [ngClass.lt-md]="'min-container'"
+    fxLayout>
+    <div *ngIf="user">
+        <mat-card
+            class="mat-elevation-z8"
+            fxFlex.xs="19em"
+            fxFlex="22em">
+            <mat-card-title fxLayoutAlign="center">
+                {{ isAdmin === true ? 'Admin Details' : 'User Details' }}
+            </mat-card-title>
+            <br>
+            <mat-card-content fxLayout="column" 
+            fxLayoutAlign="center"
+            fxLayoutGap="1em">
+                <div>
+                    <mat-label><strong>Username:</strong></mat-label>
+                    {{ user?.username }}
+                </div>
+                <div>
+                    <label><strong>Email:</strong></label>
+                    {{ user?.email }}
+                </div>
+                <div>
+                    <label><strong>Roles: </strong></label>
+                    <span *ngFor="let role of user?.roles; let i = index">
+                        <container-element [ngSwitch]="role.name">
+                            <span *ngSwitchCase="'ROLE_ADMIN'">Admin</span>
+                            <span *ngSwitchCase="'ROLE_TEACHER'">Teacher</span>
+                            <span *ngSwitchCase="'ROLE_STUDENT'">Student</span>
+                        </container-element>
+                        <span *ngIf="i+1 > 0 && i+1 < user.roles.length">{{delimeter}}</span>
+                    </span>
+                </div>
+                <div *ngIf="isAdmin === false">
+                    <label><strong>Department:</strong></label>
+                    {{ user?.department?.name }}
+                </div>
+                <div *ngIf="isAdmin === false">
+                    <label><strong>Status: </strong></label>
+                    <span>{{ user?.status ? 'Active' : 'Inactive' }}</span>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div *ngIf="isAdmin === false">
+                    <button
+                        mat-raised-button color="primary"
+                        (click)="editUser()">
+                        Edit
+                    </button>
+              
+                    <button 
+                        mat-raised-button color="warn"
+                        (click)="deleteUser(user.id)">
+                        Delete
+                    </button>
+                </div>
+                <hr>
+                <div fxLayoutAlign="end">
+                    <button 
+                        mat-button color="primary"
+                        (click)="onCancel()">
+                        Cancel
+                    </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</section>

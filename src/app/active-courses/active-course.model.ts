@@ -1,5 +1,5 @@
 import { Course } from "../courses/course.model";
-import { User } from "../user/user.model";
+import { User } from "../users/user.model";
 
 export class ActiveCourse {
     

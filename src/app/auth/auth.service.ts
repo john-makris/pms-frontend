@@ -3,10 +3,11 @@ import { Injectable } from "@angular/core";
 import { catchError, tap } from "rxjs/operators";
 import { BehaviorSubject, throwError } from 'rxjs';
 import { Router } from "@angular/router";
-import { User } from "../user/user.model";
+import { User } from "../users/user.model";
 import { TokenStorageService } from "./token-storage.service";
 import { AuthResponseData } from "./common/response/authResponseData.interface";
 import { TokenRefreshResponse } from "./common/response/tokenRefreshResponse.interface";
+import { Department } from "../departments/department.model";
 
 
 const AUTH_API = 'http://localhost:8080/pms/auth/';
@@ -54,7 +55,9 @@ export class AuthService {
                   resData.accessToken,
                   resData.accessTokenExpiryDate,
                   resData.refreshToken,
-                  resData.refreshTokenExpiryDate
+                  resData.refreshTokenExpiryDate,
+                  resData.department,
+                  resData.status
                 );
             })
         );
@@ -112,7 +115,9 @@ export class AuthService {
             accessToken,
             accessTokenExpirationDate,
             refreshToken,
-            refreshTokenExpirationDate
+            refreshTokenExpirationDate,
+            userData.department,
+            userData.status
         );
 
         this.user.next(user);
@@ -142,6 +147,8 @@ export class AuthService {
           new Date(userData._tokenExpirationDate),
           userData._refreshToken,
           new Date(userData._refreshTokenExpirationDate),
+          userData.department,
+          userData.status
         );
 
         if (loadedUser.accessToken) {
@@ -194,7 +201,9 @@ export class AuthService {
         accessToken: string,
         accessTokenExpiryDate: Date,
         refreshToken: string,
-        refreshTokenExpiryDate: Date
+        refreshTokenExpiryDate: Date,
+        department: Department,
+        status: boolean
         ) {
           console.log("id: ", id);
           console.log("accessTokenExpiryDate :", accessTokenExpiryDate);
@@ -216,7 +225,9 @@ export class AuthService {
         accessToken,
         accessTokenExpirationDate,
         refreshToken,
-        refreshTokenExpirationDate
+        refreshTokenExpirationDate,
+        department,
+        status
       );
         this.user.next(user);
         //localStorage.setItem('userData', JSON.stringify(user));

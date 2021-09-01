@@ -1,0 +1,142 @@
+<div
+    [ngClass]="'container'"
+    [ngClass.lt-sm]="'min-container'"
+    fxFlex="40em"
+    fxFlex.gt-md="40em"
+    fxFlex.md="40em"
+    fxFlex.lt-md="30em"
+    fxFlex.lt-sm="20em"
+>
+    <div class="selectorContainer">
+        <form fxLayout="column"
+        [formGroup]="selectDepartmentForm">
+            <mat-form-field
+                appearance="outline"
+                [hideRequiredMarker]="hideRequiredControl.value"
+                [floatLabel]="floatLabelControl.value">
+                <mat-select
+                    [(value)]="selectedDepartmentId"
+                    panelClass="mat-select-panel"
+                    formControlName="departmentId">
+                    <mat-option
+                        [value]="0"
+                        (click)="onDepartmentSelectSubmit()">-- All Departments --</mat-option>
+                    <mat-option 
+                        *ngFor="let department of departments"
+                        [value]="department.id"
+                        (click)="onDepartmentSelectSubmit()">
+                        <p>
+                            {{ department.name }}
+                        </p>
+                    </mat-option>
+                </mat-select>
+                <mat-label><mat-icon>domain</mat-icon> <b> Department</b></mat-label>
+                <mat-hint>Choose Department</mat-hint>
+            </mat-form-field>
+        </form>
+    </div>
+
+    <div class="selectorContainer">
+        <form fxLayout="column"
+        [formGroup]="selectRoleForm">
+            <mat-form-field
+                appearance="outline"
+                [hideRequiredMarker]="hideRequiredControl.value"
+                [floatLabel]="floatLabelControl.value">
+                <mat-select
+                    [(value)]="selectedRoleName"
+                    panelClass="mat-select-panel"
+                    formControlName="roleName">
+                    <mat-option
+                        [value]="''"
+                        (click)="onRoleSelectSubmit()">-- All Roles --</mat-option>
+                    <mat-option 
+                        *ngFor="let role of roles"
+                        [value]="role.name"
+                        (click)="onRoleSelectSubmit()">
+                        <container-element [ngSwitch]="role.name">
+                            <span *ngSwitchCase="'ROLE_ADMIN'">Admin</span>
+                            <span *ngSwitchCase="'ROLE_TEACHER'">Teacher</span>
+                            <span *ngSwitchCase="'ROLE_STUDENT'">Student</span>
+                        </container-element>
+                    </mat-option>
+                </mat-select>
+                <mat-label><b> Role</b></mat-label>
+                <mat-hint>Choose Role</mat-hint>
+            </mat-form-field>
+        </form>
+    </div>
+
+    <a routerLink="add" 
+       mat-raised-button
+       color="primary">Add User</a>
+
+       <div class="table-container">
+            <div fxLayoutAlign="center">
+                <mat-form-field fxFlex="60%">
+                    <div fxLayout="row">
+                        <input
+                            matInput
+                            placeholder="Search users"
+                            [(ngModel)]="filterText" #input>
+                        <mat-icon 
+                            matSuffix 
+                            inline="true">search</mat-icon>
+                        <button 
+                            mat-button 
+                            *ngIf="input.value"
+                            matSuffix 
+                            mat-icon-button (click)="clearInput()">
+                            <mat-icon inline="true">close</mat-icon>
+                        </button>
+                    </div>
+                </mat-form-field>
+            </div>
+
+            <div class="mat-elevation-z8">
+                <mat-table
+                    [dataSource]="dataSource" matSort matSortActive="id"
+                    matSortDirection="asc" matSortDisableClear>
+                    <ng-container matColumnDef="id">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+                        <mat-cell *matCellDef="let user">{{ user.id | number }}</mat-cell>
+                    </ng-container>
+            
+                    <ng-container matColumnDef="username">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Username</mat-header-cell>
+                        <mat-cell *matCellDef="let user">{{ user.username }}</mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="roles">
+                        <mat-header-cell *matHeaderCellDef>Roles</mat-header-cell>
+                        <mat-cell *matCellDef="let user" fxLayout="row wrap">
+                            <div *ngFor="let role of user.roles; let i = index">
+                                <container-element [ngSwitch]="role.name">
+                                    <span *ngSwitchCase="'ROLE_ADMIN'">Admin</span>
+                                    <span *ngSwitchCase="'ROLE_TEACHER'">Teacher</span>
+                                    <span *ngSwitchCase="'ROLE_STUDENT'">Student</span>
+                                </container-element>
+                            <span *ngIf="i+1 > 0 && i+1 < user.roles.length">{{delimeter}}</span>
+                            </div>
+                        </mat-cell>
+                    </ng-container>
+            
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row
+                        *matRowDef="let row; columns: displayedColumns;"
+                        routerLink="detail/{{row.id}}"
+                        routerLinkActive="active"
+                        class="table-row-style"
+                        matRipple>
+                    </mat-row>
+                </mat-table>
+            
+                <mat-paginator
+                    [length]="totalItems"
+                    [pageSize]="3" 
+                    [pageSizeOptions]="[3, 5]"
+                    showFirstLastButtons>
+                </mat-paginator>
+            </div>
+    </div>
+</div>

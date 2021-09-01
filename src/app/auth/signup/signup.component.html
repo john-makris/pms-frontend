@@ -47,8 +47,9 @@
                         placeholder="Password"
                         formControlName="password"
                         #passwordInput>
-                    <mat-hint align="end">{{ passwordInput.value?.length }} / 6</mat-hint>
-                    <mat-error>Has to be at least 6 characters long.</mat-error>
+                        <mat-hint align="end" >{{ passwordInput.value?.length }} / {{ passwordInput.value?.length > 10 ? '18' : 10 }}</mat-hint>
+                        <mat-error *ngIf="passwordInput.value?.length > 0 && passwordInput.value?.length < 10">Has to be at least 10 characters long.</mat-error>
+                        <mat-error *ngIf="passwordInput.value?.length > 18">Has to be the most 18 characters long.</mat-error>
                     <span fxLayout="row" matSuffix>
                         <button type="button" mat-icon-button (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                             <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
@@ -56,7 +57,7 @@
                         <mat-icon style="margin-top:'5px'">lock</mat-icon>
                     </span>
                     <mat-hint>Please enter your password.</mat-hint>
-                    <mat-error>Missing password.</mat-error>
+                    <mat-error *ngIf="passwordInput.value?.length === 0">Missing password.</mat-error>
                 </mat-form-field>
                 <div fxLayoutAlign="center">
                     <mat-spinner *ngIf="isLoading"></mat-spinner>

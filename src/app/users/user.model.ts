@@ -1,3 +1,5 @@
+import { Department } from "../departments/department.model";
+
 export class User {
 
     constructor(
@@ -8,7 +10,9 @@ export class User {
       public _accessToken: string,
       private _tokenExpirationDate: Date,
       private _refreshToken: string,
-      private _refreshTokenExpirationDate: Date
+      private _refreshTokenExpirationDate: Date,
+      public department: Department,
+      public status: boolean
     ) {}
   
     get accessToken() {

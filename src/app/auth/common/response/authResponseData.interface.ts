@@ -1,3 +1,5 @@
+import { Department } from "src/app/departments/department.model";
+
 export interface AuthResponseData {
     id: number;
     username: string;
@@ -8,4 +10,6 @@ export interface AuthResponseData {
     accessTokenExpiryDate: Date;
     refreshToken: string;
     refreshTokenExpiryDate: Date;
+    department: Department;
+    status: boolean;
 }

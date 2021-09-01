@@ -1,0 +1,143 @@
+<section 
+    [ngClass]="'container'"
+    [ngClass.lt-sm]="'min-container'"
+    fxLayout>
+    <form 
+        fxLayout="row" 
+        [formGroup]="userForm"
+        (ngSubmit)="onSubmit()">
+        <mat-card fxFlex.xs="19em" fxFlex="23.3em">
+            <mat-card-title fxLayoutAlign="center">
+                <h1 *ngIf="isAddMode">Add User</h1>
+                <h1 *ngIf="!isAddMode">Edit User</h1>
+            </mat-card-title>
+            <mat-card-content fxLayout="column" 
+            fxLayoutAlign="center">
+                <mat-form-field appearance="outline">
+                    <mat-label>Username</mat-label>
+                    <input 
+                        type="username" 
+                        matInput 
+                        placeholder="Username"
+                        formControlName="username">
+                    <div matSuffix>
+                        <mat-icon>person</mat-icon>
+                    </div>
+                    <mat-hint>Please enter a valid username.</mat-hint>
+                    <mat-error>Invalid or missing username.</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input 
+                        type="email"
+                        matInput 
+                        placeholder="Email"
+                        formControlName="email">
+                    <div matSuffix>
+                        <mat-icon>email</mat-icon>
+                    </div>
+                    <mat-hint>Please enter a valid email.</mat-hint>
+                    <mat-error>Invalid or missing email.</mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Password</mat-label>
+                    <input 
+                        type="password" 
+                        matInput [type]="hide ? 'password' : 'text'"
+                        placeholder="Password"
+                        formControlName="password"
+                        #passwordInput>
+                        <mat-hint align="end" >{{ passwordInput.value?.length }} / {{ passwordInput.value?.length > 10 ? '18' : 10 }}</mat-hint>
+                        <mat-error *ngIf="passwordInput.value?.length > 0 && passwordInput.value?.length < 10">Has to be at least 10 characters long.</mat-error>
+                        <mat-error *ngIf="passwordInput.value?.length > 18">Has to be the most 18 characters long.</mat-error>
+                    <span fxLayout="row" matSuffix>
+                        <button type="button" mat-icon-button (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                        <mat-icon style="margin-top:'5px'">lock</mat-icon>
+                    </span>
+                    <mat-hint>Please enter your password.</mat-hint>
+                </mat-form-field>
+                <mat-form-field
+                    appearance="outline">
+                    <mat-label>Roles</mat-label>
+                    <mat-select formControlName="selectedRoleNames" multiple>
+                        <mat-select-trigger>
+                            <span *ngIf="selectedRoleNames.value">
+                                <container-element [ngSwitch]="selectedRoleNames.value[0]">
+                                    <span *ngSwitchCase="'ROLE_ADMIN'">Admin</span>
+                                    <span *ngSwitchCase="'ROLE_TEACHER'">Teacher</span>
+                                    <span *ngSwitchCase="'ROLE_STUDENT'">Student</span>
+                                </container-element>
+                            </span>
+
+                            <span *ngIf="selectedRoleNames.value?.length > 1" class="example-additional-selection">
+                              (+{{selectedRoleNames.value.length - 1}} {{selectedRoleNames.value?.length === 2 ? 'other role' : 'other roles'}})
+                            </span>
+                          </mat-select-trigger>
+                      <mat-option *ngFor="let roleName of roleNames" [value]="roleName">
+                            <container-element [ngSwitch]="roleName">
+                                <span *ngSwitchCase="'ROLE_ADMIN'">Admin</span>
+                                <span *ngSwitchCase="'ROLE_TEACHER'">Teacher</span>
+                                <span *ngSwitchCase="'ROLE_STUDENT'">Student</span>
+                            </container-element>
+                      </mat-option>
+                    </mat-select>
+                    <mat-hint>Choose Role(s)</mat-hint>
+                    <mat-error>Role(s) is/are required.</mat-error>
+                </mat-form-field>
+                <!--*ngIf="isAddMode && allDepartments"-->
+                <mat-form-field
+                    appearance="outline">
+                    <mat-select
+                        [(value)]="selectedDepartmentId"
+                        panelClass="mat-select-panel"
+                        formControlName="departmentId">
+                        <mat-option
+                            [value]="''">-- None --</mat-option>
+                        <mat-option 
+                            *ngFor="let department of departments"
+                            [value]="department.id.toString()">
+                            <p>
+                                {{ department.name }}
+                            </p>
+                        </mat-option>
+                    </mat-select>
+                    <mat-label><mat-icon>domain</mat-icon> <b> Department</b></mat-label>
+                    <mat-hint>Choose Department</mat-hint>
+                    <mat-error>Department is required.</mat-error>
+                </mat-form-field>
+                <mat-radio-group
+                    formControlName="status">
+                    <div class="radio-container">
+                        <mat-radio-button [value]=true>Active</mat-radio-button>
+                        <mat-radio-button [value]=false>Inactive</mat-radio-button>
+                    </div>
+                </mat-radio-group>
+                <div fxLayoutAlign="center">
+                    <mat-spinner *ngIf="isLoading"></mat-spinner>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div
+                    *ngIf="!isLoading"
+                    class="form-actions"
+                    fxLayout="row"
+                    fxLayoutAlign="start">
+                        <button 
+                            type="submit" 
+                            mat-raised-button color="primary" 
+                            [disabled]="userForm.invalid || isLoading">
+                            {{ isAddMode ? 'Save' : 'Update' }}
+                        </button>
+                        <button 
+                            type="button" 
+                            mat-button color="primary" 
+                            (click)="onCancel()">
+                            Cancel
+                        </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </form>
+</section>

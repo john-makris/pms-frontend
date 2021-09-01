@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { User } from 'src/app/user/user.model';
+import { User } from 'src/app/users/user.model';
 
 @Component({
   selector: 'app-sidenav-list',

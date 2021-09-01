@@ -1,10 +1,7 @@
 import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
-import { LogOutRequest } from 'src/app/auth/logOutRequest.model';
-import { User } from 'src/app/user/user.model';
+import { User } from 'src/app/users/user.model';
 
 @Component({
   selector: 'app-header',

@@ -1,0 +1,19 @@
+<div
+    [ngClass.lt-lg]="'container'"
+    [ngClass.gt-md]="'medium-container'"
+    [ngClass.md]="'medium-container'"
+    [ngClass.lt-md]="'min-container'"
+    fxLayout="row"
+    fxLayout.lt-md="column" 
+    fxLayoutGap.gt-md="8rem"
+    fxLayoutAlign="flex-start"
+    fxLayoutAlign.lt-md="center center"
+    >
+    <div>
+        <app-user-list></app-user-list>
+    </div>
+    <div>
+        <router-outlet></router-outlet>
+    </div>
+</div>
+    <!--fxLayoutGap.gt-sm="4rem"-->

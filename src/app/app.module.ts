@@ -18,6 +18,7 @@ import { DialogsModule } from './common/dialogs/dialogs.module';
 import { DepartmentsModule } from './departments/departments.module';
 import { CoursesModule } from './courses/courses.module';
 import { ActiveCoursesModule } from './active-courses/active-courses.module';
+import { UsersModule } from './users/users.module';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { ActiveCoursesModule } from './active-courses/active-courses.module';
     AuthModule,
     CoreModule,
     DialogsModule,
+    UsersModule,
     SchoolsModule,
     DepartmentsModule,
     CoursesModule,
