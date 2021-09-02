@@ -24,7 +24,8 @@
                         <mat-icon>person</mat-icon>
                     </div>
                     <mat-hint>Please enter a valid username.</mat-hint>
-                    <mat-error>Invalid or missing username.</mat-error>
+                    <mat-error *ngIf="f.username.errors?.required">Missing username.</mat-error>
+                    <mat-error *ngIf="f.username.errors?.maxlength">Username maximum length is 25 characters.</mat-error>
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Email</mat-label>
@@ -37,7 +38,9 @@
                         <mat-icon>email</mat-icon>
                     </div>
                     <mat-hint>Please enter a valid email.</mat-hint>
-                    <mat-error>Invalid or missing email.</mat-error>
+                    <mat-error *ngIf="f.email.errors?.required">Missing email.</mat-error>
+                    <mat-error *ngIf="f.email.errors?.maxlength">Email maximum length is 20 characters.</mat-error>
+                    <mat-error *ngIf="f.email.errors?.email">Invalid email.</mat-error>
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Password</mat-label>
@@ -45,11 +48,10 @@
                         type="password" 
                         matInput [type]="hide ? 'password' : 'text'"
                         placeholder="Password"
-                        formControlName="password"
-                        #passwordInput>
-                        <mat-hint align="end" >{{ passwordInput.value?.length }} / {{ passwordInput.value?.length > 10 ? '18' : 10 }}</mat-hint>
-                        <mat-error *ngIf="passwordInput.value?.length > 0 && passwordInput.value?.length < 10">Has to be at least 10 characters long.</mat-error>
-                        <mat-error *ngIf="passwordInput.value?.length > 18">Has to be the most 18 characters long.</mat-error>
+                        formControlName="password">
+                        <mat-hint align="end" >{{ f.password.value?.length }} / {{ f.password.value?.length > 10 ? '18' : 10 }}</mat-hint>
+                        <mat-error *ngIf="f.password.errors?.minlength">Password has to be at least 10 characters long.</mat-error>
+                        <mat-error *ngIf="f.password.errors?.maxlength">Password has to be the most 18 characters long.</mat-error>
                     <span fxLayout="row" matSuffix>
                         <button type="button" mat-icon-button (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                             <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
@@ -57,7 +59,7 @@
                         <mat-icon style="margin-top:'5px'">lock</mat-icon>
                     </span>
                     <mat-hint>Please enter your password.</mat-hint>
-                    <mat-error *ngIf="passwordInput.value?.length === 0">Missing password.</mat-error>
+                    <mat-error *ngIf="f.password.errors?.required">Missing password.</mat-error>
                 </mat-form-field>
                 <div fxLayoutAlign="center">
                     <mat-spinner *ngIf="isLoading"></mat-spinner>

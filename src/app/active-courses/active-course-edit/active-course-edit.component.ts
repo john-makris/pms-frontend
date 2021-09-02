@@ -1,16 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, MaxValidator, Validators } from '@angular/forms';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
-import { CoursesDataSource } from 'src/app/courses/common/tableDataHelper/courses.datasource';
-import { CourseService } from 'src/app/courses/course.service';
+import { Course } from 'src/app/courses/course.model';
 import { ActiveCourse } from '../active-course.model';
 import { ActiveCourseService } from '../active-course.service';
 import { ActiveCourseRequestData } from '../common/payload/request/activeCourseRequestData.interface';
-import { CourseSelectDialogComponent } from './dialogs/course-select-dialog/course-select-dialog.component';
 import { CourseSelectDialogService } from './services/course-select-dialog.service';
 
 @Component({
@@ -25,6 +22,7 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   submitted: boolean = false;
 
+  currentCourse!: Course;
   currentActiveCourse!: ActiveCourse;
   selectedAcademicYear: string = '';
 
@@ -74,8 +72,8 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
         console.log("BEFORE FORM INITIALIZATION: ");
         this.activeCourseForm = this.formBuilder.group({
           academicYear: [this.selectedAcademicYear, Validators.required],
-          maxTheoryLectures: [null, Validators.required],
-          maxLabLectures: [null, Validators.required],
+          maxTheoryLectures: [null, [Validators.required, Validators.max(12), Validators.min(1)]],
+          maxLabLectures: [null, [Validators.required, Validators.max(12), Validators.min(1)]],
           status: [false, Validators.required],
           teachingStuff: [null, Validators.required],
           students: [null, Validators.required],
@@ -85,9 +83,18 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
         });
 
         this.courseSelectDialogService.courseSelectDialogState
-          .subscribe((_courseId: number) => {
-            console.log("CATCH ID: "+_courseId);
-            this.activeCourseForm.patchValue({courseId: _courseId});
+          .subscribe((_course: Course | null) => {
+            if (_course !== null) {
+              console.log("CATCH COURSE: "+_course.name);
+              this.activeCourseForm.patchValue({courseId: _course.id});
+              this.currentCourse = _course;
+            } else {
+              if (!this.currentCourse) {
+                this.f.courseId.setErrors({
+                  'required': true
+                });
+              }
+            }
         });
   }
 

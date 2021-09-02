@@ -50,6 +50,7 @@ export class UserListComponent implements OnInit {
     pageDetailSubscription!: Subscription;
     departmentsSubscription!: Subscription;
     departmentIdSubscription!: Subscription;
+    departmentChangeStatusSubscription!: Subscription;
     rolesSubscription!: Subscription;
 
     departmentChangeStatus: boolean = false;
@@ -76,11 +77,11 @@ export class UserListComponent implements OnInit {
   
     ngOnInit(): void {
 
-      this.userService.departmentIdState.subscribe((id: number) => {
+      this.departmentIdSubscription = this.userService.departmentIdState.subscribe((id: number) => {
         this.changedDepartmentId = id;
       });
 
-      this.userService.changeDepartmentState.subscribe((status: boolean) => {
+      this.departmentChangeStatusSubscription = this.userService.changeDepartmentState.subscribe((status: boolean) => {
         this.departmentChangeStatus = status;
       });
 
@@ -303,9 +304,24 @@ export class UserListComponent implements OnInit {
     }
   
     ngOnDestroy(): void {
-      this.departmentsSubscription.unsubscribe();
-      this.pageDetailSubscription.unsubscribe();
-      this.snackbarSubscription.unsubscribe();
+      if (this.departmentsSubscription) {
+        this.departmentsSubscription.unsubscribe();
+      }
+      if (this.pageDetailSubscription) {
+        this.pageDetailSubscription.unsubscribe();
+      }
+      if (this.snackbarSubscription) {
+        this.snackbarSubscription.unsubscribe();
+      }
+      if (this.departmentIdSubscription) {
+        this.departmentIdSubscription.unsubscribe();
+      }
+      if (this.departmentChangeStatusSubscription) {
+        this.departmentChangeStatusSubscription.unsubscribe();
+      }
+      if (this.rolesSubscription) {
+        this.rolesSubscription.unsubscribe();
+      }
     }
-  
-  }
+
+}

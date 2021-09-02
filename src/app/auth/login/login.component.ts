@@ -23,9 +23,9 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
-      username: new FormControl('', { validators: [Validators.required, Validators.maxLength(20)]
+      username: new FormControl('', { validators: [Validators.required, Validators.maxLength(25)]
       }),
-      password: new FormControl('', { validators: [Validators.required]})
+      password: new FormControl('', { validators: [Validators.required/*, Validators.minLength(10), Validators.maxLength(18)*/]})
     });
     this.authService.user.subscribe(currentUser => {
       this.isLoggedIn = !!currentUser;
@@ -34,6 +34,9 @@ export class LoginComponent implements OnInit {
       }
     });
   }
+
+  get f() { return this.loginForm.controls; }
+
 
   onSubmit() {
     if(this.loginForm.invalid) {

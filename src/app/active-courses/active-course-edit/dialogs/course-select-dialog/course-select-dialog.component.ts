@@ -1,20 +1,13 @@
 import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy, Inject, ViewChildren, QueryList } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import {debounceTime, distinctUntilChanged, tap, first, switchMap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, tap, switchMap} from 'rxjs/operators';
 import {merge, fromEvent, Subscription } from "rxjs";
-import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { DepartmentService } from 'src/app/departments/department.service';
-import { Department } from 'src/app/departments/department.model';
-import { ActivatedRoute, Router } from '@angular/router';
-import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { CoursesDataSource } from 'src/app/courses/common/tableDataHelper/courses.datasource';
 import { CourseService } from 'src/app/courses/course.service';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { selectCourseDialogData } from '../../interfaces/selectCourseDialogData.interface';
-import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Course } from 'src/app/courses/course.model';
 
@@ -34,6 +27,7 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
 
   selectedRowId: number = -1;
   isRowSelected: boolean = false;
+  selectedCourse!: Course | null;
 
   pageDetailSubscription!: Subscription;
 
@@ -54,7 +48,7 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
   constructor(
     private courseService: CourseService,
     private dialogRef: MatDialogRef<CourseSelectDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data :selectCourseDialogData) {}
+    @Inject(MAT_DIALOG_DATA) public data :Course) {}
 
 
   ngOnInit(): void {
@@ -126,12 +120,14 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
   selectRow(selectedRow: Course) {
     if (selectedRow.id == this.selectedRowId) {
       this.selection.deselect(selectedRow);
+      this.selectedCourse = null;
     } else {
       this.selection.toggle(selectedRow);
     }
     if(this.selection.isSelected(selectedRow)) {
       this.isRowSelected = true;
       this.selectedRowId = selectedRow.id;
+      this.selectedCourse = selectedRow;
       console.log("Selected Row Id: "+ this.selectedRowId);
     } else {
       this.isRowSelected = false;
@@ -140,11 +136,16 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
   }
 
   ok() {
-    this.dialogRef.close(this.selectedRowId);
+    this.dialogRef.close(this.selectedCourse);
   }
 
   close() {
-      this.dialogRef.close(this.data.id);
+      if (this.data.id) {
+        console.log("Close dialog: "+this.data.name);
+        this.dialogRef.close(this.data);
+      } else {
+        this.dialogRef.close(null);
+      }
   }
 
   ngOnDestroy(): void {

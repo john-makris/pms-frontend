@@ -104,8 +104,8 @@ export class UserEditComponent implements OnInit, OnDestroy {
       console.log("BEFORE FORM INITIALIZATION: "+this.selectedDepartmentId);
 
       this.userForm = this.formBuilder.group({
-        username: ['', [Validators.required, Validators.maxLength(20)]],
-        email: ['', [Validators.required, Validators.email]],
+        username: ['', [Validators.required, Validators.maxLength(25)]],
+        email: ['', [Validators.required, Validators.email, Validators.maxLength(20)]],
         password: ['', [Validators.minLength(10), Validators.maxLength(18)]],
         selectedRoleNames: this.selectedRoleNames,
         departmentId: [this.selectedDepartmentId, Validators.required],

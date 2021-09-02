@@ -16,11 +16,13 @@ import { UserService } from '../user.service';
 export class UserDetailComponent implements OnInit, OnDestroy {
   id!: number;
   user!: UserResponseData;
-  private ensureDialogSubscription!: Subscription;
   ensureDialogStatus!: boolean;
   delimeter: string = ',' + '\xa0';
   isAdmin: boolean = false;
   currentRoleName: string = '';
+
+  private ensureDialogSubscription!: Subscription;
+
 
   constructor(private route: ActivatedRoute,
     private router: Router,

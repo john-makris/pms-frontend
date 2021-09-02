@@ -28,8 +28,8 @@
                     <div matSuffix>
                         <mat-icon>date_range</mat-icon>
                     </div>
-                    <mat-hint>Please enter a valid academic year.</mat-hint>
-                    <mat-error>Invalid or missing academic year.</mat-error>
+                    <mat-hint>Select Academic Year.</mat-hint>
+                    <mat-error *ngIf="f.academicYear.errors?.required">Missing Academic Year</mat-error>
                 </mat-form-field>
 
                 <mat-form-field 
@@ -38,15 +38,17 @@
                     <input 
                         matInput 
                         type="number" 
-                        placeholder="Ex. 12" 
+                        placeholder="Max Theories" 
                         formControlName="maxTheoryLectures"
                         min="1"
                         max="12">
                     <span matSuffix>
                         <mat-icon>note_add</mat-icon>
                     </span>
-                    <mat-error *ngIf="activeCourseForm.value.maxTheoryLectures > 12">Cannot set more than 12</mat-error>
-                    <mat-error *ngIf="activeCourseForm.value.maxTheoryLectures < 1">Cannot set less than 1</mat-error>
+                    <mat-hint>Set Max Theories.</mat-hint>
+                    <mat-error *ngIf="f.maxTheoryLectures.errors?.max">Cannot set more than 12</mat-error>
+                    <mat-error *ngIf="f.maxTheoryLectures.errors?.min">Cannot set less than 1</mat-error>
+                    <mat-error *ngIf="f.maxTheoryLectures.errors?.required">Missing Theories</mat-error>
                 </mat-form-field>
 
                 <mat-form-field 
@@ -55,15 +57,17 @@
                     <input 
                         matInput 
                         type="number" 
-                        placeholder="Ex. 12" 
+                        placeholder="Max Labs"
                         formControlName="maxLabLectures"
                         min="1"
                         max="12">
                     <span matSuffix>
                         <mat-icon>construction</mat-icon>
                     </span>
-                    <mat-error *ngIf="activeCourseForm.value.maxLabLectures > 12">Cannot set more than 12</mat-error>
-                    <mat-error *ngIf="activeCourseForm.value.maxLabLectures < 1">Cannot set less than 1</mat-error>
+                    <mat-hint>Set Max Labs.</mat-hint>
+                    <mat-error *ngIf="f.maxLabLectures.errors?.max">Cannot set more than 12</mat-error>
+                    <mat-error *ngIf="f.maxLabLectures.errors?.min">Cannot set less than 1</mat-error>
+                    <mat-error *ngIf="f.maxLabLectures.errors?.required">Missing Labs</mat-error>
                 </mat-form-field>
 
                 <div 
@@ -77,12 +81,12 @@
                         </div>
                     </mat-radio-group>
                     <!-- Course -->
-                    <mat-label>Selected Course: Name of the course</mat-label>
                     <button
                         mat-raised-button color="primary"
                         (click)="selectCourse()">
-                        Course</button>
-                        <p>{{ activeCourseForm.value.courseId }}</p>
+                        Choose Course</button>
+                        <mat-label *ngIf="currentCourse">Selected Course: {{ currentCourse.name }}</mat-label>
+                        <mat-error *ngIf="f.courseId.errors?.required">Select Course</mat-error>
                     <!-- Teachers -->
                     <button
                         mat-raised-button color="primary">
