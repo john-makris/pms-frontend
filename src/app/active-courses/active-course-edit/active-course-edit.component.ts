@@ -5,10 +5,12 @@ import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { Course } from 'src/app/courses/course.model';
+import { UserData } from 'src/app/users/common/payload/response/userData.interface';
 import { ActiveCourse } from '../active-course.model';
 import { ActiveCourseService } from '../active-course.service';
 import { ActiveCourseRequestData } from '../common/payload/request/activeCourseRequestData.interface';
 import { CourseSelectDialogService } from './services/course-select-dialog.service';
+import { TeachersSelectDialogService } from './services/teachers-select-dialog.service';
 
 @Component({
   selector: 'app-active-course-edit',
@@ -22,6 +24,8 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   submitted: boolean = false;
 
+  panelOpenState = false;
+  currentTeachingStuff!: Array<UserData>;
   currentCourse!: Course;
   currentActiveCourse!: ActiveCourse;
   selectedAcademicYear: string = '';
@@ -39,6 +43,7 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private courseSelectDialogService: CourseSelectDialogService,
+    private teachersSelectDialogService: TeachersSelectDialogService,
     private activeCourseService: ActiveCourseService,
     private snackbarService: SnackbarService
   ) { }
@@ -75,7 +80,7 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
           maxTheoryLectures: [null, [Validators.required, Validators.max(12), Validators.min(1)]],
           maxLabLectures: [null, [Validators.required, Validators.max(12), Validators.min(1)]],
           status: [false, Validators.required],
-          teachingStuff: [null, Validators.required],
+          teachingStuff: [null],
           students: [null, Validators.required],
           courseId: [0, Validators.required],
           hideRequired: this.hideRequiredControl,
@@ -96,6 +101,24 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
               }
             }
         });
+
+        this.teachersSelectDialogService.teachersSelectDialogState
+        .subscribe((_teachers: Array<UserData> | null) => {
+          if (_teachers !== null) {
+            console.log("CATCH TEACHERS: ");
+            _teachers.forEach(teacher => {
+              console.log(teacher.username);
+            });
+            this.activeCourseForm.patchValue({teachingStuff: _teachers});
+            this.currentTeachingStuff = _teachers;
+          } else {
+            //if (this.f.teachingStuff.touched) {
+              this.f.teachingStuff.setErrors({
+                'required': true
+              });
+            //}
+          }
+      });
   }
 
   get f() { return this.activeCourseForm.controls; }
@@ -151,6 +174,11 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
 
   selectCourse() {
     this.courseSelectDialogService.selectCourse(this.activeCourseForm.value.courseId);
+  }
+
+  selectTeachers() {
+    this.f.teachingStuff.markAsTouched;
+    this.teachersSelectDialogService.selectTeachers(this.activeCourseForm.value.teachingStuff);
   }
 
   onFileSelected() {

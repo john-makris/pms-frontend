@@ -89,8 +89,27 @@
                         <mat-error *ngIf="f.courseId.errors?.required">Select Course</mat-error>
                     <!-- Teachers -->
                     <button
-                        mat-raised-button color="primary">
-                        Teaching Stuff</button>
+                        mat-raised-button color="primary"
+                        (click)="selectTeachers()">
+                        Choose Teacher(s)</button>
+                        <!-- <mat-label *ngIf="currentCourse">Selected Course: {{ currentCourse.name }}</mat-label> -->
+                        <mat-error *ngIf="f.teachingStuff.errors?.required">Select Teacher(s)</mat-error>
+                        <mat-accordion *ngIf="currentTeachingStuff">
+                            <mat-expansion-panel 
+                                (opened)="panelOpenState = true"
+                                (closed)="panelOpenState = false">
+                                <mat-expansion-panel-header>
+                                <mat-panel-title>
+                                    Selected Teachers
+                                </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <hr>
+                                <div *ngFor="let teacher of currentTeachingStuff">
+                                    <p>{{ teacher.username }}</p>
+                                </div>
+                            </mat-expansion-panel>
+                          </mat-accordion>
+                          
                     <!-- Students -->
                     <button 
                         type="button" 

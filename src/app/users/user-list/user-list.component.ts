@@ -112,7 +112,7 @@ export class UserListComponent implements OnInit {
       this.dataSource = new UsersDataSource(this.userService);
   
       this.dataSource.loadUsers(this.selectDepartmentForm.value.departmentId,
-                                this.selectRoleForm.value.roleId,
+                                this.selectRoleForm.value.roleName,
                                  '', 0, 3, 'asc', this.currentColumnDef);
   
       this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(

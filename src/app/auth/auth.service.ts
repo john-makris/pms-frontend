@@ -8,6 +8,7 @@ import { TokenStorageService } from "./token-storage.service";
 import { AuthResponseData } from "./common/response/authResponseData.interface";
 import { TokenRefreshResponse } from "./common/response/tokenRefreshResponse.interface";
 import { Department } from "../departments/department.model";
+import { MatDialog } from "@angular/material/dialog";
 
 
 const AUTH_API = 'http://localhost:8080/pms/auth/';
@@ -28,7 +29,8 @@ export class AuthService {
 
     constructor(private http: HttpClient,
         private router: Router,
-        private tokenStorageService: TokenStorageService) {}
+        private tokenStorageService: TokenStorageService,
+        private matDialog: MatDialog) {}
 
     signup(username: string, email: string, password: string) {
         return this.http.post<string>(AUTH_API + 'signup', {
@@ -166,6 +168,7 @@ export class AuthService {
     }
 
     systemLogout() {
+        this.matDialog.closeAll();
         this.manualLogout();
         this.logOutSubject.next(false);
     }
