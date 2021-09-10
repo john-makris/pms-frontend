@@ -1,22 +1,82 @@
 <section 
-    [ngClass]="'container'"
+    [ngClass.gt-md]="'max-container'"
+    [ngClass.md]="'max-container'"
+    [ngClass.lt-md]="'max-container'"
+    [ngClass.sm]="'min-container'"
     [ngClass.lt-sm]="'min-container'"
     fxLayout>
     <form 
+        *ngIf="currentUser || isAddMode"
         fxLayout="row" 
         [formGroup]="userForm"
         (ngSubmit)="onSubmit()">
         <mat-card
             class="mat-elevation-z8"
-            fxFlex.xs="19em" 
-            fxFlex="23.3em">
+            fxFlex.xs="19em"
+            fxFlex.sm="40em" 
+            fxFlex.gt-sm="40em"><!-- fxFlex="23.3em" -->
             <mat-card-title fxLayoutAlign="center">
                 <h1 *ngIf="isAddMode">Add User</h1>
-                <h1 *ngIf="!isAddMode">Edit User</h1>
+                <h1 *ngIf="!isAddMode && !isStudent">Edit User</h1>
+                <h1 *ngIf="!isAddMode && isStudent">Edit Student</h1>
             </mat-card-title>
-            <mat-card-content fxLayout="column" 
+            <mat-card-content fxLayout="column" fxLayout.sm="row wrap" fxLayout.gt-sm="row wrap"
             fxLayoutAlign="center">
-                <mat-form-field appearance="outline">
+
+                <mat-form-field fxFlex
+                    appearance="outline" *ngIf="!isStudent || isAddMode">
+                    <mat-label>Roles</mat-label>
+                    <mat-select formControlName="selectedRoleNames" multiple>
+                        <mat-select-trigger>
+                            <span *ngIf="selectedRoleNames.value">
+                                <container-element [ngSwitch]="selectedRoleNames.value[0]">
+                                    <span *ngSwitchCase="'ROLE_ADMIN'">Admin</span>
+                                    <span *ngSwitchCase="'ROLE_TEACHER'">Teacher</span>
+                                    <span *ngSwitchCase="'ROLE_STUDENT'">Student</span>
+                                </container-element>
+                            </span>
+
+                            <span *ngIf="selectedRoleNames.value?.length > 1" class="example-additional-selection">
+                            (+{{selectedRoleNames.value.length - 1}} {{selectedRoleNames.value?.length === 2 ? 'other role' : 'other roles'}})
+                            </span>
+                        </mat-select-trigger>
+                        <ng-container *ngIf="isAddMode">
+                            <mat-option *ngFor="let roleName of addModeRoleNames" [value]="roleName">
+                                <container-element [ngSwitch]="roleName">
+                                    <span *ngSwitchCase="'ROLE_TEACHER'">Teacher</span>
+                                    <span *ngSwitchCase="'ROLE_STUDENT'">Student</span>
+                                </container-element>
+                            </mat-option>
+                        </ng-container>
+                        <ng-container *ngIf="!isAddMode">
+                            <mat-option *ngFor="let roleName of editModeRoleNames" [value]="roleName">
+                                <container-element [ngSwitch]="roleName">
+                                    <span *ngSwitchCase="'ROLE_TEACHER'">Teacher</span>
+                                </container-element>
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                    <mat-hint>Choose Role(s)</mat-hint>
+                    <mat-error *ngIf="f.selectedRoleNames.errors?.required">Role(s) is/are required.</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" *ngIf="isStudent" fxFlex>
+                    <mat-label>AM</mat-label>
+                    <input 
+                        type="am" 
+                        matInput 
+                        placeholder="AM"
+                        formControlName="am">
+                    <div matSuffix>
+                        <mat-icon>code</mat-icon>
+                    </div>
+                    <mat-hint>Please enter AM.</mat-hint>
+                    <mat-error *ngIf="f.am.errors?.required">Missing AM.</mat-error>
+                    <mat-error *ngIf="f.am.errors?.maxlength">AM maximum length is 8 characters.</mat-error>
+                    <mat-error *ngIf="f.am.errors?.minlength">AM minimum length is 5 characters.</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Username</mat-label>
                     <input 
                         type="username" 
@@ -30,7 +90,8 @@
                     <mat-error *ngIf="f.username.errors?.required">Missing username.</mat-error>
                     <mat-error *ngIf="f.username.errors?.maxlength">Username maximum length is 25 characters.</mat-error>
                 </mat-form-field>
-                <mat-form-field appearance="outline">
+
+                <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Email</mat-label>
                     <input 
                         type="email"
@@ -45,7 +106,8 @@
                     <mat-error *ngIf="f.email.errors?.maxlength">Email maximum length is 20 characters.</mat-error>
                     <mat-error *ngIf="f.email.errors?.email">Invalid email.</mat-error>
                 </mat-form-field>
-                <mat-form-field appearance="outline">
+
+                <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Password</mat-label>
                     <input 
                         type="password" 
@@ -63,37 +125,11 @@
                     </span>
                     <mat-hint>Please enter password.</mat-hint>
                 </mat-form-field>
-                <mat-form-field
-                    appearance="outline">
-                    <mat-label>Roles</mat-label>
-                    <mat-select formControlName="selectedRoleNames" multiple>
-                        <mat-select-trigger>
-                            <span *ngIf="selectedRoleNames.value">
-                                <container-element [ngSwitch]="selectedRoleNames.value[0]">
-                                    <span *ngSwitchCase="'ROLE_ADMIN'">Admin</span>
-                                    <span *ngSwitchCase="'ROLE_TEACHER'">Teacher</span>
-                                    <span *ngSwitchCase="'ROLE_STUDENT'">Student</span>
-                                </container-element>
-                            </span>
 
-                            <span *ngIf="selectedRoleNames.value?.length > 1" class="example-additional-selection">
-                              (+{{selectedRoleNames.value.length - 1}} {{selectedRoleNames.value?.length === 2 ? 'other role' : 'other roles'}})
-                            </span>
-                          </mat-select-trigger>
-                      <mat-option *ngFor="let roleName of roleNames" [value]="roleName">
-                            <container-element [ngSwitch]="roleName">
-                                <span *ngSwitchCase="'ROLE_ADMIN'">Admin</span>
-                                <span *ngSwitchCase="'ROLE_TEACHER'">Teacher</span>
-                                <span *ngSwitchCase="'ROLE_STUDENT'">Student</span>
-                            </container-element>
-                      </mat-option>
-                    </mat-select>
-                    <mat-hint>Choose Role(s)</mat-hint>
-                    <mat-error *ngIf="f.selectedRoleNames.errors?.required">Role(s) is/are required.</mat-error>
-                </mat-form-field>
                 <!--*ngIf="isAddMode && allDepartments"-->
                 <mat-form-field
-                    appearance="outline">
+                    fxFlex
+                    appearance="outline" *ngIf="!isStudent || isAddMode">
                     <mat-select
                         [(value)]="selectedDepartmentId"
                         panelClass="mat-select-panel"
@@ -112,13 +148,16 @@
                     <mat-hint>Choose Department</mat-hint>
                     <mat-error *ngIf="f.departmentId.errors?.required">Department is required.</mat-error>
                 </mat-form-field>
+
                 <mat-radio-group
+                    fxFlexFill
                     formControlName="status">
                     <div class="radio-container">
                         <mat-radio-button [value]=true>Active</mat-radio-button>
                         <mat-radio-button [value]=false>Inactive</mat-radio-button>
                     </div>
                 </mat-radio-group>
+
                 <div fxLayoutAlign="center">
                     <mat-spinner *ngIf="isLoading"></mat-spinner>
                 </div>

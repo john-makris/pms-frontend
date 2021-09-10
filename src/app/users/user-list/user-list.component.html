@@ -1,10 +1,14 @@
 <div
-    [ngClass]="'container'"
+    [ngClass.gt-md]="'max-container'"
+    [ngClass.md]="'max-container'"
+    [ngClass.lt-md]="'max-container'"
+    [ngClass.sm]="'min-container'"
     [ngClass.lt-sm]="'min-container'"
     fxFlex="40em"
     fxFlex.gt-md="40em"
     fxFlex.md="40em"
-    fxFlex.lt-md="30em"
+    fxFlex.lt-md="40em"
+    fxFlex.sm="40em"
     fxFlex.lt-sm="20em"
 >
     <div class="selectorContainer">
@@ -67,7 +71,7 @@
         </form>
     </div>
 
-    <a routerLink="add" 
+    <a routerLink="add"
        mat-raised-button
        color="primary">Add User</a>
 

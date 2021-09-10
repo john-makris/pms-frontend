@@ -14,6 +14,10 @@
             <mat-card-content fxLayout="column" 
             fxLayoutAlign="center"
             fxLayoutGap="1em">
+                <div *ngIf="currentRoleName==='ROLE_STUDENT'">
+                    <mat-label><strong>AM:</strong></mat-label>
+                    {{ user?.am }}
+                </div>
                 <div>
                     <mat-label><strong>Username:</strong></mat-label>
                     {{ user?.username }}

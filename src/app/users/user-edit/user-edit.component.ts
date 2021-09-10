@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { DoCheck } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterContentChecked } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -6,7 +7,6 @@ import { first } from 'rxjs/operators';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { Department } from 'src/app/departments/department.model';
 import { DepartmentService } from 'src/app/departments/department.service';
-import { UserData } from '../common/payload/response/userData.interface';
 import { UserResponseData } from '../common/payload/response/userResponseData.interface';
 import { RoleService } from '../role.service';
 import { UserService } from '../user.service';
@@ -16,7 +16,7 @@ import { UserService } from '../user.service';
   templateUrl: './user-edit.component.html',
   styleUrls: ['./user-edit.component.css']
 })
-export class UserEditComponent implements OnInit, OnDestroy {
+export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
   userForm!: FormGroup;
   id!: number;
   isAddMode!: boolean;
@@ -24,7 +24,10 @@ export class UserEditComponent implements OnInit, OnDestroy {
   submitted: boolean = false;
   hide: boolean = true;
 
-  roleNames: string[] = [];
+  currentUser!: UserResponseData;
+  isStudent: boolean = false;
+  addModeRoleNames: string[] = [];
+  editModeRoleNames: string[] = [];
   currentSelectedRoleNames: Array<string> =[];
   selectedRoleNames = new FormControl([], Validators.required);
 
@@ -74,6 +77,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
             this.userService.getUserById(this.id)
               .pipe(first())
               .subscribe(currentUserData => {
+                this.currentUser = currentUserData;
                 console.log("USER EDIT STATUS: "+currentUserData.status);
                 this.currentUserPassword = currentUserData.password;
                 console.log("THIS IS THE CURRENT USER PASSWORD "+ this.currentUserPassword);
@@ -87,6 +91,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
                     console.log("Role: "+role.name);
                   });
                 this.userForm.setValue({
+                  am: currentUserData.am,
                   username: currentUserData.username,
                   email: currentUserData.email,
                   password: '',
@@ -104,6 +109,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
       console.log("BEFORE FORM INITIALIZATION: "+this.selectedDepartmentId);
 
       this.userForm = this.formBuilder.group({
+        am: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(8)]],
         username: ['', [Validators.required, Validators.maxLength(25)]],
         email: ['', [Validators.required, Validators.email, Validators.maxLength(20)]],
         password: ['', [Validators.minLength(10), Validators.maxLength(18)]],
@@ -111,6 +117,17 @@ export class UserEditComponent implements OnInit, OnDestroy {
         departmentId: [this.selectedDepartmentId, Validators.required],
         status: [false, Validators.required]
       });
+  }
+
+  ngDoCheck()	: void {
+    if (this.f.selectedRoleNames.value.includes('ROLE_STUDENT')) {
+      this.isStudent = true;
+      this.f.am.enable();
+    } else {
+      this.isStudent = false;
+      this.f.am.disable();
+      console.log("VALIDITY");
+    }
   }
 
   get f() { return this.userForm.controls; }
@@ -126,6 +143,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     const userData = {
+      am: this.userForm.value.am,
       username: this.userForm.value.username,
       email: this.userForm.value.email,
       password: this.userForm.value.password === null ? this.currentUserPassword : this.userForm.value.password,
@@ -138,6 +156,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
 
     if (this.isAddMode) {
       console.log("User Data Add: "+userData);
+      console.log(userData.am);
       console.log(userData.username);
       console.log(userData.email);
       console.log(userData.password);
@@ -147,6 +166,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
       this.createUser(userData);
     } else {
       console.log("User Data Update: ");
+      console.log(userData.am);
       console.log(userData.username);
       console.log(userData.email);
       console.log(userData.password);
@@ -191,7 +211,10 @@ export class UserEditComponent implements OnInit, OnDestroy {
     .subscribe(roles => {
       roles.forEach(role => {
         if (!role.name.includes('ROLE_ADMIN')) {
-          this.roleNames.push(role.name);
+          this.addModeRoleNames.push(role.name);
+        }
+        if (!role.name.includes('ROLE_ADMIN') && !role.name.includes('ROLE_STUDENT')) {
+          this.editModeRoleNames.push(role.name);
         }
         console.log("Role: "+role.name);
       });

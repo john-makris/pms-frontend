@@ -43,6 +43,10 @@ export class UserDetailComponent implements OnInit, OnDestroy {
             this.user.roles.forEach(role => {
               if (role.name.includes('ROLE_ADMIN')) {
                 this.currentRoleName = role.name;
+              } else if(role.name.includes('ROLE_TEACHER')) {
+                this.currentRoleName = role.name;
+              } else {
+                this.currentRoleName = role.name;
               }
             });
             if (this.currentRoleName.includes('ROLE_ADMIN')) {
