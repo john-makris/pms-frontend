@@ -53,6 +53,7 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+
     this.departmentIdSubscription = this.userService.departmentIdState
       .subscribe((departmentId: number) => {
         console.log("EDIT COMPONENT: "+departmentId);
@@ -91,7 +92,7 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
                     console.log("Role: "+role.name);
                   });
                 this.userForm.setValue({
-                  am: currentUserData.am,
+                  am: currentUserData.am ? currentUserData.am.toString() : '',
                   username: currentUserData.username,
                   email: currentUserData.email,
                   password: '',
@@ -109,10 +110,10 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
       console.log("BEFORE FORM INITIALIZATION: "+this.selectedDepartmentId);
 
       this.userForm = this.formBuilder.group({
-        am: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(8)]],
+        am: ['', [Validators.required, Validators.pattern(/^[0-9]\d*$/), Validators.minLength(5), Validators.maxLength(8)]],
         username: ['', [Validators.required, Validators.maxLength(25)]],
         email: ['', [Validators.required, Validators.email, Validators.maxLength(20)]],
-        password: ['', [Validators.minLength(10), Validators.maxLength(18)]],
+        password: ['', [this.isAddMode ? Validators.required : Validators.nullValidator, Validators.minLength(10), Validators.maxLength(18)]],
         selectedRoleNames: this.selectedRoleNames,
         departmentId: [this.selectedDepartmentId, Validators.required],
         status: [false, Validators.required]
@@ -120,13 +121,16 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   ngDoCheck()	: void {
+    this.userFormModerator();
+  }
+
+  userFormModerator() {
     if (this.f.selectedRoleNames.value.includes('ROLE_STUDENT')) {
       this.isStudent = true;
       this.f.am.enable();
     } else {
       this.isStudent = false;
       this.f.am.disable();
-      console.log("VALIDITY");
     }
   }
 

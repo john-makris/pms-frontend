@@ -5,13 +5,15 @@ import { UserEditComponent } from "./user-edit/user-edit.component";
 import { UserListComponent } from "./user-list/user-list.component";
 import { UserComponent } from "./user.component";
 import { UsersRoutingModule } from "./users-routing.module";
+import { UploadStudentsComponent } from './upload-students/upload-students.component';
 
 @NgModule({
     declarations: [
         UserComponent,
         UserDetailComponent,
         UserListComponent,
-        UserEditComponent
+        UserEditComponent,
+        UploadStudentsComponent
     ],
     imports: [
         SharedModule,

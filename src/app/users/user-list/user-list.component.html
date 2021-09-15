@@ -1,8 +1,5 @@
 <div
-    [ngClass.gt-md]="'max-container'"
-    [ngClass.md]="'max-container'"
-    [ngClass.lt-md]="'max-container'"
-    [ngClass.sm]="'min-container'"
+    [ngClass]="'container'"
     [ngClass.lt-sm]="'min-container'"
     fxFlex="40em"
     fxFlex.gt-md="40em"
@@ -71,9 +68,15 @@
         </form>
     </div>
 
-    <a routerLink="add"
-       mat-raised-button
-       color="primary">Add User</a>
+    <div fxLayoutGap="1em">
+        <a routerLink="add"
+        mat-raised-button
+        color="primary">Add User</a>
+ 
+        <a routerLink="upload"
+            mat-stroked-button
+            color="primary">Upload Students</a>
+    </div>
 
        <div class="table-container">
             <div fxLayoutAlign="center">

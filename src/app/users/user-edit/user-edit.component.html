@@ -72,6 +72,7 @@
                     </div>
                     <mat-hint>Please enter AM.</mat-hint>
                     <mat-error *ngIf="f.am.errors?.required">Missing AM.</mat-error>
+                    <mat-error *ngIf="f.am.errors?.pattern">AM must contain only integer numbers</mat-error>
                     <mat-error *ngIf="f.am.errors?.maxlength">AM maximum length is 8 characters.</mat-error>
                     <mat-error *ngIf="f.am.errors?.minlength">AM minimum length is 5 characters.</mat-error>
                 </mat-form-field>
@@ -165,7 +166,6 @@
             <mat-card-actions>
                 <div
                     *ngIf="!isLoading"
-                    class="form-actions"
                     fxLayout="row"
                     fxLayoutAlign="start">
                         <button 

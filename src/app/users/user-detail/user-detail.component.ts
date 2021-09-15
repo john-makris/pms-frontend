@@ -85,7 +85,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
       );
   }
 
-  onCancel() {
+  onClose() {
     this.router.navigate(['../../'], { relativeTo: this.route });
   }
 

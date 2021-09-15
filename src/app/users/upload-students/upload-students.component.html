@@ -1,0 +1,53 @@
+<section 
+    [ngClass.gt-md]="'max-container'"
+    [ngClass.md]="'max-container'"
+    [ngClass.lt-md]="'max-container'"
+    [ngClass.sm]="'min-container'"
+    [ngClass.lt-sm]="'min-container'"
+    fxLayout>
+        <mat-card
+            class="mat-elevation-z8"
+            fxFlex="19em">
+            <!-- 
+                fxFlex.xs="19em"
+                fxFlex.sm="23.3em" 
+                fxFlex.gt-sm="23.3em"
+             -->
+            <mat-card-title fxLayoutAlign="center">
+                <h1>Upload Students</h1>
+            </mat-card-title>
+            <mat-card-content fxLayout="column" fxLayoutAlign="center" fxLayoutGap="1em">
+
+                <p>Choose csv/excel file:</p>
+                <input type="file" (change)="selectFile($event)" #input>
+                
+                <mat-toolbar *ngIf="currentFile" class="progress-bar" fxFlex>
+                    <mat-progress-bar color="accent" [value]="progress"></mat-progress-bar>
+                    <span class="progress">{{ progress }}%</span>
+                </mat-toolbar>
+
+                <div fxLayoutAlign="center">
+                    <mat-spinner *ngIf="isLoading"></mat-spinner>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div
+                    fxLayout="row"
+                    fxLayoutAlign="start">
+                        <button
+                            *ngIf="selectedFiles"
+                            type="button" 
+                            (click)="upload()"
+                            mat-raised-button color="primary">
+                            Upload
+                        </button>
+                        <button 
+                            type="button" 
+                            mat-button color="primary" 
+                            (click)="onCancel()">
+                            Cancel
+                        </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+</section>

@@ -161,6 +161,11 @@ export class UserListComponent implements OnInit {
               this.paginator.pageIndex = this.currentPage;
               this.refreshTable();
             }
+          } else if(this.currentActivityState.includes('Students')) {
+            console.log("Students created successfully");
+            this.paginator.pageIndex = 0;
+            this.selectedRoleName="ROLE_STUDENT";
+            this.refreshTable();
           } else {
             this.refreshTable();
           }

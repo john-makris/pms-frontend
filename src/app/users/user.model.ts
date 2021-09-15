@@ -12,7 +12,8 @@ export class User {
       private _refreshToken: string,
       private _refreshTokenExpirationDate: Date,
       public department: Department,
-      public status: boolean
+      public status: boolean,
+      public am?: number
     ) {}
   
     get accessToken() {
