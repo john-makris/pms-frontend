@@ -87,7 +87,7 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
                 } else {
                   this.currentDepartmentId = '';
                 }
-                currentUserData.roles.forEach(role => {
+                currentUserData.roles.forEach((role: any) => {
                     this.currentSelectedRoleNames.push(role.name);
                     console.log("Role: "+role.name);
                   });
@@ -146,7 +146,7 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
     console.log("Department ID: "+this.userForm.value.departmentId);
 
     this.isLoading = true;
-    const userData = {
+    const userData: any = {
       am: this.userForm.value.am,
       username: this.userForm.value.username,
       email: this.userForm.value.email,

@@ -43,7 +43,7 @@ export class UserService {
         return this.http.get<UserPageResponseData[]>(API_URL + 'per_department_role/all/paginated_sorted_filtered', { params });
     }
 
-    getUserById(userId: number): Observable<UserResponseData> {
+    getUserById(userId: number): Observable<any> {
         return this.http.get<UserResponseData>(API_URL + userId);
     }
 
@@ -56,7 +56,7 @@ export class UserService {
     }
 
     // userRequestData
-    createUser(userData: any): Observable<User> {
+    createUser(userData: any): Observable<any> {
         return this.http.post<User>(API_URL + 'create/', userData);
     }
 

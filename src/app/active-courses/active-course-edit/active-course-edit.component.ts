@@ -181,7 +181,7 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
     this.teachersSelectDialogService.selectTeachers(this.activeCourseForm.value.teachingStuff);
   }
 
-  onFileSelected() {
+  onFileSelected(event: any) {
     
   }
 

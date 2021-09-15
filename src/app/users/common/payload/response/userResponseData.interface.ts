@@ -1,7 +1,8 @@
 import { Role } from "src/app/users/role.model";
 
 export interface UserResponseData {
-    am?: number;
+    id: number;
+    am: string;
     username: string;
     email: string;
     password: string;

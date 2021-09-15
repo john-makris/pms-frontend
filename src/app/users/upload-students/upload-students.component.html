@@ -22,23 +22,23 @@
                 <input type="file" (change)="selectFile($event)" #input>
                 
                 <mat-toolbar *ngIf="currentFile" class="progress-bar" fxFlex>
-                    <mat-progress-bar color="accent" [value]="progress"></mat-progress-bar>
+                    <mat-progress-bar color="accent" [value]="0"></mat-progress-bar>
                     <span class="progress">{{ progress }}%</span>
                 </mat-toolbar>
 
-                <div fxLayoutAlign="center">
+                <!--<div fxLayoutAlign="center">
                     <mat-spinner *ngIf="isLoading"></mat-spinner>
-                </div>
+                </div>-->
             </mat-card-content>
             <mat-card-actions>
                 <div
                     fxLayout="row"
                     fxLayoutAlign="start">
                         <button
-                            *ngIf="selectedFiles"
-                            type="button" 
+                            mat-raised-button
+                            color="accent"
                             (click)="upload()"
-                            mat-raised-button color="primary">
+                            [disabled]="!selectedFiles">
                             Upload
                         </button>
                         <button 

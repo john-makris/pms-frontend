@@ -15,7 +15,7 @@ import { UserService } from '../user.service';
 })
 export class UserDetailComponent implements OnInit, OnDestroy {
   id!: number;
-  user!: UserResponseData;
+  user!: any;
   ensureDialogStatus!: boolean;
   delimeter: string = ',' + '\xa0';
   isAdmin: boolean = false;
@@ -40,7 +40,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
           .subscribe((currentUserData) => {
             this.user = currentUserData;
             this.currentRoleName = '';
-            this.user.roles.forEach(role => {
+            this.user.roles.forEach((role: any) => {
               if (role.name.includes('ROLE_ADMIN')) {
                 this.currentRoleName = role.name;
               } else if(role.name.includes('ROLE_TEACHER')) {

@@ -13,10 +13,11 @@ import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 })
 export class UploadStudentsComponent implements OnInit {
 
-  selectedFiles?: FileList;
-  currentFile?: File;
-  progress: number = 0;
-  message = '';
+  selectedFiles!: FileList | undefined;
+  currentFile!: File | undefined;
+  progress!: number;
+  message: string = '';
+  status: boolean = true;
 
   @ViewChild('input') input!: ElementRef;
   @ViewChild(MatProgressBar) matProgressBar!: MatProgressBar;
@@ -25,9 +26,12 @@ export class UploadStudentsComponent implements OnInit {
       private uploadService: UploadFilesService,
       private snackbarService: SnackbarService,
       private route: ActivatedRoute,
-      private router: Router) { }
+      private router: Router) {
+      }
 
   ngOnInit(): void {
+    console.log("To see the problem: " + this.progress);
+
   }
 
   selectFile(event: any): void {
