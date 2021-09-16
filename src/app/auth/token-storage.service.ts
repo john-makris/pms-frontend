@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { User } from '../users/user.model';
+import { AuthUser } from '../users/auth-user.model';
 
 const TOKEN_KEY = 'auth-token';
 const REFRESHTOKEN_KEY = 'auth-refreshtoken';
@@ -17,7 +17,7 @@ export class TokenStorageService {
   }
 
   //+
-  public saveToken(token: string, user: User): void {
+  public saveToken(token: string, user: AuthUser): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.setItem(TOKEN_KEY, token);
 
@@ -46,7 +46,7 @@ export class TokenStorageService {
   }
 
   //+
-  public saveUser(user: User): void {
+  public saveUser(user: AuthUser): void {
     localStorage.removeItem(USER_KEY);
     localStorage.setItem(USER_KEY, JSON.stringify(user));
   }

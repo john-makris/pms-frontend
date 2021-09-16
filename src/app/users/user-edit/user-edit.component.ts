@@ -94,6 +94,8 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
                   });
                 this.userForm.setValue({
                   am: currentUserData.am ? currentUserData.am : '',
+                  firstname: currentUserData.firstname,
+                  lastname: currentUserData.lastname,
                   username: currentUserData.username,
                   email: currentUserData.email,
                   password: '',
@@ -113,6 +115,8 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
       this.userForm = this.formBuilder.group({
         am: ['', [Validators.required, Validators.pattern(/^[0-9]\d*$/), Validators.minLength(5), Validators.maxLength(8)]],
         username: ['', [Validators.required, Validators.maxLength(25)]],
+        firstname: ['', [Validators.required, Validators.maxLength(25)]],
+        lastname: ['', [Validators.required, Validators.maxLength(25)]],
         email: ['', [Validators.required, Validators.email, Validators.maxLength(20)]],
         password: ['', [this.isAddMode ? Validators.required : Validators.nullValidator, Validators.minLength(10), Validators.maxLength(18)]],
         selectedRoleNames: this.selectedRoleNames,
@@ -149,6 +153,8 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
     this.isLoading = true;
     const userData: any = {
       am: this.userForm.value.am,
+      firstname: this.userForm.value.firstname,
+      lastname: this.userForm.value.lastname,
       username: this.userForm.value.username,
       email: this.userForm.value.email,
       password: this.userForm.value.password === null ? this.currentUserPassword : this.userForm.value.password,
@@ -162,6 +168,8 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
     if (this.isAddMode) {
       console.log("User Data Add: "+userData);
       console.log(userData.am);
+      console.log(userData.firstname);
+      console.log(userData.lastname);
       console.log(userData.username);
       console.log(userData.email);
       console.log(userData.password);
@@ -172,6 +180,8 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
     } else {
       console.log("User Data Update: ");
       console.log(userData.am);
+      console.log(userData.firstname);
+      console.log(userData.lastname);
       console.log(userData.username);
       console.log(userData.email);
       console.log(userData.password);

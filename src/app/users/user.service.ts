@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { UserPageResponseData } from "./common/payload/response/userPageResponseData.interface";
 import { UserData } from "./common/payload/response/userData.interface";
-import { User } from "./user.model";
+import { AuthUser } from "./auth-user.model";
 import { UserResponseData } from "./common/payload/response/userResponseData.interface";
 import { UserRequestData } from "./common/payload/request/userRequestData.interface";
 
@@ -24,8 +24,8 @@ export class UserService {
 
     constructor(private http: HttpClient) { }
 
-    getAllUsers(): Observable<User[]> {
-        return this.http.get<User[]>(API_URL + 'all');
+    getAllUsers(): Observable<AuthUser[]> {
+        return this.http.get<AuthUser[]>(API_URL + 'all');
     }
 
     getAllPageUsers(params: HttpParams): Observable<any> {
@@ -48,12 +48,12 @@ export class UserService {
         return this.http.get<UserResponseData>(API_URL + userId);
     }
 
-    deleteAllUsers(): Observable<User[]> {
-        return this.http.delete<User[]>(API_URL + 'delete/all');
+    deleteAllUsers(): Observable<AuthUser[]> {
+        return this.http.delete<AuthUser[]>(API_URL + 'delete/all');
     }
 
-    deleteUserById(userId: number): Observable<User> {
-        return this.http.delete<User>(API_URL + 'delete/' + userId);
+    deleteUserById(userId: number): Observable<AuthUser> {
+        return this.http.delete<AuthUser>(API_URL + 'delete/' + userId);
     }
 
     createUser(userData: UserRequestData): Observable<UserRequestData> {

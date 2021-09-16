@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { catchError, tap } from "rxjs/operators";
 import { BehaviorSubject, throwError } from 'rxjs';
 import { Router } from "@angular/router";
-import { User } from "../users/user.model";
+import { AuthUser } from "../users/auth-user.model";
 import { TokenStorageService } from "./token-storage.service";
 import { AuthResponseData } from "./common/response/authResponseData.interface";
 import { TokenRefreshResponse } from "./common/response/tokenRefreshResponse.interface";
@@ -24,7 +24,7 @@ export class AuthService {
 
     logout$ = this.logOutSubject.asObservable();
 
-    user = new BehaviorSubject<User | null>(null);
+    user = new BehaviorSubject<AuthUser | null>(null);
     private tokenExpirationTimer: any;
 
     constructor(private http: HttpClient,
@@ -32,8 +32,10 @@ export class AuthService {
         private tokenStorageService: TokenStorageService,
         private matDialog: MatDialog) {}
 
-    signup(username: string, email: string, password: string) {
+    signup(firstname: string, lastname: string, username: string, email: string, password: string) {
         return this.http.post<string>(AUTH_API + 'signup', {
+            firstname: firstname,
+            lastname: lastname,
             username: username,
             email: email,
             password: password
@@ -51,6 +53,8 @@ export class AuthService {
               console.log(resData.accessTokenExpiryDate);
                 this.handleAuthentication(
                   resData.id,
+                  resData.firstname,
+                  resData.lastname,
                   resData.username,
                   resData.email,
                   resData.roles,
@@ -109,8 +113,10 @@ export class AuthService {
         console.log("accessTokenExpirationDate :" + accessTokenExpirationDate);
         console.log("CURRENT TIME :", new Date().getTime());
 
-        const user = new User(
+        const user = new AuthUser(
             userData.id,
+            userData.firstname,
+            userData.lastname,
             userData.username,
             userData.email,
             userData.roles,
@@ -140,8 +146,10 @@ export class AuthService {
             return;
         }
         
-        const loadedUser = new User(
+        const loadedUser = new AuthUser(
           userData.id,
+          userData.firstname,
+          userData.lastname,
           userData.username,
           userData.email,
           userData.roles,
@@ -198,6 +206,8 @@ export class AuthService {
 
     private handleAuthentication(
         id: number,
+        firstname: string,
+        lastname: string,
         username: string,
         email: string,
         roles: Array<string>,
@@ -220,8 +230,10 @@ export class AuthService {
       console.log("accessTokenExpirationDate :" + accessTokenExpirationDate);
       console.log("CURRENT TIME :", new Date().getTime());
 
-      const user = new User(
+      const user = new AuthUser(
         id,
+        firstname,
+        lastname,
         username,
         email,
         roles,

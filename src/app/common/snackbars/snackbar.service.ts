@@ -11,11 +11,11 @@ export class SnackbarService {
     constructor(private snackbar: MatSnackBar) { }
 
     success(_message: string) {
-        this.showSnackbar(_message, 'success', 1000);
+        this.showSnackbar(_message, 'success', 3000);
     }
 
     error(_message: string) {
-        this.showSnackbar(_message, 'danger', 3000);
+        this.showSnackbar(_message, 'danger', 15000);
     }
 
     info(_message: string) {

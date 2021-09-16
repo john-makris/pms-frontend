@@ -23,6 +23,10 @@ export class SignupComponent implements OnInit {
 
   ngOnInit(): void {
     this.signupForm = new FormGroup({
+      firstname: new FormControl('', { validators: [Validators.required, Validators.maxLength(25)]
+      }),      
+      lastname: new FormControl('', { validators: [Validators.required, Validators.maxLength(25)]
+      }),
       username: new FormControl('', { validators: [Validators.required, Validators.maxLength(25)]
       }),
       email: new FormControl('', { validators: [Validators.required, Validators.email, Validators.maxLength(20)]
@@ -37,12 +41,14 @@ export class SignupComponent implements OnInit {
     if(this.signupForm.invalid) {
       return;
     }
+    const firstname = this.signupForm.value.firstname;
+    const lastname = this.signupForm.value.lastname;
     const username = this.signupForm.value.username;
     const email = this.signupForm.value.email;
     const password = this.signupForm.value.password;
     this.isLoading = true;
     
-    this.authService.signup(username, email, password).subscribe(
+    this.authService.signup(firstname, lastname, username, email, password).subscribe(
       data => {
         console.log(data);
         this.isSuccessful = true;
@@ -52,10 +58,10 @@ export class SignupComponent implements OnInit {
         this.onLogin();
       },
       err => {
+        this.isLoading = false;
         console.log(err);
         this.errorMessage = err.error.message;
         this.isSignUpFailed = true;
-        this.isLoading = false;
       }
     );
   }

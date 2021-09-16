@@ -23,6 +23,86 @@
             <mat-card-content fxLayout="column" fxLayout.sm="row wrap" fxLayout.gt-sm="row wrap"
             fxLayoutAlign="center">
 
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>First name</mat-label>
+                    <input 
+                        type="firstname" 
+                        matInput 
+                        placeholder="Firstname"
+                        formControlName="firstname">
+                    <div matSuffix>
+                        <mat-icon>code</mat-icon>
+                    </div>
+                    <mat-hint>Please enter first name.</mat-hint>
+                    <mat-error *ngIf="f.firstname.errors?.required">Missing first name.</mat-error>
+                    <mat-error *ngIf="f.firstname.errors?.maxlength">First name maximum length is 25 characters.</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Last name</mat-label>
+                    <input 
+                        type="lastname" 
+                        matInput 
+                        placeholder="Lastname"
+                        formControlName="lastname">
+                    <div matSuffix>
+                        <mat-icon>code</mat-icon>
+                    </div>
+                    <mat-hint>Please enter lastname.</mat-hint>
+                    <mat-error *ngIf="f.lastname.errors?.required">Missing last name.</mat-error>
+                    <mat-error *ngIf="f.lastname.errors?.maxlength">Last name maximum length is 25 characters.</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Username</mat-label>
+                    <input 
+                        type="username" 
+                        matInput 
+                        placeholder="Username"
+                        formControlName="username">
+                    <div matSuffix>
+                        <mat-icon>person</mat-icon>
+                    </div>
+                    <mat-hint>Please enter username.</mat-hint>
+                    <mat-error *ngIf="f.username.errors?.required">Missing username.</mat-error>
+                    <mat-error *ngIf="f.username.errors?.maxlength">Username maximum length is 25 characters.</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Email</mat-label>
+                    <input 
+                        type="email"
+                        matInput 
+                        placeholder="Email"
+                        formControlName="email">
+                    <div matSuffix>
+                        <mat-icon>email</mat-icon>
+                    </div>
+                    <mat-hint>Please enter email.</mat-hint>
+                    <mat-error *ngIf="f.email.errors?.required">Missing email.</mat-error>
+                    <mat-error *ngIf="f.email.errors?.maxlength">Email maximum length is 20 characters.</mat-error>
+                    <mat-error *ngIf="f.email.errors?.email">Invalid email.</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Password</mat-label>
+                    <input 
+                        type="password" 
+                        matInput [type]="hide ? 'password' : 'text'"
+                        placeholder="Password"
+                        formControlName="password">
+                        <mat-hint align="end" >{{ f.password.value?.length }} / {{ f.password.value?.length > 10 ? '18' : 10 }}</mat-hint>
+                        <mat-error *ngIf="f.password.errors?.minlength">Password has to be at least 10 characters long.</mat-error>
+                        <mat-error *ngIf="f.password.errors?.maxlength">Password has to be the most 18 characters long.</mat-error>
+                    <span fxLayout="row" matSuffix>
+                        <button type="button" mat-icon-button (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                        <mat-icon style="margin-top:'5px'">lock</mat-icon>
+                    </span>
+                    <mat-hint>Please enter password.</mat-hint>
+                </mat-form-field>
+
                 <mat-form-field fxFlex
                     appearance="outline" *ngIf="!isStudent || isAddMode">
                     <mat-label>Roles</mat-label>
@@ -75,56 +155,6 @@
                     <mat-error *ngIf="f.am.errors?.pattern">AM must contain only integer numbers</mat-error>
                     <mat-error *ngIf="f.am.errors?.maxlength">AM maximum length is 8 characters.</mat-error>
                     <mat-error *ngIf="f.am.errors?.minlength">AM minimum length is 5 characters.</mat-error>
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Username</mat-label>
-                    <input 
-                        type="username" 
-                        matInput 
-                        placeholder="Username"
-                        formControlName="username">
-                    <div matSuffix>
-                        <mat-icon>person</mat-icon>
-                    </div>
-                    <mat-hint>Please enter username.</mat-hint>
-                    <mat-error *ngIf="f.username.errors?.required">Missing username.</mat-error>
-                    <mat-error *ngIf="f.username.errors?.maxlength">Username maximum length is 25 characters.</mat-error>
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Email</mat-label>
-                    <input 
-                        type="email"
-                        matInput 
-                        placeholder="Email"
-                        formControlName="email">
-                    <div matSuffix>
-                        <mat-icon>email</mat-icon>
-                    </div>
-                    <mat-hint>Please enter email.</mat-hint>
-                    <mat-error *ngIf="f.email.errors?.required">Missing email.</mat-error>
-                    <mat-error *ngIf="f.email.errors?.maxlength">Email maximum length is 20 characters.</mat-error>
-                    <mat-error *ngIf="f.email.errors?.email">Invalid email.</mat-error>
-                </mat-form-field>
-
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Password</mat-label>
-                    <input 
-                        type="password" 
-                        matInput [type]="hide ? 'password' : 'text'"
-                        placeholder="Password"
-                        formControlName="password">
-                        <mat-hint align="end" >{{ f.password.value?.length }} / {{ f.password.value?.length > 10 ? '18' : 10 }}</mat-hint>
-                        <mat-error *ngIf="f.password.errors?.minlength">Password has to be at least 10 characters long.</mat-error>
-                        <mat-error *ngIf="f.password.errors?.maxlength">Password has to be the most 18 characters long.</mat-error>
-                    <span fxLayout="row" matSuffix>
-                        <button type="button" mat-icon-button (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-                            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                        </button>
-                        <mat-icon style="margin-top:'5px'">lock</mat-icon>
-                    </span>
-                    <mat-hint>Please enter password.</mat-hint>
                 </mat-form-field>
 
                 <!--*ngIf="isAddMode && allDepartments"-->

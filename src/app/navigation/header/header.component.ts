@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { User } from 'src/app/users/user.model';
+import { AuthUser } from 'src/app/users/auth-user.model';
 
 @Component({
   selector: 'app-header',
@@ -11,7 +11,7 @@ import { User } from 'src/app/users/user.model';
 export class HeaderComponent implements OnInit, OnDestroy {
   @Output() sidenavToggle = new EventEmitter<void>();
   isAuth: boolean = false;
-  user!: User;
+  user!: AuthUser;
 
   private roles!: string[];
   showAdminFeatures = false;

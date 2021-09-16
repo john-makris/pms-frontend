@@ -1,9 +1,11 @@
 import { Department } from "../departments/department.model";
 
-export class User {
+export class AuthUser {
 
     constructor(
       public id: number,
+      public firstname: string,
+      public lastname: string,
       public username: string,
       public email: string,
       public roles: Array<string>,
