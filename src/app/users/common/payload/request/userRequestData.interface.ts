@@ -5,6 +5,6 @@ export interface UserRequestData {
     email: string;
     roles: Array<string>;
     password: string;
-    am?: number;
-    department?: Department;
+    am: string;
+    department: Department;
 }

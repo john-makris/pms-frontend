@@ -132,6 +132,7 @@ export class UserListComponent implements OnInit {
       
       this.snackbarSubscription = this.snackbarService.snackbarState.subscribe(
         (state: SnackbarData) => {
+          this.selectedRoleName = "";
           this.currentActivityState = state.message;
           if(this.currentActivityState.includes('added')) {
             //console.log('Current State: '+this.currentState);
@@ -166,6 +167,7 @@ export class UserListComponent implements OnInit {
             this.paginator.pageIndex = 0;
             this.selectedRoleName="ROLE_STUDENT";
             this.refreshTable();
+            this.selectedRoleName = "";
           } else {
             this.refreshTable();
           }

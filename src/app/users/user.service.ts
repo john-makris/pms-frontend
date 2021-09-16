@@ -5,6 +5,7 @@ import { UserPageResponseData } from "./common/payload/response/userPageResponse
 import { UserData } from "./common/payload/response/userData.interface";
 import { User } from "./user.model";
 import { UserResponseData } from "./common/payload/response/userResponseData.interface";
+import { UserRequestData } from "./common/payload/request/userRequestData.interface";
 
 const API_URL = 'http://localhost:8080/pms/users/';
 
@@ -28,22 +29,22 @@ export class UserService {
     }
 
     getAllPageUsers(params: HttpParams): Observable<any> {
-        return this.http.get<UserPageResponseData[]>(API_URL + 'all/sorted', { params });
+        return this.http.get<UserPageResponseData>(API_URL + 'all/sorted', { params });
     }
 
     getAllPageUsersByDepartmentId(params: HttpParams): Observable<any> {
-        return this.http.get<UserPageResponseData[]>(API_URL + 'per_department/all/paginated_sorted_filtered', { params });
+        return this.http.get<UserPageResponseData>(API_URL + 'per_department/all/paginated_sorted_filtered', { params });
     }
 
     getAllPageUsersByRole(params: HttpParams): Observable<any> {
-        return this.http.get<UserPageResponseData[]>(API_URL + 'per_role/all/paginated_sorted_filtered', { params });
+        return this.http.get<UserPageResponseData>(API_URL + 'per_role/all/paginated_sorted_filtered', { params });
     }
 
     getAllPageUsersByDepartmentIdAndRole(params: HttpParams): Observable<any> {
-        return this.http.get<UserPageResponseData[]>(API_URL + 'per_department_role/all/paginated_sorted_filtered', { params });
+        return this.http.get<UserPageResponseData>(API_URL + 'per_department_role/all/paginated_sorted_filtered', { params });
     }
 
-    getUserById(userId: number): Observable<any> {
+    getUserById(userId: number): Observable<UserResponseData> {
         return this.http.get<UserResponseData>(API_URL + userId);
     }
 
@@ -55,13 +56,11 @@ export class UserService {
         return this.http.delete<User>(API_URL + 'delete/' + userId);
     }
 
-    // userRequestData
-    createUser(userData: any): Observable<any> {
-        return this.http.post<User>(API_URL + 'create/', userData);
+    createUser(userData: UserRequestData): Observable<UserRequestData> {
+        return this.http.post<UserRequestData>(API_URL + 'create/', userData);
     }
 
-    // userRequestData
-    updateUser(userId: number, userData: any): Observable<any> {
+    updateUser(userId: number, userData: UserRequestData): Observable<any> {
         return this.http.put(API_URL + 'update/' + userId, userData);
     }
 }

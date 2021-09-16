@@ -9,6 +9,6 @@ export interface UserResponseData {
     roles: Array<Role>;
     department: {
         id: number;
-    }
+    } | null;
     status: boolean;
 }

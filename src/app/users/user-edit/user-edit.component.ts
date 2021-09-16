@@ -7,6 +7,7 @@ import { first } from 'rxjs/operators';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { Department } from 'src/app/departments/department.model';
 import { DepartmentService } from 'src/app/departments/department.service';
+import { UserRequestData } from '../common/payload/request/userRequestData.interface';
 import { UserResponseData } from '../common/payload/response/userResponseData.interface';
 import { RoleService } from '../role.service';
 import { UserService } from '../user.service';
@@ -182,7 +183,7 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
     }
   }
 
-  private createUser(userData: UserResponseData) {
+  private createUser(userData: UserRequestData) {
     this.userService.createUser(userData)
       .pipe(first())
       .subscribe(() => {
@@ -196,7 +197,7 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
       .add(() => { this.isLoading = false; });
   }
 
-  private updateUser(userData: any) {
+  private updateUser(userData: UserRequestData) {
     this.userService.updateUser(this.id, userData)
       .pipe(first())
       .subscribe(() => {
