@@ -92,7 +92,7 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
                     console.log("Role: "+role.name);
                   });
                 this.userForm.setValue({
-                  am: currentUserData.am ? currentUserData.am.toString() : '',
+                  am: currentUserData.am ? currentUserData.am : '',
                   username: currentUserData.username,
                   email: currentUserData.email,
                   password: '',

@@ -15,7 +15,7 @@ export class UploadStudentsComponent implements OnInit {
 
   selectedFiles!: FileList | undefined;
   currentFile!: File | undefined;
-  progress!: number;
+  progress: number = 0;
   message: string = '';
   status: boolean = true;
 
@@ -51,7 +51,7 @@ export class UploadStudentsComponent implements OnInit {
           (event: any) => {
             if (event.type === HttpEventType.UploadProgress) {
               console.log("PROGRESS !!"+this.progress);
-              //this.progress = Math.round(100 * event.loaded / event.total);
+              this.progress = Math.round(100 * event.loaded / event.total);
               console.log("PROGRESS: "+this.progress);
             } else if (event instanceof HttpResponse) {
               setTimeout(()=>{

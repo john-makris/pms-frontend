@@ -21,8 +21,8 @@
                 <p>Choose csv/excel file:</p>
                 <input type="file" (change)="selectFile($event)" #input>
                 
-                <mat-toolbar *ngIf="currentFile" class="progress-bar" fxFlex>
-                    <mat-progress-bar color="accent" [value]="0"></mat-progress-bar>
+                <mat-toolbar *ngIf="currentFile" class="progress-bar">
+                    <mat-progress-bar color="accent" [value]="progress"></mat-progress-bar>
                     <span class="progress">{{ progress }}%</span>
                 </mat-toolbar>
 
@@ -30,13 +30,13 @@
                     <mat-spinner *ngIf="isLoading"></mat-spinner>
                 </div>-->
             </mat-card-content>
-            <mat-card-actions>
+            <mat-card-actions *ngIf="progress !== undefined">
                 <div
                     fxLayout="row"
                     fxLayoutAlign="start">
                         <button
                             mat-raised-button
-                            color="accent"
+                            color="primary"
                             (click)="upload()"
                             [disabled]="!selectedFiles">
                             Upload
