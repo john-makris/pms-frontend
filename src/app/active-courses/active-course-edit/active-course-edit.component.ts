@@ -112,11 +112,11 @@ export class ActiveCourseEditComponent implements OnInit, OnDestroy {
             this.activeCourseForm.patchValue({teachingStuff: _teachers});
             this.currentTeachingStuff = _teachers;
           } else {
-            //if (this.f.teachingStuff.touched) {
+            if (!this.currentTeachingStuff) {
               this.f.teachingStuff.setErrors({
                 'required': true
               });
-            //}
+            }
           }
       });
   }

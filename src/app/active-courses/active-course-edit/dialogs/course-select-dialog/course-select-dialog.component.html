@@ -68,7 +68,8 @@
     </mat-dialog-content>
 
     <mat-dialog-actions fxLayoutGap="0.5em">
-        <button 
+        <button
+            *ngIf="dialogStarted"
             mat-raised-button
             [disabled]="!isRowSelected"
             color="primary" 

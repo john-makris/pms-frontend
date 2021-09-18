@@ -18,6 +18,7 @@ import { Course } from 'src/app/courses/course.model';
 })
 export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDestroy {
   
+  dialogStarted: boolean = true;
   dataSource!: CoursesDataSource;
 
   totalItems: number = 0;

@@ -8,31 +8,16 @@
         <mat-card
             class="mat-elevation-z8"
             fxFlex.xs="19em"
-            fxFlex="22em">
+            fxFlex.sm="40em" 
+            fxFlex.gt-sm="40em">
             <mat-card-title fxLayoutAlign="center">
                 <h1 *ngIf="isAddMode">Add Active Course</h1>
                 <h1 *ngIf="!isAddMode">Edit Active Course</h1>
             </mat-card-title>
-            <mat-card-content fxLayout="column" 
+            <mat-card-content fxLayout="column" fxLayout.sm="row wrap" fxLayout.gt-sm="row wrap"
             fxLayoutAlign="center">
 
-                <mat-form-field appearance="outline">
-                    <mat-label> Select Academic Year</mat-label>
-                    <mat-select 
-                        formControlName="academicYear"
-                        [(value)]="selectedAcademicYear">
-                        <mat-option>None</mat-option>
-                        <mat-option value="2020 - 2021">2020 - 2021</mat-option>
-                        <mat-option value="2021 - 2022">2021 - 2022</mat-option>
-                      </mat-select>
-                    <div matSuffix>
-                        <mat-icon>date_range</mat-icon>
-                    </div>
-                    <mat-hint>Select Academic Year.</mat-hint>
-                    <mat-error *ngIf="f.academicYear.errors?.required">Missing Academic Year</mat-error>
-                </mat-form-field>
-
-                <mat-form-field 
+                <mat-form-field fxFlex
                     appearance="outline">
                     <mat-label>Max Theories</mat-label>
                     <input 
@@ -51,7 +36,7 @@
                     <mat-error *ngIf="f.maxTheoryLectures.errors?.required">Missing Theories</mat-error>
                 </mat-form-field>
 
-                <mat-form-field 
+                <mat-form-field fxFlex
                     appearance="outline">
                     <mat-label>Max Labs</mat-label>
                     <input 
@@ -70,57 +55,83 @@
                     <mat-error *ngIf="f.maxLabLectures.errors?.required">Missing Labs</mat-error>
                 </mat-form-field>
 
-                <div 
-                    fxLayoutGap="1em"
-                    fxLayout="column">
-                    <mat-radio-group
-                        formControlName="status">
-                        <div class="radio-container">
-                            <mat-radio-button [value]=true>Active</mat-radio-button>
-                            <mat-radio-button [value]=false>Inactive</mat-radio-button>
-                        </div>
-                    </mat-radio-group>
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label> Select Academic Year</mat-label>
+                    <mat-select 
+                        formControlName="academicYear"
+                        [(value)]="selectedAcademicYear">
+                        <mat-option>None</mat-option>
+                        <mat-option value="2020 - 2021">2020 - 2021</mat-option>
+                        <mat-option value="2021 - 2022">2021 - 2022</mat-option>
+                      </mat-select>
+                    <div matSuffix>
+                        <mat-icon>date_range</mat-icon>
+                    </div>
+                    <mat-hint>Select Academic Year.</mat-hint>
+                    <mat-error *ngIf="f.academicYear.errors?.required">Missing Academic Year</mat-error>
+                </mat-form-field>
+
+
+                <div fxLayout="column" fxFlex
+                    class="non-form-field-course">
                     <!-- Course -->
                     <button
-                        mat-raised-button color="primary"
+                        mat-stroked-button color="primary"
                         (click)="selectCourse()">
                         Choose Course</button>
                         <mat-label *ngIf="currentCourse">Selected Course: {{ currentCourse.name }}</mat-label>
                         <mat-error *ngIf="f.courseId.errors?.required">Select Course</mat-error>
+                </div>
+
+                <div fxLayout fxLayout.lt-sm="column" fxFlexFill
+                    class="non-form-field-students">
+                    <!-- Students -->
+                    <div fxFlex class="aligner">
+                        <mat-label><strong>Upload csv/excel of Students:</strong></mat-label>
+                    </div>
+                    <div fxFlex class="aligner">
+                        <input 
+                        (change)="onFileSelected($event)" 
+                        #fileInput type="file">
+                    </div>
+                </div>
+
+                <div fxLayout="column" fxFlexFill
+                    class="non-form-field-teacher">
                     <!-- Teachers -->
                     <button
-                        mat-raised-button color="primary"
+                        class="aligner"
+                        mat-stroked-button color="primary"
                         (click)="selectTeachers()">
                         Choose Teacher(s)</button>
                         <!-- <mat-label *ngIf="currentCourse">Selected Course: {{ currentCourse.name }}</mat-label> -->
-                        <mat-error *ngIf="f.teachingStuff.errors?.required">Select Teacher(s)</mat-error>
-                        <mat-accordion *ngIf="currentTeachingStuff">
-                            <mat-expansion-panel 
-                                (opened)="panelOpenState = true"
-                                (closed)="panelOpenState = false">
-                                <mat-expansion-panel-header>
-                                <mat-panel-title>
-                                    Selected Teachers
-                                </mat-panel-title>
-                                </mat-expansion-panel-header>
-                                <hr>
-                                <div *ngFor="let teacher of currentTeachingStuff">
-                                    <p>{{ teacher.username }}</p>
-                                </div>
-                            </mat-expansion-panel>
-                          </mat-accordion>
-                          
-                    <!-- Students -->
-                    <button 
-                        type="button" 
-                        mat-raised-button 
-                        (click)="fileInput.click()">Choose File
-                    </button>
-                    <input 
-                        hidden 
-                        (change)="onFileSelected($event)" 
-                        #fileInput type="file">
+                        <mat-error class="aligner" *ngIf="f.teachingStuff.errors?.required">Select Teacher(s)</mat-error>
+                    
+                    <mat-accordion class="aligner"
+                        *ngIf="currentTeachingStuff">
+                        <mat-expansion-panel 
+                            (opened)="panelOpenState = true"
+                            (closed)="panelOpenState = false">
+                            <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                Selected Teachers
+                            </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <hr>
+                            <div *ngFor="let teacher of currentTeachingStuff">
+                                <p>{{ teacher.username }}</p>
+                            </div>
+                        </mat-expansion-panel>
+                    </mat-accordion>
                 </div>
+
+                <mat-radio-group fxFlex
+                    formControlName="status">
+                    <div class="radio-container">
+                        <mat-radio-button [value]=true>Active</mat-radio-button>
+                        <mat-radio-button [value]=false>Inactive</mat-radio-button>
+                    </div>
+                </mat-radio-group>
 
                 <div fxLayoutAlign="center">
                     <mat-spinner *ngIf="isLoading"></mat-spinner>

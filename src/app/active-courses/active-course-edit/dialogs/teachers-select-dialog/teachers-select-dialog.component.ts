@@ -17,7 +17,8 @@ import { UserService } from 'src/app/users/user.service';
   styleUrls: ['./teachers-select-dialog.component.css']
 })
 export class TeachersSelectDialogComponent implements OnInit {
-
+  
+  dialogStarted: boolean = true;
   isLoading: boolean = false;
   submitted: boolean = false;
   

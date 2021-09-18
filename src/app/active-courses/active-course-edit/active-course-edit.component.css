@@ -14,6 +14,26 @@
     padding-right: 0.25em;
 }
 
+.non-form-field-course {
+    margin-top: 1em;
+    margin-left: 0.4em;
+    margin-right: 0.4em;
+}
+
+.non-form-field-teacher {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.non-form-field-students {
+    margin-top: 1em;
+}
+
+.aligner {
+    margin-left: 0.4em;
+    margin-right: 0.4em;
+}
+
 mat-form-field {
     padding: 0.35em;
 }
