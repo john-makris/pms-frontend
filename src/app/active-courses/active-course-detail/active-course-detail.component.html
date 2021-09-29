@@ -19,16 +19,43 @@
                     {{ activeCourse.course?.name }}
                 </div>
                 <div>
-                    <label><strong>Semester:</strong></label>
-                    {{ activeCourse.course?.semester }}
-                </div>
-                <div>
                     <label><strong>Department:</strong></label>
                     {{ activeCourse.course.department?.name }}
                 </div>
                 <div>
                     <label><strong>Academic Year:</strong></label>
                     {{ activeCourse?.academicYear }}
+                </div>
+                <div>
+                    <label><strong>Semester:</strong></label>
+                    {{ activeCourse.course?.semester }}
+                </div>
+
+                <div>
+                    <label><strong>Max Theory Lectures:</strong></label>
+                    {{ activeCourse?.maxTheoryLectures }}
+                </div>
+                <div>
+                    <label><strong>Max Lab Lectures:</strong></label>
+                    {{ activeCourse?.maxLabLectures }}
+                </div>
+                <div fxLayout="row wrap">
+                    <label><strong>{{ "Teaching Stuff:"}}{{ space }}</strong></label>
+                    <span
+                        *ngFor="let teacher of activeCourse.teachingStuff; let i = index">
+                        <span>
+                            <span>{{ teacher.firstname }} {{ teacher.lastname }}</span>
+                            <span *ngIf="i+1 > 0 && i+1 < activeCourse.teachingStuff.length">{{delimeter}}</span>
+                        </span>
+                    </span>
+                </div>
+                <div>
+                    <label><strong>Students: </strong></label>
+                    <button mat-stroked-button color="primary">Preview</button>
+                </div>
+                <div>
+                    <label><strong>Status:</strong></label>
+                    {{ activeCourse?.status === true ? 'active' : 'inactive' }}
                 </div>
             </mat-card-content>
             <mat-card-actions>

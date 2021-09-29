@@ -3,6 +3,8 @@ import { Role } from "src/app/users/role.model";
 
 export interface UserData {
     id: number,
+    firstname: string,
+    lastname: string,
     username: string,
     email: string,
     roles: Array<Role>,

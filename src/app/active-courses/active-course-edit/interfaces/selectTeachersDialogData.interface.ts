@@ -1,5 +1,5 @@
-import { User } from "src/app/users/user.model";
+import { UserData } from "src/app/users/common/payload/response/userData.interface";
 
 export interface selectTeachersDialogData {
-    teachingStuff: User[]
+    teachingStuff: UserData[];
 }

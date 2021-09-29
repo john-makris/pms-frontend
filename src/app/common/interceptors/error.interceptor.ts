@@ -9,16 +9,19 @@ export class ErrorInterceptor implements HttpInterceptor {
     constructor(private snackbarService: SnackbarService) {}
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        return next.handle(request).pipe(catchError(err => {
+        console.log("Eimai mesa ston interceptor");
+        return next.handle(request).pipe(catchError((err: HttpErrorResponse) => {
+            console.log("Eimai mesa sto return tou interceptor");
             if (err instanceof HttpErrorResponse && !request.url.includes('auth/signin') && err.status === 401) {
                 console.log("Error Interceptor");
                 return next.handle(request);
             } else {
+                console.log("Eimai mesa sto Else tou error interceptor");
                 const error = err.error?.message || err.statusText;
                 // best solution is to output error
                 this.snackbarService.error(err.error.message);
                 console.error(err);
-                console.log("BGHKE APO TO IF");
+                console.log("BGHKE APO TO ELSE");
                 return throwError(error);
             }
         }));

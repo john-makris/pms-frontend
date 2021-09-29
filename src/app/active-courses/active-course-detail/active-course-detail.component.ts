@@ -18,6 +18,9 @@ export class ActiveCourseDetailComponent implements OnInit, OnDestroy {
   private ensureDialogSubscription!: Subscription;
   ensureDialogStatus!: boolean;
 
+  space: string = '\xa0';
+  delimeter: string = ',' + '\xa0';
+
   constructor(private route: ActivatedRoute,
     private router: Router,
     private activeCourseService: ActiveCourseService,
@@ -29,7 +32,7 @@ export class ActiveCourseDetailComponent implements OnInit, OnDestroy {
       .subscribe(
         (params: Params) => {
           this.id = params['id'];
-          this.activeCourseService.getActiveCourseByCourseId(this.id)
+          this.activeCourseService.getActiveCourseById(this.id)
           .pipe(first())
           .subscribe((x: ActiveCourse) => {
             this.activeCourse = x;
@@ -44,7 +47,7 @@ export class ActiveCourseDetailComponent implements OnInit, OnDestroy {
 
   deleteActiveCourse(id: number) {
     if (!this.activeCourse) return;
-    this.ensureDialogService.openDialog('will be Deleted', this.activeCourse.course.name);
+    this.ensureDialogService.openDialog('will be Deleted', 'Active Course '+this.activeCourse.course.name);
     this.ensureDialogSubscription = this.ensureDialogService
       .ensureDialogState
       .pipe(first())
@@ -52,13 +55,13 @@ export class ActiveCourseDetailComponent implements OnInit, OnDestroy {
         (state: boolean) => {
           this.ensureDialogStatus = state;
           if (this.ensureDialogStatus) {
-            this.activeCourse.isDeleting = true;
+            //this.activeCourse.isDeleting = true;
             console.log("Hallo "+this.ensureDialogStatus);
             this.activeCourseService.deleteActiveCourseById(id)
                 .pipe(first())
                 .subscribe(() => {
-                  this.activeCourse.isDeleting = false;
-                  this.snackbarService.success('Course deleted');
+                  //this.activeCourse.isDeleting = false;
+                  this.snackbarService.success('Active Course deleted');
                   this.router.navigate(['../../'], { relativeTo: this.route });
                 });
           }

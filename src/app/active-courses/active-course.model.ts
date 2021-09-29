@@ -1,5 +1,6 @@
 import { Course } from "../courses/course.model";
 import { AuthUser } from "../users/auth-user.model";
+import { UserData } from "../users/common/payload/response/userData.interface";
 
 export class ActiveCourse {
     
@@ -8,10 +9,9 @@ export class ActiveCourse {
         public academicYear: string,
         public maxTheoryLectures: number,
         public maxLabLectures: number,
-        public teachingStuff: AuthUser[],
-        public students: AuthUser[],
-        public course: Course,
         public status: boolean,
-        public isDeleting?: boolean
+        public teachingStuff: UserData[],
+        public students: UserData[],
+        public course: Course,
     ) {}
 }

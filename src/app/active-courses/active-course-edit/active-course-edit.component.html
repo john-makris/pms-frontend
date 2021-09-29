@@ -76,23 +76,36 @@
                     class="non-form-field-course">
                     <!-- Course -->
                     <button
+                    [class.border-invalid]="f.courseId.invalid && f.courseId.touched"
+                        [ngClass.gt-xs]="{'course-button': true}"
+                        type="button"
                         mat-stroked-button color="primary"
                         (click)="selectCourse()">
                         Choose Course</button>
                         <mat-label *ngIf="currentCourse">Selected Course: {{ currentCourse.name }}</mat-label>
-                        <mat-error *ngIf="f.courseId.errors?.required">Select Course</mat-error>
+                        <mat-error class="validation-text" *ngIf="f.courseId.errors?.required && f.courseId.touched">Missing Course</mat-error>
                 </div>
 
-                <div fxLayout fxLayout.lt-sm="column" fxFlexFill
-                    class="non-form-field-students">
+                <div fxLayout fxLayout.lt-sm="column" fxFlex
+                    class="non-form-field-students" fxLayoutGap.lt-sm="0.5em">
                     <!-- Students -->
                     <div fxFlex class="aligner">
-                        <mat-label><strong>Upload csv/excel of Students:</strong></mat-label>
+                        <mat-label
+                        ><strong>Upload csv/excel of Students:</strong></mat-label>
                     </div>
                     <div fxFlex class="aligner">
-                        <input 
-                        (change)="onFileSelected($event)" 
+                        <input
+                        [ngClass]="{'color-invalid': f.students.invalid && f.students.touched}"
+                        (focus)="onTouched()"
+                        (click)="state=true"
+                        (change)="selectStudentsFile($event)"
                         #fileInput type="file">
+
+                        <div class="validation-text">
+                            <mat-error *ngIf="f.students.errors?.requiredFileTypes"> Wrong file type: csv/excel required</mat-error>
+                            <mat-error *ngIf="f.students.errors?.inappropriate && f.students.touched">Inappropriate file</mat-error>
+                            <mat-error *ngIf="f.students.errors?.required && f.students.touched">Missing file</mat-error>
+                        </div>
                     </div>
                 </div>
 
@@ -100,12 +113,13 @@
                     class="non-form-field-teacher">
                     <!-- Teachers -->
                     <button
+                        [ngClass]="{'border-invalid': f.teachingStuff.invalid && f.teachingStuff.touched}"
+                        type="button"
                         class="aligner"
                         mat-stroked-button color="primary"
                         (click)="selectTeachers()">
                         Choose Teacher(s)</button>
-                        <!-- <mat-label *ngIf="currentCourse">Selected Course: {{ currentCourse.name }}</mat-label> -->
-                        <mat-error class="aligner" *ngIf="f.teachingStuff.errors?.required">Select Teacher(s)</mat-error>
+                        <mat-error class="aligner" class="validation-text" *ngIf="f.teachingStuff.errors?.required && f.teachingStuff.touched">Missing Teacher(s)</mat-error>
                     
                     <mat-accordion class="aligner"
                         *ngIf="currentTeachingStuff">
@@ -118,8 +132,14 @@
                             </mat-panel-title>
                             </mat-expansion-panel-header>
                             <hr>
-                            <div *ngFor="let teacher of currentTeachingStuff">
-                                <p>{{ teacher.username }}</p>
+                            <div fxLayout fxLayout.lt-sm="column">
+                                <span
+                                *ngFor="let teacher of currentTeachingStuff; let i = index">
+                                    <span>
+                                        <span>{{ teacher.firstname }} {{ teacher.lastname }}</span>
+                                        <span *ngIf="i+1 > 0 && i+1 < currentTeachingStuff.length">{{delimeter}}</span>
+                                    </span>
+                                </span>
                             </div>
                         </mat-expansion-panel>
                     </mat-accordion>

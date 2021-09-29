@@ -5,9 +5,6 @@ export interface ActiveCourseRequestData {
     maxTheoryLectures: number,
     maxLabLectures: number,
     teachingStuff: UserData[],
-    students: UserData[],
     status: boolean,
-    course: {
-        id: number
-    }
+    courseId: number
 }

@@ -22,13 +22,13 @@ export class AuthInterceptorService implements HttpInterceptor {
         if (token != null) {
             authReq = this.addTokenHeader(req, token);
         }
-
+        console.log("Mesa ston Auth interceptor");
         return next.handle(authReq).pipe(catchError(error => {
             if (error instanceof HttpErrorResponse && !authReq.url.includes('auth/signin') && error.status === 401) {
-                console.log("Kanonikos Interceptor");
-                return this.handle401Error(authReq, next);
+              console.log("Mesa sto if tou Auth interceptor");
+              return this.handle401Error(authReq, next);
             }
-
+            console.log("Ekso apo to if tou Auth interceptor");
             return throwError(error);        
         }));
     }

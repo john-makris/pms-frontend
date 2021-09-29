@@ -15,9 +15,17 @@
 }
 
 .non-form-field-course {
-    margin-top: 1em;
+    margin-top: 0.6em;
     margin-left: 0.4em;
     margin-right: 0.4em;
+}
+
+.border-invalid {
+  border: 0.15em solid #f00;
+}
+
+.color-invalid {
+    color: #f00;
 }
 
 .non-form-field-teacher {
@@ -29,9 +37,19 @@
     margin-top: 1em;
 }
 
+.course-button {
+    line-height: 3.55em;
+}
+
+.validation-text {
+    font-size: 75%;
+    margin-top: 0.2em;
+    margin-left: 4%;
+}
+
 .aligner {
-    margin-left: 0.4em;
-    margin-right: 0.4em;
+    margin-left: 0.42em;
+    margin-right: 0.42em;
 }
 
 mat-form-field {

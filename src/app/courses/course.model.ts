@@ -6,7 +6,6 @@ export class Course {
         public id: number,
         public name: string,
         public semester: string,
-        public department: Department,
-        public isDeleting?: boolean
+        public department: Department
     ) {}
 }

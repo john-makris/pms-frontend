@@ -52,12 +52,12 @@ export class CourseDetailComponent implements OnInit, OnDestroy {
         (state: boolean) => {
           this.ensureDialogStatus = state;
           if (this.ensureDialogStatus) {
-            this.course.isDeleting = true;
+            //this.course.isDeleting = true;
             console.log("Hallo "+this.ensureDialogStatus);
             this.courseService.deleteCourseById(id)
                 .pipe(first())
                 .subscribe(() => {
-                  this.course.isDeleting = false;
+                  //this.course.isDeleting = false;
                   this.snackbarService.success('Course deleted');
                   this.router.navigate(['../../'], { relativeTo: this.route });
                 });

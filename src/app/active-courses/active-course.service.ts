@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpEvent, HttpParams, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { ActiveCourse } from "./active-course.model";
@@ -45,11 +45,49 @@ export class ActiveCourseService {
         return this.http.delete<ActiveCourse>(API_URL + 'delete/' + activeCourseId);
     }
 
-    createActiveCourse(activeCourseData: ActiveCourseRequestData): Observable<ActiveCourse> {
-        return this.http.post<ActiveCourse>(API_URL + 'create/', activeCourseData);
+    createActiveCourse(activeCourseData: ActiveCourseRequestData, studentsFileData: File): Observable<HttpEvent<any>> {
+        const formData: FormData = new FormData();
+
+        if (studentsFileData.name.endsWith('.csv')) {
+            formData.append( 'studentsFile', new Blob([studentsFileData], { type: 'text/csv' }), studentsFileData.name);
+        }
+        
+        if (studentsFileData.name.endsWith('.xlsx')) {
+            formData.append( 'studentsFile', new Blob([studentsFileData],
+                { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), studentsFileData.name);
+        }
+        
+        formData.append( 'activeCourseData', JSON.stringify(activeCourseData));
+
+        const req = new HttpRequest('POST', `${API_URL}create`, formData, {
+            reportProgress: true,
+            responseType: 'json'
+        });
+
+        return this.http.request(req);
     }
 
-    updateActiveCourse(activeCourseId: number, activeCourseData: ActiveCourseRequestData): Observable<any> {
-        return this.http.put(API_URL + 'update/' + activeCourseId, activeCourseData);
+    updateActiveCourse(activeCourseId: number, activeCourseData: ActiveCourseRequestData, studentsFileData: File | null): Observable<HttpEvent<any>> {
+        const formData: FormData = new FormData();
+
+        if (studentsFileData) {
+            if (studentsFileData.name.endsWith('.csv')) {
+                formData.append( 'studentsFile', new Blob([studentsFileData], { type: 'text/csv' }), studentsFileData.name);
+            }
+            
+            if (studentsFileData.name.endsWith('.xlsx')) {
+                formData.append( 'studentsFile', new Blob([studentsFileData],
+                    { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), studentsFileData.name);
+            }
+        }
+        
+        formData.append( 'activeCourseData', JSON.stringify(activeCourseData));
+
+        const req = new HttpRequest('PUT', `${API_URL}update/` + activeCourseId, formData, {
+            reportProgress: true,
+            responseType: 'json'
+        });
+
+        return this.http.request(req);
     }
 }
