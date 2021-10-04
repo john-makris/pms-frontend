@@ -4,6 +4,34 @@
     fxFlex="40em"
     fxFlex.lt-sm="calc(20em)"
 >
+
+    <div class="selectorContainer">
+        <form fxLayout="column"
+        [formGroup]="selectDepartmentForm">
+            <mat-form-field
+                appearance="outline">
+                <mat-select
+                    [(value)]="selectedDepartmentId"
+                    panelClass="mat-select-panel"
+                    formControlName="departmentId">
+                    <mat-option
+                        [value]="0"
+                        (click)="onSubmit()">-- All Departments --</mat-option>
+                    <mat-option 
+                        *ngFor="let department of departments"
+                        [value]="department.id"
+                        (click)="onSubmit()">
+                        <p>
+                            {{ department.name }}
+                        </p>
+                    </mat-option>
+                </mat-select>
+                <mat-label><mat-icon>domain</mat-icon> <b> Department</b></mat-label>
+                <mat-hint>Choose Department</mat-hint>
+            </mat-form-field>
+        </form>
+    </div>
+
     <a routerLink="add"
        mat-raised-button
        color="primary">Add Active Course</a>

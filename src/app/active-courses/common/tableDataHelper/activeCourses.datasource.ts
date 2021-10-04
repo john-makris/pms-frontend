@@ -26,7 +26,7 @@ export class ActiveCoursesDataSource implements DataSource<ActiveCourse> {
 
     constructor(private activeCourseService: ActiveCourseService) { }
 
-    loadActiveCourses(courseId: number,
+    loadActiveCourses(departmentId: number,
                 filter:string,
                 pageIndex:number,
                 pageSize:number,
@@ -42,7 +42,7 @@ export class ActiveCoursesDataSource implements DataSource<ActiveCourse> {
         console.log("Current Column Def: "+currentColumnDef);*/
 
 
-        let params: HttpParams = this.createParams(courseId,
+        let params: HttpParams = this.createParams(departmentId,
             filter, pageIndex, pageSize, sortDirection, currentColumnDef);
             console.log("PARAMS: "+params);
 
@@ -66,7 +66,7 @@ export class ActiveCoursesDataSource implements DataSource<ActiveCourse> {
             });
         } else {
             //console.log("EXIST ID ?"+ params.has('id'));
-            this.activeCourseService.getAllPageActiveCoursesByCourseId(params)
+            this.activeCourseService.getAllPageActiveCoursesByCourseDepartmentId(params)
             .pipe(
                 catchError(() => of([])),
                 finalize(() => this.loadingSubject.next(false))
@@ -101,7 +101,7 @@ export class ActiveCoursesDataSource implements DataSource<ActiveCourse> {
     }
 
     createParams(
-        courseId: number,
+        departmentId: number,
         filter:string,
         pageIndex:number,
         pageSize:number,
@@ -110,9 +110,9 @@ export class ActiveCoursesDataSource implements DataSource<ActiveCourse> {
 
             let params = new HttpParams();
 
-            if (courseId) {
+            if (departmentId) {
                 //console.log("ID: "+courseId);
-                params=params.set('id', courseId);
+                params=params.set('id', departmentId);
             }
 
             if (filter) {

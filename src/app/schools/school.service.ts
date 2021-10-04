@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { SchoolRequestData } from "./common/payload/request/schoolRequestData.interface";
 import { School } from "./school.model";
 
@@ -10,6 +10,10 @@ const API_URL = 'http://localhost:8080/pms/schools/';
     providedIn: 'root'
 })
 export class SchoolService {
+
+    schoolIdSubject = new BehaviorSubject<number>(0);
+
+    schoolIdState = this.schoolIdSubject.asObservable();
 
     constructor(private http: HttpClient) { }
 

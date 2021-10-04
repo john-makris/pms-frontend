@@ -11,10 +11,6 @@ const API_URL = 'http://localhost:8080/pms/courses/';
 })
 export class CourseService {
 
-    departmentIdSubject = new BehaviorSubject<number>(0);
-
-    departmentIdState = this.departmentIdSubject.asObservable();
-
     constructor(private http: HttpClient) { }
 
     getAllPageCourses(params: HttpParams): Observable<any> {

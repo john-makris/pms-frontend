@@ -1,11 +1,15 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { ActivatedRoute, Router } from '@angular/router';
 import { fromEvent, merge, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/operators';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
+import { Department } from 'src/app/departments/department.model';
+import { DepartmentService } from 'src/app/departments/department.service';
 import { ActiveCourseService } from '../active-course.service';
 import { ActiveCoursesDataSource } from '../common/tableDataHelper/activeCourses.datasource';
 
@@ -16,10 +20,13 @@ import { ActiveCoursesDataSource } from '../common/tableDataHelper/activeCourses
 })
 export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  selectDepartmentForm!: FormGroup;
   isLoading: boolean = false;
   submitted: boolean = false;
   
   dataSource!: ActiveCoursesDataSource;
+  departments!: Department[];
+  selectedDepartmentId: number = 0;
 
   totalItems: number = 0;
   currentPage: number = 0;
@@ -29,6 +36,7 @@ export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestr
 
   snackbarSubscription!: Subscription;
   pageDetailSubscription!: Subscription;
+  departmentsSubscription!: Subscription;
 
   displayedColumns = [
     'id',
@@ -42,15 +50,32 @@ export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestr
   @ViewChild('input') input!: ElementRef;
 
   constructor(
-    private activeCourseService: ActiveCourseService,
-    private snackbarService: SnackbarService) {}
+    private router: Router,
+    private route: ActivatedRoute,
+    private formBuilder: FormBuilder,
+    private snackbarService: SnackbarService,
+    private departmentService: DepartmentService,
+    private activeCourseService: ActiveCourseService) {}
 
 
   ngOnInit(): void {
+    this.departmentsSubscription = this.departmentService.getAllDepartments()
+    .pipe(first())
+    .subscribe(departments => {
+      this.departments = departments;
+    });
+    this.selectDepartmentForm = this.formBuilder.group({
+      departmentId: [this.selectedDepartmentId, Validators.required]
+    });
+
+    console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
+
+    this.departmentService.departmentIdSubject.next(this.selectedDepartmentId);
 
     this.dataSource = new ActiveCoursesDataSource(this.activeCourseService);
 
-    this.dataSource.loadActiveCourses(0, '', 0, 3, 'asc', this.currentColumnDef);
+    this.dataSource.loadActiveCourses(this.selectDepartmentForm.value.departmentId, 
+      '', 0, 3, 'asc', this.currentColumnDef);
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -72,6 +97,11 @@ export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestr
         this.currentActivityState = state.message;
         if(this.currentActivityState.includes('added')) {
           //console.log('Current State: '+this.currentState);
+          this.selectDepartmentForm.setValue(
+            {
+              departmentId: this.selectedDepartmentId
+            });
+          this.selectedDepartmentId = this.selectDepartmentForm.value.departmentId;
           this.paginator.pageIndex = 0;
           this.refreshTable();
         } else if(this.currentActivityState.includes('deleted') && this.currentPageItems === 1) {
@@ -88,6 +118,30 @@ export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestr
         }
       }
     );
+  }
+
+  get f() { return this.selectDepartmentForm.controls; }
+
+  onSubmit() {
+    this.router.navigate(['/active-courses'], { relativeTo: this.route });
+    this.submitted = true;
+    //console.log("HAAAAALOOOO!!!");
+    if(this.selectDepartmentForm.invalid) {
+      return;
+    }
+
+    this.isLoading = true;
+    //console.log("DEPARTMENT ID: "+ this.selectDepartmentForm.value.departmentId);
+    this.selectedDepartmentId = this.selectDepartmentForm.value.departmentId;
+    this.paginator.pageIndex = 0;
+    this.paginator.pageSize;
+    this.sort.direction='asc'
+    this.currentColumnDef;
+    console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
+    this.departmentService.departmentIdSubject.next(this.selectedDepartmentId);
+
+
+    this.refreshTable();
   }
 
   ngAfterViewInit() {
@@ -118,7 +172,7 @@ export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestr
 
   loadActiveCoursesPage() {
     this.dataSource.loadActiveCourses(
-        0,
+        this.selectedDepartmentId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,
@@ -141,6 +195,7 @@ export class ActiveCourseListComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   ngOnDestroy(): void {
+    this.departmentsSubscription.unsubscribe();
     this.pageDetailSubscription.unsubscribe();
     this.snackbarSubscription.unsubscribe();
   }

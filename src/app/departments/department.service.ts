@@ -11,9 +11,9 @@ const API_URL = 'http://localhost:8080/pms/departments/';
 })
 export class DepartmentService {
 
-    schoolIdSubject = new BehaviorSubject<number>(0);
+    departmentIdSubject = new BehaviorSubject<number>(0);
 
-    schoolIdState = this.schoolIdSubject.asObservable();
+    departmentIdState = this.departmentIdSubject.asObservable();
 
     constructor(private http: HttpClient) { }
 

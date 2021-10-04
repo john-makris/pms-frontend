@@ -44,7 +44,7 @@ export class CourseEditComponent implements OnInit, OnDestroy{
   ) { }
 
   ngOnInit(): void {
-    this.departmentIdSubscription = this.courseService.departmentIdState
+    this.departmentIdSubscription = this.departmentService.departmentIdState
       .subscribe((departmentId: number) => {
         console.log("EDIT COMPONENT: "+departmentId);
         if (departmentId == 0) {

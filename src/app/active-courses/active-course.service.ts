@@ -21,8 +21,8 @@ export class ActiveCourseService {
         return this.http.get<ActiveCourse[]>(API_URL + 'all/paginated_sorted_filtered', { params });
     }
 
-    getAllPageActiveCoursesByCourseId(params: HttpParams): Observable<any> {
-        return this.http.get<ActiveCourse[]>(API_URL + 'per_course/all/paginated_sorted_filtered', { params });
+    getAllPageActiveCoursesByCourseDepartmentId(params: HttpParams): Observable<any> {
+        return this.http.get<ActiveCourse[]>(API_URL + 'per_department/all/paginated_sorted_filtered', { params });
     }
 
     getAllActiveCourses(): Observable<ActiveCourse[]> {

@@ -75,11 +75,12 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
 
-    this.courseService.departmentIdSubject.next(this.selectedDepartmentId);
+    this.departmentService.departmentIdSubject.next(this.selectedDepartmentId);
 
     this.dataSource = new CoursesDataSource(this.courseService);
 
-    this.dataSource.loadCourses(this.selectDepartmentForm.value.departmentId, '', 0, 3, 'asc', this.currentColumnDef);
+    this.dataSource.loadCourses(this.selectDepartmentForm.value.departmentId, 
+      '', 0, 3, 'asc', this.currentColumnDef);
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -144,7 +145,7 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sort.direction='asc'
     this.currentColumnDef;
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
-    this.courseService.departmentIdSubject.next(this.selectedDepartmentId);
+    this.departmentService.departmentIdSubject.next(this.selectedDepartmentId);
 
 
     this.refreshTable();

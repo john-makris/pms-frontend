@@ -44,7 +44,7 @@ export class DepartmentEditComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.schoolIdSubscription = this.schoolIdSubscription = this.departmentService.schoolIdState
+    this.schoolIdSubscription = this.schoolIdSubscription = this.schoolService.schoolIdState
       .subscribe((schoolId: number) => {
         console.log("EDIT COMPONENT: "+schoolId);
         if (schoolId == 0) {

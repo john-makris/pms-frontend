@@ -75,7 +75,7 @@ export class DepartmentListComponent implements OnInit, AfterViewInit, OnDestroy
 
     console.log("SCHOOL ID: "+this.selectedSchoolId);
 
-    this.departmentService.schoolIdSubject.next(this.selectedSchoolId);
+    this.schoolService.schoolIdSubject.next(this.selectedSchoolId);
 
     this.dataSource = new DepartmentsDataSource(this.departmentService);
 
@@ -144,7 +144,7 @@ export class DepartmentListComponent implements OnInit, AfterViewInit, OnDestroy
     this.sort.direction='asc'
     this.currentColumnDef;
     console.log("SCHOOL ID: "+this.selectedSchoolId);
-    this.departmentService.schoolIdSubject.next(this.selectedSchoolId);
+    this.schoolService.schoolIdSubject.next(this.selectedSchoolId);
 
     this.refreshTable();
   }
