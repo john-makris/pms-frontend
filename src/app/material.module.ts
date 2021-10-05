@@ -25,6 +25,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip'; 
 
 @NgModule({
     imports: [
@@ -53,7 +54,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
         MatDividerModule,
         MatExpansionModule,
         MatRadioModule,
-        MatProgressBarModule
+        MatProgressBarModule,
+        MatTooltipModule
     ],
     exports: [
         MatButtonModule, 
@@ -81,7 +83,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
         MatDividerModule,
         MatExpansionModule,
         MatRadioModule,
-        MatProgressBarModule
+        MatProgressBarModule,
+        MatTooltipModule
     ]
 })
 export class MaterialModule {}

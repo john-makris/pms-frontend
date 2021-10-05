@@ -32,9 +32,13 @@
         </form>
     </div>
 
-    <a routerLink="add"
+    <button
+       *ngIf="departments"
+       type="button"
        mat-raised-button
-       color="primary">Add Active Course</a>
+       color="primary"
+       routerLink="add"
+       [disabled]="selectedDepartmentId===0">Add Active Course</button>
 
     <div class="table-container">
         <div fxLayoutAlign="center">

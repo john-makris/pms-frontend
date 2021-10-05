@@ -7,6 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
+import { DepartmentService } from 'src/app/departments/department.service';
 import { UserData } from 'src/app/users/common/payload/response/userData.interface';
 import { UsersDataSource } from 'src/app/users/common/tableDataHelper/users.datasource';
 import { UserService } from 'src/app/users/user.service';
@@ -26,6 +27,7 @@ export class TeachersSelectDialogComponent implements OnInit {
 
   haha: boolean = false;
 
+  currentDepartmentId: number =0;
   selectedRows: Array<UserData> = [];
 
   totalItems: number = 0;
@@ -33,6 +35,7 @@ export class TeachersSelectDialogComponent implements OnInit {
   currentPageItems: number = 0;
   currentColumnDef: string = 'id';
 
+  departmentIdSubscription!: Subscription;
   pageDetailSubscription!: Subscription;
 
   displayedColumns = [
@@ -49,6 +52,7 @@ export class TeachersSelectDialogComponent implements OnInit {
   @ViewChild('input') input!: ElementRef;
 
   constructor(
+    private departmentService: DepartmentService,
     private userService: UserService,
     private dialogRef: MatDialogRef<TeachersSelectDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data :UserData) {}
@@ -56,13 +60,14 @@ export class TeachersSelectDialogComponent implements OnInit {
 
   ngOnInit(): void {
 
-    //console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
-
-    //this.userService.departmentIdSubject.next(this.selectedDepartmentId);
+    this.departmentIdSubscription = this.departmentService.departmentIdState
+      .subscribe((departmentId: number) => {
+        this.currentDepartmentId = departmentId;
+    })
 
     this.dataSource = new UsersDataSource(this.userService);
 
-    this.dataSource.loadUsers(0, 'ROLE_TEACHER','', 0, 3, 'asc', this.currentColumnDef);
+    this.dataSource.loadUsers(this.currentDepartmentId, 'ROLE_TEACHER','', 0, 3, 'asc', this.currentColumnDef);
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -172,7 +177,7 @@ export class TeachersSelectDialogComponent implements OnInit {
 
   loadUsersPage() {
     this.dataSource.loadUsers(
-        0,
+        this.currentDepartmentId,
         'ROLE_TEACHER',
         this.input.nativeElement.value,
         this.paginator.pageIndex,
@@ -211,6 +216,9 @@ export class TeachersSelectDialogComponent implements OnInit {
   ngOnDestroy(): void {
     if (this.pageDetailSubscription) {
       this.pageDetailSubscription.unsubscribe();
+    }
+    if (this.departmentIdSubscription) {
+      this.departmentIdSubscription.unsubscribe();
     }
   }
 

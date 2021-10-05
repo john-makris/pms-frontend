@@ -10,6 +10,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Course } from 'src/app/courses/course.model';
+import { DepartmentService } from 'src/app/departments/department.service';
 
 @Component({
   selector: 'app-course-select-dialog',
@@ -26,10 +27,12 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
   currentPageItems: number = 0;
   currentColumnDef: string = 'id';
 
+  currentDepartmentId: number =0;
   selectedRowId: number = -1;
   isRowSelected: boolean = false;
   selectedCourse!: Course | null;
 
+  departmentIdSubscription!: Subscription;
   pageDetailSubscription!: Subscription;
 
   displayedColumns = [
@@ -47,6 +50,7 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
   selection = new SelectionModel<Course>(false, []);
 
   constructor(
+    private departmentService: DepartmentService,
     private courseService: CourseService,
     private dialogRef: MatDialogRef<CourseSelectDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data :Course) {}
@@ -54,9 +58,14 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnInit(): void {
 
+    this.departmentIdSubscription = this.departmentService.departmentIdState
+      .subscribe((departmentId: number) => {
+        this.currentDepartmentId = departmentId;
+    })
+
     this.dataSource = new CoursesDataSource(this.courseService);
 
-    this.dataSource.loadCourses(0, '', 0, 3, 'asc', this.currentColumnDef);
+    this.dataSource.loadCourses(this.currentDepartmentId, '', 0, 3, 'asc', this.currentColumnDef);
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -96,7 +105,7 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
 
   loadCoursesPage() {
     this.dataSource.loadCourses(
-        0,
+        this.currentDepartmentId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,
@@ -150,7 +159,12 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
   }
 
   ngOnDestroy(): void {
-    this.pageDetailSubscription.unsubscribe();
+    if (this.pageDetailSubscription) {
+      this.pageDetailSubscription.unsubscribe();
+    }
+    if (this.departmentIdSubscription) {
+      this.departmentIdSubscription.unsubscribe();
+    }
   }
 
 }
