@@ -209,7 +209,7 @@ export class UserListComponent implements OnInit {
   
       this.isLoading = true;
       //console.log("DEPARTMENT ID: "+ this.selectDepartmentForm.value.departmentId);
-      this.selectedDepartmentId = this.selectDepartmentForm.value.departmentId;
+      //this.selectedDepartmentId = this.selectDepartmentForm.value.departmentId;
       this.selectedRoleName = this.selectRoleForm.value.roleName;
       this.paginator.pageIndex = 0;
       this.paginator.pageSize;

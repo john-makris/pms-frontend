@@ -7,7 +7,6 @@ export interface UserResponseData {
     lastname: string;
     username: string;
     email: string;
-    password: string;
     roles: Array<Role>;
     department: {
         id: number;

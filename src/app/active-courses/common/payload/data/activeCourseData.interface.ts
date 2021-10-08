@@ -1,7 +1,8 @@
 import { Course } from "src/app/courses/course.model";
 import { UserData } from "src/app/users/common/payload/response/userData.interface";
 
-export interface ActiveCourseRequestData {
+export interface ActiveCourseResponseData {
+    id: number,
     maxTheoryLectures: number,
     maxLabLectures: number,
     academicYear: string,

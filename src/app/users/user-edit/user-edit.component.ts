@@ -81,8 +81,6 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
               .subscribe(currentUserData => {
                 this.currentUser = currentUserData;
                 console.log("USER EDIT STATUS: "+currentUserData.status);
-                this.currentUserPassword = currentUserData.password;
-                console.log("THIS IS THE CURRENT USER PASSWORD "+ this.currentUserPassword);
                 if (currentUserData.department) {
                   this.currentDepartmentId = currentUserData.department.id.toString();
                 } else {

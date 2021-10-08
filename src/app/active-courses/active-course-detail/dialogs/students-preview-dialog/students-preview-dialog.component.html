@@ -1,0 +1,79 @@
+<section
+    [ngClass]="'container'"
+    fxLayout="column"
+    fxLayoutAlign="center">
+
+    <h2 mat-dialog-title fxLayoutAlign="center">
+        List of Students:
+    </h2>
+
+    <mat-dialog-content fxLayoutAlign="center">
+        <div class="table-container">
+            <div fxLayoutAlign="center">
+                <mat-form-field fxFlex="60%">
+                    <div fxLayout="row">
+                        <input
+                            matInput 
+                            placeholder="Search student" #input>
+                        <mat-icon 
+                            matSuffix 
+                            inline="true">search</mat-icon>
+                        <button 
+                            mat-button 
+                            *ngIf="input.value"
+                            matSuffix 
+                            mat-icon-button (click)="clearInput()">
+                            <mat-icon inline="true">close</mat-icon>
+                        </button>
+                    </div>
+                </mat-form-field>
+            </div>
+            <div class="mat-elevation-z8">
+                <mat-table
+                    [dataSource]="dataSource" matSort matSortActive="id"
+                    matSortDirection="asc" matSortDisableClear>
+                    <ng-container matColumnDef="id">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+                        <mat-cell *matCellDef="let user">{{ user.id | number }}</mat-cell>
+                    </ng-container>
+            
+                    <ng-container matColumnDef="username">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Username</mat-header-cell>
+                        <mat-cell *matCellDef="let user">{{ user.username }}</mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="firstname">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>First Name</mat-header-cell>
+                        <mat-cell *matCellDef="let user">{{ user.firstname }}</mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="lastname">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</mat-header-cell>
+                        <mat-cell *matCellDef="let user">{{ user.lastname }}</mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row
+                        *matRowDef="let row; columns: displayedColumns;">
+                    </mat-row>
+                </mat-table>
+            
+                <mat-paginator
+                    [length]="totalItems"
+                    [pageSize]="3"
+                    [pageSizeOptions]="[3, 5]"
+                    showFirstLastButtons>
+                </mat-paginator>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions fxLayoutGap="0.5em">
+        <button 
+            mat-button
+            color="warn"
+            (click)="close()">
+            Close
+        </button>
+    </mat-dialog-actions>
+</section>

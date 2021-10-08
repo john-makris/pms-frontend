@@ -37,7 +37,8 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
 
   displayedColumns = [
     'id',
-    'name'
+    'name',
+    'semester'
   ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -127,7 +128,8 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
     this.loadCoursesPage();
   }
 
-  selectRow(selectedRow: Course) {
+  selectRow(selectedRow: any) {
+    //console.log("Selected Row: "+ JSON.stringify(selectedRow));
     if (selectedRow.id == this.selectedRowId) {
       this.selection.deselect(selectedRow);
       this.selectedCourse = null;
@@ -137,8 +139,13 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
     if(this.selection.isSelected(selectedRow)) {
       this.isRowSelected = true;
       this.selectedRowId = selectedRow.id;
-      this.selectedCourse = selectedRow;
-      console.log("Selected Row Id: "+ this.selectedRowId);
+      this.selectedCourse = {
+        id: selectedRow.id,
+        name: selectedRow.name,
+        semester: selectedRow.semester,
+        department: selectedRow.department
+      }
+      //console.log("Selected Course: "+JSON.stringify(this.selectedCourse));
     } else {
       this.isRowSelected = false;
       this.selectedRowId = -1;
@@ -146,12 +153,14 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
   }
 
   ok() {
+    //console.log("DIALOG: "+JSON.stringify(this.selectedCourse));
     this.dialogRef.close(this.selectedCourse);
   }
 
   close() {
       if (this.data.id) {
-        console.log("Close dialog: "+this.data.name);
+        //console.log("Close dialog: "+this.data.name);
+        //console.log("DIALOG: "+JSON.stringify(this.data));
         this.dialogRef.close(this.data);
       } else {
         this.dialogRef.close(null);

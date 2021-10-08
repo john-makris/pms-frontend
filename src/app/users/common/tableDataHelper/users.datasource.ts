@@ -43,6 +43,34 @@ export class UsersDataSource implements DataSource<UserData> {
         this.retrieveData(params);
     }
 
+    loadActiveCourseStudents(activeCourseId: number,                
+                    filter:string,
+                    pageIndex:number,
+                    pageSize:number,
+                    sortDirection:string,
+                    currentColumnDef:string) {
+        let params: HttpParams = this.createStudentParams(activeCourseId, filter,
+            pageIndex, pageSize, sortDirection, currentColumnDef);
+            console.log("PARAMS: "+params);
+
+        this.loadingSubject.next(true);
+
+        this.retrieveActiveCourseStudents(params);             
+    }
+
+    retrieveActiveCourseStudents(params: HttpParams) {
+        this.userService.getAllPageStudentsByActiveCourse(params)
+        .pipe(
+            catchError(() => of([])),
+            finalize(() => this.loadingSubject.next(false))
+        )
+        .pipe(first())
+        .subscribe((response: UserPageResponseData) => {
+            //console.log("RESPONSE !!!!!!! "+response);
+            this.checkData(response);
+        });
+    }
+
     retrieveData(params: HttpParams) {
         if(!params.has('id')) {
             if(params.has('name')) {
@@ -116,6 +144,43 @@ export class UsersDataSource implements DataSource<UserData> {
                 currentPageItems: 0
             });
         }
+    }
+
+    createStudentParams(
+        activeCourseId: number,
+        filter:string,
+        pageIndex:number,
+        pageSize:number,
+        sortDirection:string,
+        currentColumnDef:string): HttpParams {
+
+            let params = new HttpParams();
+
+            if (activeCourseId) {
+                //console.log("ID: "+departmentId);
+                params=params.set('id', activeCourseId);
+            }
+
+            if (filter) {
+                //console.log("Filter: "+filter);
+                params=params.set('filter', filter);
+            }
+    
+            if (pageIndex) {
+                //console.log("pageIndex: "+pageIndex);
+                params=params.set('page', pageIndex);
+            }
+        
+            if (pageSize) {
+                //console.log("pageSize: "+pageSize);
+                params=params.set('size', pageSize);
+            }
+        
+            if (sortDirection && currentColumnDef) {
+                params=params.set('sort', currentColumnDef+","+sortDirection);
+                //console.log("SORT: "+currentColumnDef+","+sortDirection);
+            }
+        return params;
     }
 
     createParams(

@@ -4,8 +4,11 @@ import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.service';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
+import { UserData } from 'src/app/users/common/payload/response/userData.interface';
 import { ActiveCourse } from '../active-course.model';
 import { ActiveCourseService } from '../active-course.service';
+import { ActiveCourseResponseData } from '../common/payload/data/activeCourseData.interface';
+import { StudentsPreviewDialogService } from './services/students-preview-dialog.service';
 
 @Component({
   selector: 'app-active-course-detail',
@@ -14,7 +17,7 @@ import { ActiveCourseService } from '../active-course.service';
 })
 export class ActiveCourseDetailComponent implements OnInit, OnDestroy {
   id!: number;
-  activeCourse!: ActiveCourse;
+  activeCourse!: ActiveCourseResponseData;
   private ensureDialogSubscription!: Subscription;
   ensureDialogStatus!: boolean;
 
@@ -25,7 +28,8 @@ export class ActiveCourseDetailComponent implements OnInit, OnDestroy {
     private router: Router,
     private activeCourseService: ActiveCourseService,
     private snackbarService: SnackbarService,
-    private ensureDialogService: EnsureDialogService) { }
+    private ensureDialogService: EnsureDialogService,
+    private studentsPreviewDialogService: StudentsPreviewDialogService) { }
 
   ngOnInit(): void {
     this.route.params
@@ -34,8 +38,9 @@ export class ActiveCourseDetailComponent implements OnInit, OnDestroy {
           this.id = params['id'];
           this.activeCourseService.getActiveCourseById(this.id)
           .pipe(first())
-          .subscribe((x: ActiveCourse) => {
-            this.activeCourse = x;
+          .subscribe((currentActiveCourse: ActiveCourseResponseData) => {
+            this.activeCourse = currentActiveCourse;
+            console.log("Active Course Details: "+JSON.stringify(this.activeCourse));
           });
       }
     );
@@ -67,6 +72,10 @@ export class ActiveCourseDetailComponent implements OnInit, OnDestroy {
           }
         }
       );
+  }
+
+  previewStudents() {
+    this.studentsPreviewDialogService.showStudents(this.activeCourse.id);
   }
 
   onCancel() {

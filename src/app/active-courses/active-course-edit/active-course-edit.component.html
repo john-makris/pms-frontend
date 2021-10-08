@@ -1,4 +1,4 @@
-<section 
+<section
     [ngClass]="'container'"
     [ngClass.lt-md]="'min-container'"
     fxLayout>
@@ -76,14 +76,14 @@
                     class="non-form-field-course">
                     <!-- Course -->
                     <button
-                    [class.border-invalid]="f.courseId.invalid && f.courseId.touched"
+                    [class.border-invalid]="f.course.invalid && f.course.touched"
                         [ngClass.gt-xs]="{'course-button': true}"
                         type="button"
                         mat-stroked-button color="primary"
                         (click)="selectCourse()">
                         Choose Course</button>
                         <mat-label *ngIf="currentCourse">Selected Course: {{ currentCourse.name }}</mat-label>
-                        <mat-error class="validation-text" *ngIf="f.courseId.errors?.required && f.courseId.touched">Missing Course</mat-error>
+                        <mat-error class="validation-text" *ngIf="f.course.errors?.required && f.course.touched">Missing Course</mat-error>
                 </div>
 
                 <div fxLayout fxLayout.lt-sm="column" fxFlex

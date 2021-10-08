@@ -5,11 +5,12 @@ import {catchError, finalize, first} from "rxjs/operators";
 import { PageDetail } from "src/app/common/models/pageDetail.model";
 import { ActiveCourse } from "../../active-course.model";
 import { ActiveCourseService } from "../../active-course.service";
+import { ActiveCourseResponseData } from "../payload/data/activeCourseData.interface";
 import { ActiveCoursesResponseData } from "../payload/response/activeCoursesResponseData.interface";
 
-export class ActiveCoursesDataSource implements DataSource<ActiveCourse> {
+export class ActiveCoursesDataSource implements DataSource<ActiveCourseResponseData> {
 
-    private activeCourseSubject = new BehaviorSubject<ActiveCourse[]>([]);
+    private activeCourseSubject = new BehaviorSubject<ActiveCourseResponseData[]>([]);
 
     private pageDetailSubject = new BehaviorSubject<PageDetail>({
         currentPage: 0,

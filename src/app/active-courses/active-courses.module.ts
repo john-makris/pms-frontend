@@ -8,6 +8,7 @@ import { ActiveCoursesComponent } from "./active-courses.component";
 import { CourseAccordionComponent } from "./active-course-list/course-accordion/course-accordion.component";
 import { CourseSelectDialogComponent } from './active-course-edit/dialogs/course-select-dialog/course-select-dialog.component';
 import { TeachersSelectDialogComponent } from './active-course-edit/dialogs/teachers-select-dialog/teachers-select-dialog.component';
+import { StudentsPreviewDialogComponent } from './active-course-detail/dialogs/students-preview-dialog/students-preview-dialog.component';
 
 @NgModule({
     declarations: [
@@ -17,7 +18,8 @@ import { TeachersSelectDialogComponent } from './active-course-edit/dialogs/teac
         ActiveCourseEditComponent,
         CourseAccordionComponent,
         CourseSelectDialogComponent,
-        TeachersSelectDialogComponent
+        TeachersSelectDialogComponent,
+        StudentsPreviewDialogComponent
     ],
     imports: [
         SharedModule,

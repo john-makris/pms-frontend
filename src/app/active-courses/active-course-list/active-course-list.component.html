@@ -32,13 +32,17 @@
         </form>
     </div>
 
-    <button
-       *ngIf="departments"
-       type="button"
-       mat-raised-button
-       color="primary"
-       routerLink="add"
-       [disabled]="selectedDepartmentId===0">Add Active Course</button>
+    <span matTooltip="Select a Specific Department"
+         matTooltipPosition="after"
+         [matTooltipDisabled]="selectedDepartmentId !==0">
+        <button
+            *ngIf="departments"
+            type="button"
+            mat-raised-button
+            color="primary"
+            routerLink="add"
+            [disabled]="selectedDepartmentId === 0">Add Active Course</button>
+    </span>
 
     <div class="table-container">
         <div fxLayoutAlign="center">

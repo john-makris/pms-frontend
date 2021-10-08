@@ -1,7 +1,9 @@
 import { HttpClient, HttpEvent, HttpParams, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
+import { UserData } from "../users/common/payload/response/userData.interface";
 import { ActiveCourse } from "./active-course.model";
+import { ActiveCourseResponseData } from "./common/payload/data/activeCourseData.interface";
 import { ActiveCourseRequestData } from "./common/payload/request/activeCourseRequestData.interface";
 
 const API_URL = 'http://localhost:8080/pms/active-courses/';
@@ -29,7 +31,7 @@ export class ActiveCourseService {
         return this.http.get<ActiveCourse[]>(API_URL + 'all');
     }
 
-    getActiveCourseById(activeCourseId: number): Observable<ActiveCourse> {
+    getActiveCourseById(activeCourseId: number): Observable<ActiveCourseResponseData> {
         return this.http.get<ActiveCourse>(API_URL + activeCourseId);
     }
 
@@ -58,6 +60,10 @@ export class ActiveCourseService {
         }
         
         formData.append( 'activeCourseData', JSON.stringify(activeCourseData));
+
+        console.log("Here is the problem: "+activeCourseData.course);
+
+        console.log("Here is the problem: "+JSON.stringify(activeCourseData.course));
 
         const req = new HttpRequest('POST', `${API_URL}create`, formData, {
             reportProgress: true,

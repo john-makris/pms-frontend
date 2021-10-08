@@ -1,7 +1,7 @@
-import { ActiveCourse } from "src/app/active-courses/active-course.model";
+import { ActiveCourseResponseData } from "../data/activeCourseData.interface";
 
 export interface ActiveCoursesResponseData {
-    activeCourses: ActiveCourse[],
+    activeCourses: ActiveCourseResponseData[],
     currentPage: number,
     totalItems: number,
     totalPages: number
