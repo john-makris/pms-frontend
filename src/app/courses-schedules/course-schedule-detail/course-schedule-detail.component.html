@@ -1,0 +1,88 @@
+<section
+    [ngClass]="'container'"
+    [ngClass.lt-md]="'min-container'"
+    fxLayout>
+    <div *ngIf="courseSchedule">
+        <mat-card
+            class="mat-elevation-z8"
+            fxFlex.xs="19em"
+            fxFlex="22em">
+            <mat-card-title fxLayoutAlign="center">
+                Course Schedule Details
+            </mat-card-title>
+            <br>
+            <mat-card-content fxLayout="column" 
+            fxLayoutAlign="center"
+            fxLayoutGap="1em">
+                <div>
+                    <mat-label><strong>Course Schedule Name:</strong></mat-label>
+                    {{ courseSchedule.course?.name }}
+                </div>
+                <div>
+                    <label><strong>Department:</strong></label>
+                    {{ courseSchedule.course.department?.name }}
+                </div>
+                <div>
+                    <label><strong>Academic Year:</strong></label>
+                    {{ courseSchedule?.academicYear }}
+                </div>
+                <div>
+                    <label><strong>Semester:</strong></label>
+                    {{ courseSchedule.course?.semester }}
+                </div>
+
+                <div>
+                    <label><strong>Max Theory Lectures:</strong></label>
+                    {{ courseSchedule?.maxTheoryLectures }}
+                </div>
+                <div>
+                    <label><strong>Max Lab Lectures:</strong></label>
+                    {{ courseSchedule?.maxLabLectures }}
+                </div>
+                <div fxLayout="row wrap">
+                    <label><strong>{{ "Teaching Stuff:"}}{{ space }}</strong></label>
+                    <span
+                        *ngFor="let teacher of courseSchedule.teachingStuff; let i = index">
+                        <span>
+                            <span>{{ teacher.firstname }} {{ teacher.lastname }}</span>
+                            <span *ngIf="i+1 > 0 && i+1 < courseSchedule.teachingStuff.length">{{delimeter}}</span>
+                        </span>
+                    </span>
+                </div>
+                <div>
+                    <label><strong>Students: </strong></label>
+                    <button 
+                        mat-stroked-button color="primary"
+                        (click)="previewStudents()">Preview</button>
+                </div>
+                <div>
+                    <label><strong>Status:</strong></label>
+                    {{ courseSchedule?.status === true ? 'active' : 'inactive' }}
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div>
+                    <button
+                        mat-raised-button color="primary"
+                        (click)="editCourseSchedule()">
+                        Edit
+                    </button>
+              
+                    <button 
+                        mat-raised-button color="warn"
+                        (click)="deleteCourseSchedule(courseSchedule.id)">
+                        Delete
+                    </button>
+                </div>
+                <hr>
+                <div fxLayoutAlign="end">
+                    <button 
+                        mat-button color="primary"
+                        (click)="onCancel()">
+                        Cancel
+                    </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</section>

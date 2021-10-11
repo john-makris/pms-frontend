@@ -17,7 +17,7 @@ import { ErrorInterceptor } from './common/interceptors/error.interceptor';
 import { DialogsModule } from './common/dialogs/dialogs.module';
 import { DepartmentsModule } from './departments/departments.module';
 import { CoursesModule } from './courses/courses.module';
-import { ActiveCoursesModule } from './active-courses/active-courses.module';
+import { CoursesSchedulesModule } from './courses-schedules/courses-schedules.module';
 import { UsersModule } from './users/users.module';
 
 @NgModule({
@@ -41,7 +41,7 @@ import { UsersModule } from './users/users.module';
     SchoolsModule,
     DepartmentsModule,
     CoursesModule,
-    ActiveCoursesModule
+    CoursesSchedulesModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }

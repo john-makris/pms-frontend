@@ -26,9 +26,9 @@ const routes: Routes = [
     canLoad: [AuthGuard]
   }
   ,
-  { path: 'active-courses',
-  loadChildren: () => import('./active-courses/active-courses.module')
-    .then(m => m.ActiveCoursesModule),
+  { path: 'courses-schedules',
+  loadChildren: () => import('./courses-schedules/courses-schedules.module')
+    .then(m => m.CoursesSchedulesModule),
     canLoad: [AuthGuard]
   }
 ];

@@ -59,7 +59,7 @@ export class UsersDataSource implements DataSource<UserData> {
     }
 
     retrieveActiveCourseStudents(params: HttpParams) {
-        this.userService.getAllPageStudentsByActiveCourse(params)
+        this.userService.getAllPageStudentsByCourseSchedule(params)
         .pipe(
             catchError(() => of([])),
             finalize(() => this.loadingSubject.next(false))
