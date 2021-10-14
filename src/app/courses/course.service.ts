@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { CourseRequestData } from "./common/payload/request/courseRequestData.interface";
+import { CourseResponseData } from "./common/payload/response/courseResponseData.interface";
 import { Course } from "./course.model";
 
 const API_URL = 'http://localhost:8080/pms/courses/';
@@ -25,8 +26,8 @@ export class CourseService {
         return this.http.get<Course[]>(API_URL + 'all');
     }
 
-    getCourseById(courseId: number): Observable<Course> {
-        return this.http.get<Course>(API_URL + courseId);
+    getCourseById(courseId: number): Observable<CourseResponseData> {
+        return this.http.get<CourseResponseData>(API_URL + courseId);
     }
 
     deleteAllCourses(): Observable<Course[]> {

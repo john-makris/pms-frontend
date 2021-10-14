@@ -5,7 +5,6 @@ import { CourseScheduleEditComponent } from "./course-schedule-edit/course-sched
 import { CourseScheduleListComponent } from "./course-schedule-list/course-schedule-list.component";
 import { CoursesSchedulesRoutingModule } from "./courses-schedules-routing.module";
 import { CoursesSchedulesComponent } from "./courses-schedules.component";
-import { CourseAccordionComponent } from "./course-schedule-list/course-accordion/course-accordion.component";
 import { CourseSelectDialogComponent } from './course-schedule-edit/dialogs/course-select-dialog/course-select-dialog.component';
 import { TeachersSelectDialogComponent } from './course-schedule-edit/dialogs/teachers-select-dialog/teachers-select-dialog.component';
 import { StudentsPreviewDialogComponent } from './course-schedule-detail/dialogs/students-preview-dialog/students-preview-dialog.component';
@@ -16,7 +15,6 @@ import { StudentsPreviewDialogComponent } from './course-schedule-detail/dialogs
         CourseScheduleDetailComponent,
         CourseScheduleListComponent,
         CourseScheduleEditComponent,
-        CourseAccordionComponent,
         CourseSelectDialogComponent,
         TeachersSelectDialogComponent,
         StudentsPreviewDialogComponent

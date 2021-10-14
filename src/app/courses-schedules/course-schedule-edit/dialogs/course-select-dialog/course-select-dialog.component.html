@@ -44,7 +44,7 @@
 
                     <ng-container matColumnDef="semester">
                         <mat-header-cell *matHeaderCellDef mat-sort-header>Semester</mat-header-cell>
-                        <mat-cell *matCellDef="let course">{{ course.semester }}</mat-cell>
+                        <mat-cell *matCellDef="let course">{{ course.semester.semesterName }}</mat-cell>
                     </ng-container>
             
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

@@ -55,25 +55,8 @@
                     <mat-error *ngIf="f.maxLabLectures.errors?.required">Missing Labs</mat-error>
                 </mat-form-field>
 
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label> Select Academic Year</mat-label>
-                    <mat-select 
-                        formControlName="academicYear"
-                        [(value)]="selectedAcademicYear">
-                        <mat-option>None</mat-option>
-                        <mat-option value="2020 - 2021">2020 - 2021</mat-option>
-                        <mat-option value="2021 - 2022">2021 - 2022</mat-option>
-                      </mat-select>
-                    <div matSuffix>
-                        <mat-icon>date_range</mat-icon>
-                    </div>
-                    <mat-hint>Select Academic Year.</mat-hint>
-                    <mat-error *ngIf="f.academicYear.errors?.required">Missing Academic Year</mat-error>
-                </mat-form-field>
-
-
                 <div fxLayout="column" fxFlex
-                    class="non-form-field-course">
+                    class="non-form-field-course" *ngIf="isAddMode">
                     <!-- Course -->
                     <button
                     [class.border-invalid]="f.course.invalid && f.course.touched"
@@ -86,25 +69,27 @@
                         <mat-error class="validation-text" *ngIf="f.course.errors?.required && f.course.touched">Missing Course</mat-error>
                 </div>
 
-                <div fxLayout fxLayout.lt-sm="column" fxFlex
+                <div fxFlex
                     class="non-form-field-students" fxLayoutGap.lt-sm="0.5em">
                     <!-- Students -->
-                    <div fxFlex class="aligner">
-                        <mat-label
-                        ><strong>Upload csv/excel of Students:</strong></mat-label>
-                    </div>
-                    <div fxFlex class="aligner">
-                        <input
-                        [ngClass]="{'color-invalid': f.students.invalid && f.students.touched}"
-                        (focus)="onTouched()"
-                        (click)="state=true"
-                        (change)="selectStudentsFile($event)"
-                        #fileInput type="file">
-
-                        <div class="validation-text">
-                            <mat-error *ngIf="f.students.errors?.requiredFileTypes"> Wrong file type: csv/excel required</mat-error>
-                            <mat-error *ngIf="f.students.errors?.inappropriate && f.students.touched">Inappropriate file</mat-error>
-                            <mat-error *ngIf="f.students.errors?.required && f.students.touched">Missing file</mat-error>
+                    <div fxLayout="row wrap" fxLayout.lt-sm="column">
+                        <div fxFlex class="aligner">
+                            <mat-label
+                            ><strong>Upload csv/excel of Students:</strong></mat-label>
+                        </div>
+                        <div fxFlex class="aligner">
+                            <input
+                            [ngClass]="{'color-invalid': f.students.invalid && f.students.touched}"
+                            (focus)="onTouched()"
+                            (click)="state=true"
+                            (change)="selectStudentsFile($event)"
+                            #fileInput type="file">
+    
+                            <div class="validation-text">
+                                <mat-error *ngIf="f.students.errors?.requiredFileTypes"> Wrong file type: csv/excel required</mat-error>
+                                <mat-error *ngIf="f.students.errors?.inappropriate && f.students.touched">Inappropriate file</mat-error>
+                                <mat-error *ngIf="f.students.errors?.required && f.students.touched">Missing file</mat-error>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -144,14 +129,6 @@
                         </mat-expansion-panel>
                     </mat-accordion>
                 </div>
-
-                <mat-radio-group fxFlex
-                    formControlName="status">
-                    <div class="radio-container">
-                        <mat-radio-button [value]=true>Active</mat-radio-button>
-                        <mat-radio-button [value]=false>Inactive</mat-radio-button>
-                    </div>
-                </mat-radio-group>
 
                 <div fxLayoutAlign="center">
                     <mat-spinner *ngIf="isLoading"></mat-spinner>

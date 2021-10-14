@@ -27,7 +27,7 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
   currentPageItems: number = 0;
   currentColumnDef: string = 'id';
 
-  currentDepartmentId: number =0;
+  currentDepartmentId: number = 0;
   selectedRowId: number = -1;
   isRowSelected: boolean = false;
   selectedCourse!: Course | null;

@@ -1,6 +1,8 @@
 export interface CourseRequestData {
     name: string,
-    semester: string,
+    semester: {
+        id: number;
+    },
     department: {
         id: number;
     }

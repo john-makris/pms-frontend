@@ -21,7 +21,7 @@ export class DepartmentEditComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   submitted: boolean = false;
   schools: School[] = [];
-  selectedSchoolId: number = 0;
+  selectedSchoolId: string = '';
   allSchools: boolean = true;
 
   hideRequiredControl = new FormControl(false);
@@ -51,7 +51,7 @@ export class DepartmentEditComponent implements OnInit, OnDestroy {
           this.allSchools = true;
         } else {
           this.allSchools = false;
-          this.selectedSchoolId = schoolId;
+          this.selectedSchoolId = schoolId.toString();
         }
     });
 
@@ -69,7 +69,7 @@ export class DepartmentEditComponent implements OnInit, OnDestroy {
                   name: currentDepartmentData.name,
                   schoolId: currentDepartmentData.school.id
                 });
-                this.selectedSchoolId = currentDepartmentData.school.id;
+                this.selectedSchoolId = currentDepartmentData.school.id.toString();
                 console.log(currentDepartmentData.school.id);
               });
           } else {

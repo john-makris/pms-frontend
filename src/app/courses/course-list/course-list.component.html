@@ -16,11 +16,11 @@
                     panelClass="mat-select-panel"
                     formControlName="departmentId">
                     <mat-option
-                        [value]="0"
+                        [value]="''"
                         (click)="onSubmit()">-- All Departments --</mat-option>
                     <mat-option 
                         *ngFor="let department of departments"
-                        [value]="department.id"
+                        [value]="department.id.toString()"
                         (click)="onSubmit()">
                         <p>
                             {{ department.name }}
@@ -74,7 +74,7 @@
 
                 <ng-container matColumnDef="semester">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Semester</mat-header-cell>
-                    <mat-cell *matCellDef="let course">{{ course.semester }}</mat-cell>
+                    <mat-cell *matCellDef="let course">{{ course.semester.semesterName }}</mat-cell>
                 </ng-container>
         
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

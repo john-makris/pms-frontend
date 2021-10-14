@@ -29,7 +29,7 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
   
   dataSource!: CoursesDataSource;
   departments!: Department[];
-  selectedDepartmentId: number = 0;
+  selectedDepartmentId: string = '';
 
   totalItems: number = 0;
   currentPage: number = 0;
@@ -68,14 +68,14 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.departments = departments;
       });
     this.selectDepartmentForm = this.formBuilder.group({
-      departmentId: [this.selectedDepartmentId, Validators.required],
+      departmentId: [this.selectedDepartmentId],
       hideRequired: this.hideRequiredControl,
       floatLabel: this.floatLabelControl
     });
 
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
 
-    this.departmentService.departmentIdSubject.next(this.selectedDepartmentId);
+    this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
 
     this.dataSource = new CoursesDataSource(this.courseService);
 
@@ -145,7 +145,7 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sort.direction='asc'
     this.currentColumnDef;
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
-    this.departmentService.departmentIdSubject.next(this.selectedDepartmentId);
+    this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
 
 
     this.refreshTable();
@@ -179,7 +179,7 @@ export class CourseListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loadCoursesPage() {
     this.dataSource.loadCourses(
-        this.selectedDepartmentId,
+        +this.selectedDepartmentId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,

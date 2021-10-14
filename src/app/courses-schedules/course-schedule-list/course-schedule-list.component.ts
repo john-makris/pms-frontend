@@ -26,7 +26,7 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
   
   dataSource!: CourseScheduleDataSource;
   departments!: Department[];
-  selectedDepartmentId: number = 0;
+  selectedDepartmentId: string = '';
 
   totalItems: number = 0;
   currentPage: number = 0;
@@ -70,7 +70,7 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
 
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
 
-    this.departmentService.departmentIdSubject.next(this.selectedDepartmentId);
+    this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
 
     this.dataSource = new CourseScheduleDataSource(this.courseScheduleService);
 
@@ -138,7 +138,7 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
     this.sort.direction='asc'
     this.currentColumnDef;
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
-    this.departmentService.departmentIdSubject.next(this.selectedDepartmentId);
+    this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
 
 
     this.refreshTable();
@@ -172,7 +172,7 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
 
   loadCoursesSchedulesPage() {
     this.dataSource.loadCoursesSchedules(
-        this.selectedDepartmentId,
+        +this.selectedDepartmentId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,

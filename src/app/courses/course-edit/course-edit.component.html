@@ -30,30 +30,34 @@
                     <mat-hint>Please enter a valid name.</mat-hint>
                     <mat-error>Invalid or missing name.</mat-error>
                 </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Semester</mat-label>
-                    <input 
-                        type="text"
-                        matInput 
-                        placeholder="Semester"
-                        formControlName="semester">
-                    <mat-hint>Please enter a valid semester.</mat-hint>
-                    <mat-error>Invalid or missing semester.</mat-error>
+                <mat-form-field
+                    appearance="outline">
+                    <mat-select
+                        [(value)]="selectedSemesterId"
+                        panelClass="mat-select-panel"
+                        formControlName="semesterId">
+                        <mat-option
+                            [value]="''">-- None --</mat-option>
+                        <mat-option *ngFor="let semester of semesters" [value]="semester.id.toString()">
+                            <p>{{ semester.semesterName }}</p>
+                        </mat-option>
+                    </mat-select>
+                    <mat-label><mat-icon>event_note</mat-icon> <b> Semester</b></mat-label>
+                    <mat-hint>Choose Semester</mat-hint>
+                    <mat-error>Semester is required.</mat-error>
                 </mat-form-field>
                 <mat-form-field
                     *ngIf="isAddMode && allDepartments"
-                    appearance="outline"
-                    [hideRequiredMarker]="hideRequiredControl.value"
-                    [floatLabel]="floatLabelControl.value">
+                    appearance="outline">
                     <mat-select
                         [(value)]="selectedDepartmentId"
                         panelClass="mat-select-panel"
                         formControlName="departmentId">
                         <mat-option
-                            [value]="0">-- None --</mat-option>
+                            [value]="''">-- None --</mat-option>
                         <mat-option 
                             *ngFor="let department of departments"
-                            [value]="department.id">
+                            [value]="department.id.toString()">
                             <p>
                                 {{ department.name }}
                             </p>

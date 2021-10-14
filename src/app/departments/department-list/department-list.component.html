@@ -19,11 +19,11 @@
                     panelClass="mat-select-panel"
                     formControlName="schoolId">
                     <mat-option
-                        [value]="0"
+                        [value]="''"
                         (click)="onSubmit()">-- All Schools --</mat-option>
                     <mat-option 
                         *ngFor="let school of schools"
-                        [value]="school.id"
+                        [value]="school.id.toString()"
                         (click)="onSubmit()">
                         <p>
                             {{ school.name }}

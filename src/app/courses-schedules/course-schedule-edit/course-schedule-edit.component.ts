@@ -100,10 +100,8 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
 
         console.log("BEFORE FORM INITIALIZATION: ");
         this.courseScheduleForm = this.formBuilder.group({
-          academicYear: [this.selectedAcademicYear, Validators.required],
           maxTheoryLectures: [null, [Validators.required, Validators.max(12), Validators.min(1)]],
           maxLabLectures: [null, [Validators.required, Validators.max(12), Validators.min(1)]],
-          status: [false, Validators.required],
           teachingStuff: [null, Validators.required],
           students: [null, this.isAddMode ? Validators.required : null],
           course: [null, Validators.required],
@@ -220,10 +218,8 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
     const courseScheduleData: CourseScheduleRequestData = {
       maxTheoryLectures: this.courseScheduleForm.value.maxTheoryLectures,
       maxLabLectures: this.courseScheduleForm.value.maxLabLectures,
-      academicYear: this.courseScheduleForm.value.academicYear,
       course: this.courseScheduleForm.value.course,
-      teachingStuff: this.courseScheduleForm.value.teachingStuff,
-      status: this.courseScheduleForm.value.status
+      teachingStuff: this.courseScheduleForm.value.teachingStuff
     };
 
     //this.courseScheduleForm.reset();

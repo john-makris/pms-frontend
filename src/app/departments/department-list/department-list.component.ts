@@ -31,7 +31,7 @@ export class DepartmentListComponent implements OnInit, AfterViewInit, OnDestroy
   
   dataSource!: DepartmentsDataSource;
   schools!: School[];
-  selectedSchoolId: number = 0;
+  selectedSchoolId: string = '';
 
   totalItems: number = 0;
   currentPage: number = 0;
@@ -68,14 +68,14 @@ export class DepartmentListComponent implements OnInit, AfterViewInit, OnDestroy
         this.schools = schools;
       });
     this.selectSchoolForm = this.formBuilder.group({
-      schoolId: [this.selectedSchoolId, Validators.required],
+      schoolId: [this.selectedSchoolId],
       hideRequired: this.hideRequiredControl,
       floatLabel: this.floatLabelControl
     });
 
     console.log("SCHOOL ID: "+this.selectedSchoolId);
 
-    this.schoolService.schoolIdSubject.next(this.selectedSchoolId);
+    this.schoolService.schoolIdSubject.next(+this.selectedSchoolId);
 
     this.dataSource = new DepartmentsDataSource(this.departmentService);
 
@@ -144,7 +144,7 @@ export class DepartmentListComponent implements OnInit, AfterViewInit, OnDestroy
     this.sort.direction='asc'
     this.currentColumnDef;
     console.log("SCHOOL ID: "+this.selectedSchoolId);
-    this.schoolService.schoolIdSubject.next(this.selectedSchoolId);
+    this.schoolService.schoolIdSubject.next(+this.selectedSchoolId);
 
     this.refreshTable();
   }
@@ -177,7 +177,7 @@ export class DepartmentListComponent implements OnInit, AfterViewInit, OnDestroy
 
   loadDepartmentsPage() {
     this.dataSource.loadDepartments(
-        this.selectedSchoolId,
+        +this.selectedSchoolId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,

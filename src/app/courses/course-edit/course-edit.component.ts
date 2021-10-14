@@ -7,7 +7,10 @@ import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { Department } from 'src/app/departments/department.model';
 import { DepartmentService } from 'src/app/departments/department.service';
 import { CourseRequestData } from '../common/payload/request/courseRequestData.interface';
+import { CourseResponseData } from '../common/payload/response/courseResponseData.interface';
 import { CourseService } from '../course.service';
+import { Semester } from '../semester.model';
+import { SemesterService } from '../semester.service';
 
 @Component({
   selector: 'app-course-edit',
@@ -21,16 +24,16 @@ export class CourseEditComponent implements OnInit, OnDestroy{
   isLoading: boolean = false;
   submitted: boolean = false;
   departments: Department[] = [];
-  selectedDepartmentId: number = 0;
+  semesters: Semester[] = [];
+  selectedSemesterId: string = '';
+  selectedDepartmentId: string = '';
   allDepartments: boolean = true;
-
-  hideRequiredControl = new FormControl(false);
-  floatLabelControl = new FormControl('auto');
 
   departmentIdSubscription!: Subscription;
   routeSubscription!: Subscription;
   courseSubscription!: Subscription;
   departmentsSubscription!: Subscription;
+  semestersSubscription!: Subscription;
   createCourseSubscription!: Subscription;
   updateCourseSubscription!: Subscription;
 
@@ -40,10 +43,13 @@ export class CourseEditComponent implements OnInit, OnDestroy{
     private router: Router,
     private courseService: CourseService,
     private departmentService: DepartmentService,
+    private semesterService: SemesterService,
     private snackbarService: SnackbarService
   ) { }
 
   ngOnInit(): void {
+    this.loadSemesters();
+
     this.departmentIdSubscription = this.departmentService.departmentIdState
       .subscribe((departmentId: number) => {
         console.log("EDIT COMPONENT: "+departmentId);
@@ -51,7 +57,7 @@ export class CourseEditComponent implements OnInit, OnDestroy{
           this.allDepartments = true;
         } else {
           this.allDepartments = false;
-          this.selectedDepartmentId = departmentId;
+          this.selectedDepartmentId = departmentId.toString();
         }
     });
 
@@ -64,13 +70,14 @@ export class CourseEditComponent implements OnInit, OnDestroy{
           if(!this.isAddMode) {
             this.courseSubscription = this.courseService.getCourseById(this.id)
               .pipe(first())
-              .subscribe((currentCourseData: CourseRequestData) => {
+              .subscribe((currentCourseData: CourseResponseData) => {
                 this.courseForm.patchValue({
                   name: currentCourseData.name,
                   semester: currentCourseData.semester,
                   departmentId: currentCourseData.department.id
                 });
-                this.selectedDepartmentId = currentCourseData.department.id;
+                this.selectedSemesterId = currentCourseData.semester.id.toString();
+                this.selectedDepartmentId = currentCourseData.department.id.toString();
                 console.log(currentCourseData.department.id);
               });
           } else {
@@ -83,10 +90,8 @@ export class CourseEditComponent implements OnInit, OnDestroy{
         console.log("BEFORE FORM INITIALIZATION: "+this.selectedDepartmentId);
       this.courseForm = this.formBuilder.group({
         name: ['', Validators.required],
-        semester: ['', Validators.required],
-        departmentId: [this.selectedDepartmentId, Validators.required],
-        hideRequired: this.hideRequiredControl,
-        floatLabel: this.floatLabelControl
+        semesterId: [this.selectedSemesterId, Validators.required],
+        departmentId: [this.selectedDepartmentId, Validators.required]
       });
   }
 
@@ -102,13 +107,15 @@ export class CourseEditComponent implements OnInit, OnDestroy{
     this.isLoading = true;
     const courseData = {
       name: this.courseForm.value.name,
-      semester: this.courseForm.value.semester,
+      semester: {
+        id: +this.courseForm.value.semesterId
+      },
       department: {
-        id: this.courseForm.value.departmentId
+        id: +this.courseForm.value.departmentId
       }
     };
 
-    this.courseForm.reset();
+    //this.courseForm.reset();
 
     if (this.isAddMode) {
       this.createCourse(courseData);
@@ -143,6 +150,15 @@ export class CourseEditComponent implements OnInit, OnDestroy{
     .subscribe(departments => {
       this.departments = departments;
       console.log(this.departments);
+    });
+  }
+
+  loadSemesters() {
+    this.semestersSubscription = this.semesterService.getAllSemesters()
+    .pipe(first())
+    .subscribe(semesters => {
+      this.semesters = semesters;
+      console.log(this.semesters);
     });
   }
 

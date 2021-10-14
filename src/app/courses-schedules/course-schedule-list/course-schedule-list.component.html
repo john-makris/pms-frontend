@@ -15,11 +15,11 @@
                     panelClass="mat-select-panel"
                     formControlName="departmentId">
                     <mat-option
-                        [value]="0"
+                        [value]="''"
                         (click)="onSubmit()">-- All Departments --</mat-option>
                     <mat-option 
                         *ngFor="let department of departments"
-                        [value]="department.id"
+                        [value]="department.id.toString()"
                         (click)="onSubmit()">
                         <p>
                             {{ department.name }}
@@ -34,14 +34,14 @@
 
     <span matTooltip="Select a Specific Department"
          matTooltipPosition="after"
-         [matTooltipDisabled]="selectedDepartmentId !==0">
+         [matTooltipDisabled]="selectedDepartmentId !==''">
         <button
             *ngIf="departments"
             type="button"
             mat-raised-button
             color="primary"
             routerLink="add"
-            [disabled]="selectedDepartmentId === 0">Add Course Schedule</button>
+            [disabled]="selectedDepartmentId === ''">Add Course Schedule</button>
     </span>
 
     <div class="table-container">
@@ -81,7 +81,7 @@
 
                 <ng-container matColumnDef="semester">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Semester</mat-header-cell>
-                    <mat-cell *matCellDef="let courseSchedule">{{ courseSchedule.course.semester }}</mat-cell>
+                    <mat-cell *matCellDef="let courseSchedule">{{ courseSchedule.course.semester.semesterName }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="academicYear">
