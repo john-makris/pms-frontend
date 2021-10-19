@@ -66,7 +66,7 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
 
     this.dataSource = new CoursesDataSource(this.courseService);
 
-    this.dataSource.loadCourses(this.currentDepartmentId, '', 0, 3, 'asc', this.currentColumnDef);
+    this.dataSource.loadCoursesBySeason(this.currentDepartmentId, '', 0, 3, 'asc', this.currentColumnDef);
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -105,7 +105,7 @@ export class CourseSelectDialogComponent implements OnInit, AfterViewInit, OnDes
   }
 
   loadCoursesPage() {
-    this.dataSource.loadCourses(
+    this.dataSource.loadCoursesBySeason(
         this.currentDepartmentId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,

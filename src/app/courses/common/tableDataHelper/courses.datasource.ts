@@ -51,6 +51,59 @@ export class CoursesDataSource implements DataSource<Course> {
         this.retrieveData(params);
     }
 
+    loadCoursesBySeason(departmentId: number,
+        filter:string,
+        pageIndex:number,
+        pageSize:number,
+        sortDirection:string,
+        currentColumnDef:string) {
+
+        /*console.log("LOAD COURSES PARAMETERS: ");
+        console.log("DEPARTMENT ID: "+departmentId);
+        console.log("FILTER: "+filter);
+        console.log("Page Index: "+pageIndex);
+        console.log("Page Size: "+pageSize);
+        console.log("Sort Direction: "+sortDirection);
+        console.log("Current Column Def: "+currentColumnDef);*/
+
+
+        let params: HttpParams = this.createParams(departmentId,
+            filter, pageIndex, pageSize, sortDirection, currentColumnDef);
+            console.log("PARAMS: "+params);
+
+        this.loadingSubject.next(true);
+
+        this.retrieveCoursesBySeasonData(params);
+    }
+
+    retrieveCoursesBySeasonData(params: HttpParams) {
+        if(!params.has('id')) {
+            //console.log("EXIST ID ?"+ params.has('id'));
+            this.courseService.getAllPageCoursesPerSeason(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: CoursesResponseData) => {
+                //console.log("RESPONSE !!!!!!! "+response);
+                this.checkData(response);
+            });
+        } else {
+            //console.log("EXIST ID ?"+ params.has('id'));
+            this.courseService.getAllPageCoursesByDepartmentIdPerSeason(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: CoursesResponseData) => {
+                //console.log("RESPONSE !!!!!!! "+response);
+                this.checkData(response);
+            });
+        }
+    }
+
     retrieveData(params: HttpParams) {
         if(!params.has('id')) {
             //console.log("EXIST ID ?"+ params.has('id'));

@@ -65,7 +65,7 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
       this.departments = departments;
     });
     this.selectDepartmentForm = this.formBuilder.group({
-      departmentId: [this.selectedDepartmentId, Validators.required]
+      departmentId: [this.selectedDepartmentId]
     });
 
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);

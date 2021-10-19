@@ -56,8 +56,9 @@
                         (click)="previewStudents()">Preview</button>
                 </div>
                 <div>
-                    <label><strong>Status:</strong></label>
-                    {{ courseSchedule?.status === true ? 'active' : 'inactive' }}
+                    <label><strong>Status: </strong></label>
+                    <span *ngIf="courseSchedule.status === null">{{ 'pending' }}</span>
+                    <span *ngIf="courseSchedule.status !== null">{{ courseSchedule?.status === true ? 'active' : 'inactive' }}</span>
                 </div>
             </mat-card-content>
             <mat-card-actions>

@@ -18,8 +18,16 @@ export class CourseService {
         return this.http.get<Course[]>(API_URL + 'all/paginated_sorted_filtered', { params });
     }
 
+    getAllPageCoursesPerSeason(params: HttpParams): Observable<any> {
+        return this.http.get<Course[]>(API_URL + 'all/per_season_paginated_sorted_filtered', { params });
+    }
+
+    getAllPageCoursesByDepartmentIdPerSeason(params: HttpParams): Observable<any> {
+        return this.http.get<Course[]>(API_URL + 'all/per_season_and_department/paginated_sorted_filtered', { params });
+    }
+
     getAllPageCoursesByDepartmentId(params: HttpParams): Observable<any> {
-        return this.http.get<Course[]>(API_URL + 'per_department/all/paginated_sorted_filtered', { params });
+        return this.http.get<Course[]>(API_URL + 'all/per_department/paginated_sorted_filtered', { params });
     }
 
     getAllCourses(): Observable<Course[]> {
