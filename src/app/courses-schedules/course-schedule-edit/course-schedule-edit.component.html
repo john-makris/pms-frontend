@@ -12,48 +12,10 @@
             fxFlex.gt-sm="40em">
             <mat-card-title fxLayoutAlign="center">
                 <h1 *ngIf="isAddMode">Add Course Schedule</h1>
-                <h1 *ngIf="!isAddMode">Course Schedule</h1>
+                <h1 *ngIf="!isAddMode">{{ currentCourse.name }} Schedule</h1>
             </mat-card-title>
             <mat-card-content fxLayout="column" fxLayout.sm="row wrap" fxLayout.gt-sm="row wrap"
             fxLayoutAlign="center">
-
-                <mat-form-field fxFlex
-                    appearance="outline">
-                    <mat-label>Max Theories</mat-label>
-                    <input 
-                        matInput 
-                        type="number" 
-                        placeholder="Max Theories" 
-                        formControlName="maxTheoryLectures"
-                        min="1"
-                        max="12">
-                    <span matSuffix>
-                        <mat-icon>note_add</mat-icon>
-                    </span>
-                    <mat-hint>Set Max Theories.</mat-hint>
-                    <mat-error *ngIf="f.maxTheoryLectures.errors?.max">Cannot set more than 12</mat-error>
-                    <mat-error *ngIf="f.maxTheoryLectures.errors?.min">Cannot set less than 1</mat-error>
-                    <mat-error *ngIf="f.maxTheoryLectures.errors?.required">Missing Theories</mat-error>
-                </mat-form-field>
-
-                <mat-form-field fxFlex
-                    appearance="outline">
-                    <mat-label>Max Labs</mat-label>
-                    <input 
-                        matInput 
-                        type="number" 
-                        placeholder="Max Labs"
-                        formControlName="maxLabLectures"
-                        min="1"
-                        max="12">
-                    <span matSuffix>
-                        <mat-icon>construction</mat-icon>
-                    </span>
-                    <mat-hint>Set Max Labs.</mat-hint>
-                    <mat-error *ngIf="f.maxLabLectures.errors?.max">Cannot set more than 12</mat-error>
-                    <mat-error *ngIf="f.maxLabLectures.errors?.min">Cannot set less than 1</mat-error>
-                    <mat-error *ngIf="f.maxLabLectures.errors?.required">Missing Labs</mat-error>
-                </mat-form-field>
 
                 <div fxLayout="column" fxFlex
                     class="non-form-field-course" *ngIf="isAddMode">
@@ -84,7 +46,7 @@
                             (click)="state=true"
                             (change)="selectStudentsFile($event)"
                             #fileInput type="file">
-    
+
                             <div class="validation-text">
                                 <mat-error *ngIf="f.students.errors?.requiredFileTypes"> Wrong file type: csv/excel required</mat-error>
                                 <mat-error *ngIf="f.students.errors?.inappropriate && f.students.touched">Inappropriate file</mat-error>
@@ -92,6 +54,46 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div fxFlex fxLayout.lt-sm="column" fxLayout.sm="row" fxLayout.gt-sm="row">
+                    <mat-form-field fxFlex
+                        appearance="outline">
+                        <mat-label>Max Theories</mat-label>
+                        <input 
+                            matInput 
+                            type="number" 
+                            placeholder="Max Theories" 
+                            formControlName="maxTheoryLectures"
+                            min="1"
+                            max="12">
+                        <span matSuffix>
+                            <mat-icon>note_add</mat-icon>
+                        </span>
+                        <mat-hint>Set Max Theories.</mat-hint>
+                        <mat-error *ngIf="f.maxTheoryLectures.errors?.max">Cannot set more than 12</mat-error>
+                        <mat-error *ngIf="f.maxTheoryLectures.errors?.min">Cannot set less than 1</mat-error>
+                        <mat-error *ngIf="f.maxTheoryLectures.errors?.required">Missing Theories</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field fxFlex
+                        appearance="outline">
+                        <mat-label>Max Labs</mat-label>
+                        <input 
+                            matInput 
+                            type="number" 
+                            placeholder="Max Labs"
+                            formControlName="maxLabLectures"
+                            min="1"
+                            max="12">
+                        <span matSuffix>
+                            <mat-icon>construction</mat-icon>
+                        </span>
+                        <mat-hint>Set Max Labs.</mat-hint>
+                        <mat-error *ngIf="f.maxLabLectures.errors?.max">Cannot set more than 12</mat-error>
+                        <mat-error *ngIf="f.maxLabLectures.errors?.min">Cannot set less than 1</mat-error>
+                        <mat-error *ngIf="f.maxLabLectures.errors?.required">Missing Labs</mat-error>
+                    </mat-form-field>
                 </div>
 
                 <div fxLayout="column" fxFlexFill

@@ -6,6 +6,9 @@
 >
 
     <div class="selectorContainer">
+        <h1>Courses Schedules</h1>
+        <mat-divider></mat-divider>
+        <br>
         <form fxLayout="column"
         [formGroup]="selectDepartmentForm">
             <mat-form-field
@@ -84,9 +87,9 @@
                     <mat-cell *matCellDef="let courseSchedule">{{ courseSchedule.course.semester.semesterName }}</mat-cell>
                 </ng-container>
 
-                <ng-container matColumnDef="academicYear">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Academic Year</mat-header-cell>
-                    <mat-cell *matCellDef="let courseSchedule">{{ courseSchedule.academicYear }}</mat-cell>
+                <ng-container matColumnDef="status">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+                    <mat-cell *matCellDef="let courseSchedule">{{ courseSchedule.status===true?'active':'pending' }}</mat-cell>
                 </ng-container>
         
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

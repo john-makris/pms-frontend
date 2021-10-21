@@ -42,7 +42,7 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
     'id',
     'name',
     'semester',
-    'academicYear'
+    'status'
   ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

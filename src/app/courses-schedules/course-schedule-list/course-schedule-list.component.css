@@ -25,13 +25,13 @@
 }
 
 .mat-column-semester {
-    max-width: 20%;
+    max-width: 15%;
     margin-right: 6%;
 }
 
-.mat-column-academicYear {
-    max-width: 25%;
-    margin-right: 6%;
+.mat-column-status {
+    max-width: 20%;
+    margin-left: 6%;
 }
 
 .selectorContainer {
