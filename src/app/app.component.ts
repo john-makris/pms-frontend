@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from './auth/auth.service';
 import { TokenRefreshResponse } from './auth/common/response/tokenRefreshResponse.interface';
@@ -17,7 +18,9 @@ export class AppComponent implements OnInit, OnDestroy {
   private logoutSubscription!: Subscription;
   private deleteRefreshTokenSubscription!: Subscription;
 
-  constructor(private authService: AuthService,
+  constructor(
+    private router: Router,
+    private authService: AuthService,
     private tokenStorageService: TokenStorageService) {}
 
   ngOnInit() {
@@ -59,6 +62,8 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       }
     );
+
+    
 
   }
 
