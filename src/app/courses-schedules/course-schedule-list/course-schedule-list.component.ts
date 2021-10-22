@@ -140,7 +140,6 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
     this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
 
-
     this.refreshTable();
   }
 
