@@ -22,7 +22,7 @@ import { LectureService } from '../lecture.service';
 })
 export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  selectCourseSchedule!: FormGroup;
+  selectCourseScheduleForm!: FormGroup;
   hideRequiredControl = new FormControl(false);
   floatLabelControl = new FormControl('auto');
 
@@ -67,7 +67,7 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(coursesSchedules => {
         this.coursesSchedules = coursesSchedules;
       });
-    this.selectCourseSchedule = this.formBuilder.group({
+    this.selectCourseScheduleForm = this.formBuilder.group({
       courseScheduleId: [this.selectedCourseScheduleId],
       hideRequired: this.hideRequiredControl,
       floatLabel: this.floatLabelControl
@@ -79,7 +79,7 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataSource = new LecturesDataSource(this.lectureService);
 
-    this.dataSource.loadLectures(this.selectCourseSchedule.value.courseScheduleId, '', 0, 3, 'asc', this.currentColumnDef);
+    this.dataSource.loadLectures(this.selectCourseScheduleForm.value.courseScheduleId, '', 0, 3, 'asc', this.currentColumnDef);
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -101,13 +101,13 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentActivityState = state.message;
         if(this.currentActivityState.includes('added')) {
           //console.log('Current State: '+this.currentState);
-          this.selectCourseSchedule.setValue(
+          this.selectCourseScheduleForm.setValue(
             {
               courseScheduleId: this.selectedCourseScheduleId,
               hideRequired: this.hideRequiredControl,
               floatLabel: this.floatLabelControl
             });
-          this.selectedCourseScheduleId = this.selectCourseSchedule.value.courseScheduleId;
+          this.selectedCourseScheduleId = this.selectCourseScheduleForm.value.courseScheduleId;
           this.paginator.pageIndex = 0;
           this.refreshTable();
         } else if(this.currentActivityState.includes('deleted') && this.currentPageItems === 1) {
@@ -126,19 +126,19 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  get f() { return this.selectCourseSchedule.controls; }
+  get f() { return this.selectCourseScheduleForm.controls; }
 
   onSubmit() {
     this.router.navigate(['/lectures'], { relativeTo: this.route });
     this.submitted = true;
     //console.log("HAAAAALOOOO!!!");
-    if(this.selectCourseSchedule.invalid) {
+    if(this.selectCourseScheduleForm.invalid) {
       return;
     }
 
     this.isLoading = true;
     //console.log("DEPARTMENT ID: "+ this.selectDepartmentForm.value.departmentId);
-    this.selectedCourseScheduleId = this.selectCourseSchedule.value.courseScheduleId;
+    this.selectedCourseScheduleId = this.selectCourseScheduleForm.value.courseScheduleId;
     this.paginator.pageIndex = 0;
     this.paginator.pageSize;
     this.sort.direction='asc'
