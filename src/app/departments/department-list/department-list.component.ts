@@ -2,7 +2,6 @@ import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy } fr
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/operators';
@@ -12,7 +11,6 @@ import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { School } from 'src/app/schools/school.model';
 import { SchoolService } from 'src/app/schools/school.service';
 import { DepartmentsDataSource } from '../common/tableDataHelper/departments.datasource';
-import { Department } from '../department.model';
 import { DepartmentService } from '../department.service';
 
 @Component({

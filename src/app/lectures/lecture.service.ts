@@ -21,7 +21,7 @@ export class LectureService {
     }
 
     getAllPageLecturesByCourseScheduleId(params: HttpParams): Observable<any> {
-        return this.http.get<Lecture[]>(API_URL + 'per_school/all/paginated_sorted_filtered', { params });
+        return this.http.get<Lecture[]>(API_URL + 'all/by_course-schedule/paginated_sorted_filtered', { params });
     }
 
     getAllLectures(): Observable<Lecture[]> {
