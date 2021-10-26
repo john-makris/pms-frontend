@@ -1,1 +1,82 @@
-<p>lecture-edit works!</p>
+<section 
+    [ngClass]="'container'"
+    [ngClass.lt-md]="'min-container'"
+    fxLayout>
+    <form 
+        [formGroup]="lectureForm"
+        (ngSubmit)="onSubmit()">
+        <mat-card
+            class="mat-elevation-z8"
+            fxFlex.xs="19em"
+            fxFlex="22em">
+            <mat-card-title fxLayoutAlign="center">
+                <h1 *ngIf="isAddMode">Add Lecture</h1>
+                <h1 *ngIf="!isAddMode">Edit Lecture</h1>
+            </mat-card-title>
+            <mat-card-content fxLayout="column" 
+            fxLayoutAlign="center">
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Title</mat-label>
+                    <textarea 
+                        type="text"
+                        matInput 
+                        placeholder="Title"
+                        formControlName="title">
+                    </textarea>
+                    <div matSuffix>
+                        <mat-icon>domain</mat-icon>
+                    </div>
+                    <mat-hint>Please enter a valid title.</mat-hint>
+                    <mat-error>Invalid or missing title.</mat-error>
+                </mat-form-field>
+                <mat-form-field
+                    *ngIf="isAddMode && allCoursesSchedules"
+                    appearance="outline"
+                    [hideRequiredMarker]="hideRequiredControl.value"
+                    [floatLabel]="floatLabelControl.value">
+                    <mat-select
+                        [(value)]="selectedCourseScheduleId"
+                        panelClass="mat-select-panel"
+                        formControlName="courseScheduleId">
+                        <mat-option
+                            [value]="''">-- None --</mat-option>
+                        <mat-option 
+                            *ngFor="let courseSchedule of coursesSchedules"
+                            [value]="courseSchedule.id.toString()">
+                            <p>
+                                {{ courseSchedule.course.name }}
+                            </p>
+                        </mat-option>
+                    </mat-select>
+                    <mat-label><mat-icon>date_range</mat-icon> <b> Course Schedule</b></mat-label>
+                    <mat-hint>Choose Course Schedule</mat-hint>
+                    <mat-error>Course Schedule is required.</mat-error>
+                </mat-form-field>
+                <div fxLayoutAlign="center">
+                    <mat-spinner *ngIf="isLoading"></mat-spinner>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div
+                    *ngIf="!isLoading"
+                    class="form-actions"
+                    fxLayout="row"
+                    fxLayoutAlign="start">
+                        <button 
+                            type="submit" 
+                            mat-raised-button color="primary" 
+                            [disabled]="lectureForm.invalid || isLoading">
+                            {{ isAddMode ? 'Save' : 'Update' }}
+                        </button>
+                        <button 
+                            type="button" 
+                            mat-button color="primary" 
+                            (click)="onCancel()">
+                            Cancel
+                        </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </form>
+</section>

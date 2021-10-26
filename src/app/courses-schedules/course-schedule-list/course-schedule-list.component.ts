@@ -10,7 +10,7 @@ import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { Department } from 'src/app/departments/department.model';
 import { DepartmentService } from 'src/app/departments/department.service';
-import { CourseScheduleDataSource } from '../common/tableDataHelper/coursesSchedules.datasource';
+import { CoursesSchedulesDataSource } from '../common/tableDataHelper/coursesSchedules.datasource';
 import { CourseScheduleService } from '../course-schedule.service';
 
 @Component({
@@ -24,7 +24,7 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
   isLoading: boolean = false;
   submitted: boolean = false;
   
-  dataSource!: CourseScheduleDataSource;
+  dataSource!: CoursesSchedulesDataSource;
   departments!: Department[];
   selectedDepartmentId: string = '';
 
@@ -72,7 +72,7 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
 
     this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
 
-    this.dataSource = new CourseScheduleDataSource(this.courseScheduleService);
+    this.dataSource = new CoursesSchedulesDataSource(this.courseScheduleService);
 
     this.dataSource.loadCoursesSchedules(this.selectDepartmentForm.value.departmentId, 
       '', 0, 3, 'asc', this.currentColumnDef);

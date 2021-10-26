@@ -11,6 +11,6 @@ export class CourseSchedule {
         public status: boolean,
         public teachingStuff: UserData[],
         public students: UserData[],
-        public course: Course,
+        public course: Course
     ) {}
 }

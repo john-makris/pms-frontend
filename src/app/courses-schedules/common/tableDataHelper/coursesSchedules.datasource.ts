@@ -7,7 +7,7 @@ import { CourseScheduleService } from "../../course-schedule.service";
 import { CourseScheduleResponseData } from "../payload/response/courseScheduleResponseData.interface";
 import { CoursesSchedulesResponseData } from "../payload/response/coursesSchedulesResponseData.interface";
 
-export class CourseScheduleDataSource implements DataSource<CourseScheduleResponseData> {
+export class CoursesSchedulesDataSource implements DataSource<CourseScheduleResponseData> {
 
     private courseScheduleSubject = new BehaviorSubject<CourseScheduleResponseData[]>([]);
 

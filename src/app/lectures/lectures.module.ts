@@ -5,6 +5,7 @@ import { LectureEditComponent } from "./lecture-edit/lecture-edit.component";
 import { LectureListComponent } from "./lecture-list/lecture-list.component";
 import { LecturesRoutingModule } from "./lectures-routing.module";
 import { LecturesComponent } from "./lectures.component";
+import { CourseScheduleSelectDialogComponent } from './lecture-edit/dialogs/course-schedule-select-dialog/course-schedule-select.component';
 
 
 @NgModule({
@@ -12,7 +13,8 @@ import { LecturesComponent } from "./lectures.component";
         LecturesComponent,
         LectureDetailComponent,
         LectureListComponent,
-        LectureEditComponent
+        LectureEditComponent,
+        CourseScheduleSelectDialogComponent
     ],
     imports: [
         SharedModule,
