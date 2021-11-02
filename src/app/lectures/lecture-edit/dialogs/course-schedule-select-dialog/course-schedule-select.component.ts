@@ -37,7 +37,8 @@ export class CourseScheduleSelectDialogComponent implements OnInit, AfterViewIni
 
   displayedColumns = [
     'id',
-    'name'
+    'name',
+    'semester'
   ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -58,7 +59,7 @@ export class CourseScheduleSelectDialogComponent implements OnInit, AfterViewIni
     this.departmentIdSubscription = this.departmentService.departmentIdState
       .subscribe((departmentId: number) => {
         this.currentDepartmentId = departmentId;
-    })
+    });
 
     this.dataSource = new CoursesSchedulesDataSource(this.courseScheduleService);
 
@@ -140,6 +141,8 @@ export class CourseScheduleSelectDialogComponent implements OnInit, AfterViewIni
         academicYear: selectedRow.academicYear,
         maxTheoryLectures: selectedRow.maxTheoryLectures,
         maxLabLectures: selectedRow.maxLabLectures,
+        theoryLectureDuration: selectedRow.theoryLectureDuration,
+        labLectureDuration: selectedRow.labLectureDuration,
         status: selectedRow.status,
         teachingStuff: selectedRow.teachingStuff,
         students: selectedRow.students,

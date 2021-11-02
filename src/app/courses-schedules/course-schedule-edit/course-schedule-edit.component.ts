@@ -91,65 +91,69 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
         }
       );
 
-      this.departmentIdSubscription = this.departmentService.departmentIdState
-        .subscribe((departmentId: number) => {
-          if (departmentId === 0 && this.isAddMode) {
-            this.onCancel();
-          }
-        });
+    this.departmentIdSubscription = this.departmentService.departmentIdState
+      .subscribe((departmentId: number) => {
+        if (departmentId === 0 && this.isAddMode) {
+          this.onCancel();
+        }
+    });
 
-        console.log("BEFORE FORM INITIALIZATION: ");
-        this.courseScheduleForm = this.formBuilder.group({
-          maxTheoryLectures: [null, [Validators.required, Validators.max(12), Validators.min(1)]],
-          maxLabLectures: [null, [Validators.required, Validators.max(12), Validators.min(1)]],
-          teachingStuff: [null, Validators.required],
-          students: [null, this.isAddMode ? Validators.required : null],
-          course: [null, Validators.required],
-          hideRequired: this.hideRequiredControl,
-          floatLabel: this.floatLabelControl
-        });
+    console.log("BEFORE FORM INITIALIZATION: ");
+    this.courseScheduleForm = this.formBuilder.group({
+      maxTheoryLectures: [null, [Validators.required, Validators.max(12), Validators.min(1)]],
+      maxLabLectures: [null, [Validators.required, Validators.max(12), Validators.min(1)]],
+      theoryHours: [null, [Validators.required, Validators.max(3), Validators.min(1)]],
+      theoryMinutes: [null, [Validators.required, Validators.max(59), Validators.min(0)]],
+      labHours: [null, [Validators.required, Validators.max(3), Validators.min(1)]],
+      labMinutes: [null, [Validators.required, Validators.max(59), Validators.min(0)]],
+      teachingStuff: [null, Validators.required],
+      students: [null, this.isAddMode ? Validators.required : null],
+      course: [null, Validators.required],
+      hideRequired: this.hideRequiredControl,
+      floatLabel: this.floatLabelControl
+    });
 
-        this.courseSelectDialogSubscription = this.courseSelectDialogService.courseSelectDialogState
-          .subscribe((_course: Course | null) => {
-            this.courseScheduleForm.controls.course.markAsTouched();
-            console.log("Course Data: "+JSON.stringify(_course));
-            if (_course !== null) {
-              console.log("CATCH COURSE: "+_course.name);
-              this.courseScheduleForm.patchValue({course: _course});
-              this.currentCourse = _course;
-              console.log("Is course valid ? "+this.f.course.valid);
-            } else {
-              if (!this.currentCourse) {
-                this.f.course.setErrors({
-                  'required': true
-                });
-              } else {
-                console.log("Is course valid ? "+this.f.course.valid);
-              }
-            }
-        });
-
-        this.teachersSelectDialogSubscription = this.teachersSelectDialogService.teachersSelectDialogState
-        .subscribe((_teachers: Array<UserData> | null) => {
-          this.courseScheduleForm.controls.teachingStuff.markAsTouched();
-          if (_teachers !== null) {
-            console.log("CATCH TEACHERS: ");
-            _teachers.forEach(teacher => {
-              console.log(teacher.username);
+    this.courseSelectDialogSubscription = this.courseSelectDialogService.courseSelectDialogState
+      .subscribe((_course: Course | null) => {
+        this.courseScheduleForm.controls.course.markAsTouched();
+        console.log("Course Data: "+JSON.stringify(_course));
+        if (_course !== null) {
+          console.log("CATCH COURSE: "+_course.name);
+          this.courseScheduleForm.patchValue({course: _course});
+          this.currentCourse = _course;
+          console.log("Is course valid ? "+this.f.course.valid);
+        } else {
+          if (!this.currentCourse) {
+            this.f.course.setErrors({
+              'required': true
             });
-            this.courseScheduleForm.patchValue({teachingStuff: _teachers});
-            this.currentTeachingStuff = _teachers;
-            console.log("Teachers"+this.f.teachingStuff.valid);
           } else {
-            if (!this.currentTeachingStuff) {
-              this.f.teachingStuff.setErrors({
-                'required': true
-              });
-            } else {
-              console.log("Teachers"+this.f.teachingStuff.valid);
-            }
+            console.log("Is course valid ? "+this.f.course.valid);
           }
-      });
+        }
+    });
+
+    this.teachersSelectDialogSubscription = this.teachersSelectDialogService.teachersSelectDialogState
+      .subscribe((_teachers: Array<UserData> | null) => {
+        this.courseScheduleForm.controls.teachingStuff.markAsTouched();
+        if (_teachers !== null) {
+          console.log("CATCH TEACHERS: ");
+          _teachers.forEach(teacher => {
+            console.log(teacher.username);
+          });
+          this.courseScheduleForm.patchValue({teachingStuff: _teachers});
+          this.currentTeachingStuff = _teachers;
+          console.log("Teachers"+this.f.teachingStuff.valid);
+        } else {
+          if (!this.currentTeachingStuff) {
+            this.f.teachingStuff.setErrors({
+              'required': true
+            });
+          } else {
+            console.log("Teachers"+this.f.teachingStuff.valid);
+          }
+        }
+    });
   }
 
   get f() { return this.courseScheduleForm.controls; }
@@ -218,6 +222,14 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
     const courseScheduleData: CourseScheduleRequestData = {
       maxTheoryLectures: this.courseScheduleForm.value.maxTheoryLectures,
       maxLabLectures: this.courseScheduleForm.value.maxLabLectures,
+      theoryLectureDuration: this.durationCalculatorInSeconds(
+        this.courseScheduleForm.value.theoryHours,
+        this.courseScheduleForm.value.theoryMinutes
+      ),
+      labLectureDuration: this.durationCalculatorInSeconds(
+        this.courseScheduleForm.value.labHours,
+        this.courseScheduleForm.value.labMinutes
+      ),
       course: this.courseScheduleForm.value.course,
       teachingStuff: this.courseScheduleForm.value.teachingStuff
     };
@@ -270,6 +282,10 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
           });
         }
       }).add(() => this.isLoading = false);
+  }
+
+  durationCalculatorInSeconds(hours: number, minutes: number): number {
+    return ((hours * 3600) + (minutes * 60));
   }
 
   onCancel() {

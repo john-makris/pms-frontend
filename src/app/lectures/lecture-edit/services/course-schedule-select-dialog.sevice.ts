@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { CourseSelectDialogComponent } from 'src/app/courses-schedules/course-schedule-edit/dialogs/course-select-dialog/course-select-dialog.component';
 import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model';
-import { Course } from 'src/app/courses/course.model';
+import { CourseScheduleSelectDialogComponent } from '../dialogs/course-schedule-select-dialog/course-schedule-select.component';
 
 @Injectable({ providedIn: 'root' })
 export class CourseScheduleSelectDialogService {
-    public courseScheduleSelectDialogSubject = new Subject<Course | null>();
+    public courseScheduleSelectDialogSubject = new Subject<CourseSchedule | null>();
     public courseScheduleSelectDialogState = this.courseScheduleSelectDialogSubject.asObservable();
 
     constructor(private courseScheduleSelectDialog: MatDialog) { }
@@ -17,13 +16,13 @@ export class CourseScheduleSelectDialogService {
 
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
-        dialogConfig.data = {course: courseSchedule};
+        dialogConfig.data = {courseSchedule: courseSchedule};
         dialogConfig.maxWidth = '30em';
         dialogConfig.minWidth = 'min-content';
     
-        const dialogRef = this.courseScheduleSelectDialog.open(CourseSelectDialogComponent, dialogConfig);
+        const dialogRef = this.courseScheduleSelectDialog.open(CourseScheduleSelectDialogComponent, dialogConfig);
 
-        dialogRef.afterClosed().subscribe((result: Course) => {
+        dialogRef.afterClosed().subscribe((result: CourseSchedule) => {
             console.log(`Dialog result: ${result}`);
             this.courseScheduleSelectDialogSubject.next(result);
         });

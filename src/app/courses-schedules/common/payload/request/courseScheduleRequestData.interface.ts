@@ -4,6 +4,8 @@ import { UserData } from "src/app/users/common/payload/response/userData.interfa
 export interface CourseScheduleRequestData {
     maxTheoryLectures: number,
     maxLabLectures: number,
+    theoryLectureDuration: number,
+    labLectureDuration: number,
     course: Course,
     teachingStuff: UserData[]
 }

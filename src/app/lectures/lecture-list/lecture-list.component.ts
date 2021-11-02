@@ -10,8 +10,8 @@ import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model';
 import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
-import { School } from 'src/app/schools/school.model';
-import { SchoolService } from 'src/app/schools/school.service';
+import { Department } from 'src/app/departments/department.model';
+import { DepartmentService } from 'src/app/departments/department.service';
 import { LecturesDataSource } from '../common/tableDataHelper/lectures.datasource';
 import { LectureService } from '../lecture.service';
 
@@ -22,7 +22,7 @@ import { LectureService } from '../lecture.service';
 })
 export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  selectCourseScheduleForm!: FormGroup;
+  selectDepartmentForm!: FormGroup;
   hideRequiredControl = new FormControl(false);
   floatLabelControl = new FormControl('auto');
 
@@ -30,8 +30,8 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
   submitted: boolean = false;
   
   dataSource!: LecturesDataSource;
-  coursesSchedules!: CourseSchedule[];
-  selectedCourseScheduleId: string = '';
+  departments!: Department[];
+  selectedDepartmentId: string = '';
 
   totalItems: number = 0;
   currentPage: number = 0;
@@ -41,7 +41,7 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   snackbarSubscription!: Subscription;
   pageDetailSubscription!: Subscription;
-  coursesSchedulesSubscription!: Subscription;
+  departmentsSubscription!: Subscription;
 
   displayedColumns = [
     'id',
@@ -58,28 +58,27 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
     private formBuilder: FormBuilder,
     private lectureService: LectureService,
     private snackbarService: SnackbarService,
-    private courseScheduleService: CourseScheduleService) {}
+    private departmentService: DepartmentService) {}
 
 
   ngOnInit(): void {
-    this.coursesSchedulesSubscription = this.courseScheduleService.getAllCoursesSchedules()
-      .pipe(first())
-      .subscribe(coursesSchedules => {
-        this.coursesSchedules = coursesSchedules;
-      });
-    this.selectCourseScheduleForm = this.formBuilder.group({
-      courseScheduleId: [this.selectedCourseScheduleId],
-      hideRequired: this.hideRequiredControl,
-      floatLabel: this.floatLabelControl
+    this.departmentsSubscription = this.departmentService.getAllDepartments()
+    .pipe(first())
+    .subscribe(departments => {
+      this.departments = departments;
     });
 
-    console.log("Course Schedule ID: "+this.selectedCourseScheduleId);
+    this.selectDepartmentForm = this.formBuilder.group({
+      departmentId: [this.selectedDepartmentId]
+    });
 
-    this.courseScheduleService.courseScheduleIdSubject.next(+this.selectedCourseScheduleId);
+    console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
+
+    this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
 
     this.dataSource = new LecturesDataSource(this.lectureService);
 
-    this.dataSource.loadLectures(this.selectCourseScheduleForm.value.courseScheduleId, '', 0, 3, 'asc', this.currentColumnDef);
+    this.dataSource.loadLectures(this.selectDepartmentForm.value.courseScheduleId, '', 0, 3, 'asc', this.currentColumnDef);
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -101,13 +100,13 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentActivityState = state.message;
         if(this.currentActivityState.includes('added')) {
           //console.log('Current State: '+this.currentState);
-          this.selectCourseScheduleForm.setValue(
+          this.selectDepartmentForm.setValue(
             {
-              courseScheduleId: this.selectedCourseScheduleId,
+              courseScheduleId: this.selectedDepartmentId,
               hideRequired: this.hideRequiredControl,
               floatLabel: this.floatLabelControl
             });
-          this.selectedCourseScheduleId = this.selectCourseScheduleForm.value.courseScheduleId;
+          this.selectedDepartmentId = this.selectDepartmentForm.value.courseScheduleId;
           this.paginator.pageIndex = 0;
           this.refreshTable();
         } else if(this.currentActivityState.includes('deleted') && this.currentPageItems === 1) {
@@ -126,25 +125,25 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  get f() { return this.selectCourseScheduleForm.controls; }
+  get f() { return this.selectDepartmentForm.controls; }
 
   onSubmit() {
     this.router.navigate(['/lectures'], { relativeTo: this.route });
     this.submitted = true;
     //console.log("HAAAAALOOOO!!!");
-    if(this.selectCourseScheduleForm.invalid) {
+    if(this.selectDepartmentForm.invalid) {
       return;
     }
 
     this.isLoading = true;
     //console.log("DEPARTMENT ID: "+ this.selectDepartmentForm.value.departmentId);
-    this.selectedCourseScheduleId = this.selectCourseScheduleForm.value.courseScheduleId;
+    this.selectedDepartmentId = this.selectDepartmentForm.value.departmentId;
     this.paginator.pageIndex = 0;
     this.paginator.pageSize;
     this.sort.direction='asc'
     this.currentColumnDef;
-    console.log("Course Schedule ID: "+this.selectedCourseScheduleId);
-    this.courseScheduleService.courseScheduleIdSubject.next(+this.selectedCourseScheduleId);
+    console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
+    this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
 
     this.refreshTable();
   }
@@ -177,7 +176,7 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loadLecturesPage() {
     this.dataSource.loadLectures(
-        +this.selectedCourseScheduleId,
+        +this.selectedDepartmentId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,
@@ -200,7 +199,7 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.coursesSchedulesSubscription.unsubscribe();
+    this.departmentsSubscription.unsubscribe();
     this.pageDetailSubscription.unsubscribe();
     this.snackbarSubscription.unsubscribe();
  }

@@ -9,8 +9,8 @@ import { DepartmentService } from 'src/app/departments/department.service';
 import { CourseRequestData } from '../common/payload/request/courseRequestData.interface';
 import { CourseResponseData } from '../common/payload/response/courseResponseData.interface';
 import { CourseService } from '../course.service';
-import { Semester } from '../semester.model';
-import { SemesterService } from '../semester.service';
+import { Semester } from '../semesters/semester.model';
+import { SemesterService } from '../semesters/semester.service';
 
 @Component({
   selector: 'app-course-edit',
@@ -73,7 +73,7 @@ export class CourseEditComponent implements OnInit, OnDestroy{
               .subscribe((currentCourseData: CourseResponseData) => {
                 this.courseForm.patchValue({
                   name: currentCourseData.name,
-                  semester: currentCourseData.semester,
+                  semesterId: currentCourseData.semester.id,
                   departmentId: currentCourseData.department.id
                 });
                 this.selectedSemesterId = currentCourseData.semester.id.toString();

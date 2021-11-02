@@ -39,6 +39,14 @@
                     <label><strong>Max Lab Lectures:</strong></label>
                     {{ courseSchedule?.maxLabLectures }}
                 </div>
+                <div>
+                    <label><strong>Theory Duration:</strong></label>
+                    {{ theoryMinutes!==0 ? theoryHours + ' hours '+'& ' + theoryMinutes + ' minutes' : theoryHours + ' hours' }}
+                </div>
+                <div>
+                    <label><strong>Lab Duration:</strong></label>
+                    {{ labMinutes!==0 ? labHours + ' hours '+'& ' + labMinutes + ' minutes' : labHours + ' hours' }}
+                </div>
                 <div fxLayout="row wrap">
                     <label><strong>{{ "Teaching Stuff:"}}{{ space }}</strong></label>
                     <span

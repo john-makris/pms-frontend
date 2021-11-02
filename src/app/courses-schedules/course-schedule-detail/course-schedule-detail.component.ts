@@ -18,6 +18,12 @@ export class CourseScheduleDetailComponent implements OnInit, OnDestroy {
   courseSchedule!: CourseScheduleResponseData;
   private ensureDialogSubscription!: Subscription;
   ensureDialogStatus!: boolean;
+  
+  theoryHours: number = 0;
+  theoryMinutes: number = 0;
+
+  labHours: number = 0;
+  labMinutes: number = 0;
 
   space: string = '\xa0';
   delimeter: string = ',' + '\xa0';
@@ -38,6 +44,7 @@ export class CourseScheduleDetailComponent implements OnInit, OnDestroy {
           .pipe(first())
           .subscribe((currentCourseSchedule: CourseScheduleResponseData) => {
             this.courseSchedule = currentCourseSchedule;
+            this.calcHoursAndMinutes();
             console.log("Course Schedule Details: "+JSON.stringify(this.courseSchedule));
           });
       }
@@ -70,6 +77,13 @@ export class CourseScheduleDetailComponent implements OnInit, OnDestroy {
           }
         }
       );
+  }
+
+  calcHoursAndMinutes() {
+    this.theoryHours = Math.floor(this.courseSchedule.theoryLectureDuration / 3600);
+    this.theoryMinutes = (Math.floor(this.courseSchedule.theoryLectureDuration % 3600)) / 60;
+    this.labHours = Math.floor(this.courseSchedule.labLectureDuration / 3600);
+    this.labMinutes = (Math.floor(this.courseSchedule.labLectureDuration % 3600)) / 60;
   }
 
   previewStudents() {

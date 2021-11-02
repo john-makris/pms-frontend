@@ -8,6 +8,8 @@ export class CourseSchedule {
         public academicYear: string,
         public maxTheoryLectures: number,
         public maxLabLectures: number,
+        public theoryLectureDuration: number,
+        public labLectureDuration: number,
         public status: boolean,
         public teachingStuff: UserData[],
         public students: UserData[],

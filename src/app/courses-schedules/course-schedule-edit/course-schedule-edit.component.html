@@ -3,6 +3,7 @@
     [ngClass.lt-md]="'min-container'"
     fxLayout>
     <form 
+        fxLayout
         [formGroup]="courseScheduleForm"
         (ngSubmit)="onSubmit()">
         <mat-card
@@ -14,7 +15,7 @@
                 <h1 *ngIf="isAddMode">Add Course Schedule</h1>
                 <h1 *ngIf="!isAddMode">{{ currentCourse.name }} Schedule</h1>
             </mat-card-title>
-            <mat-card-content fxLayout="column" fxLayout.sm="row wrap" fxLayout.gt-sm="row wrap"
+            <mat-card-content fxLayout.lt-sm="column" fxLayout="row wrap"
             fxLayoutAlign="center">
 
                 <div fxLayout="column" fxFlex
@@ -35,11 +36,10 @@
                     class="non-form-field-students" fxLayoutGap.lt-sm="0.5em">
                     <!-- Students -->
                     <div fxLayout="row wrap" fxLayout.lt-sm="column">
-                        <div fxFlex class="aligner">
-                            <mat-label
-                            ><strong>Upload csv/excel of Students:</strong></mat-label>
+                        <div class="aligner" fxFlex>
+                            <mat-label><strong>Upload csv/excel of Students:</strong></mat-label>
                         </div>
-                        <div fxFlex class="aligner">
+                        <div class="aligner" fxFlex>
                             <input
                             [ngClass]="{'color-invalid': f.students.invalid && f.students.touched}"
                             (focus)="onTouched()"
@@ -56,7 +56,103 @@
                     </div>
                 </div>
 
-                <div fxFlex fxLayout.lt-sm="column" fxLayout.sm="row" fxLayout.gt-sm="row wrap">
+                <div *ngIf="isAddMode"
+                    fxFlex 
+                    fxLayout.lt-sm="column" 
+                    fxLayout="row" 
+                    class="duration-styles">
+                    <div fxLayout="column" fxFlex>
+                        <div class="aligner">
+                            <mat-label><strong>Theory Duration:</strong></mat-label>
+                        </div>
+                        <div fxLayout="row">
+                            <mat-form-field fxFlex class="small-width"
+                                appearance="outline">
+                                <mat-label>Hours</mat-label>
+                                <input 
+                                    matInput 
+                                    type="number" 
+                                    placeholder="Hours"
+                                    formControlName="theoryHours"
+                                    min="1"
+                                    max="3">
+                                <span matSuffix>
+                                    <mat-icon>hourglass_full</mat-icon>
+                                </span>
+                                <mat-hint>Set Hours.</mat-hint>
+                                <mat-error *ngIf="f.theoryHours.errors?.max">Cannot set more than 3</mat-error>
+                                <mat-error *ngIf="f.theoryHours.errors?.min">Cannot set less than 1</mat-error>
+                                <mat-error *ngIf="f.theoryHours.errors?.required">Missing Hours</mat-error>
+                            </mat-form-field>
+    
+                            <mat-form-field fxFlex class="small-width"
+                                appearance="outline">
+                                <mat-label>Minutes</mat-label>
+                                <input 
+                                    matInput 
+                                    type="number" 
+                                    placeholder="Minutes"
+                                    formControlName="theoryMinutes"
+                                    min="0"
+                                    max="59">
+                                <span matSuffix>
+                                    <mat-icon>hourglass_bottom</mat-icon>
+                                </span>
+                                <mat-hint>Set Minutes.</mat-hint>
+                                <mat-error *ngIf="f.theoryMinutes.errors?.max">Cannot set more than 59</mat-error>
+                                <mat-error *ngIf="f.theoryMinutes.errors?.min">Cannot set less than 0</mat-error>
+                                <mat-error *ngIf="f.theoryMinutes.errors?.required">Missing Minutes</mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div fxLayout="column" fxFlex>
+                        <div class="aligner">
+                            <mat-label><strong>Lab Duration:</strong></mat-label>
+                        </div>
+                        <div fxLayout="row">
+                            <mat-form-field fxFlex class="small-width"
+                                appearance="outline">
+                                <mat-label>Hours</mat-label>
+                                <input 
+                                    matInput 
+                                    type="number" 
+                                    placeholder="Hours"
+                                    formControlName="labHours"
+                                    min="1"
+                                    max="3">
+                                <span matSuffix>
+                                    <mat-icon>hourglass_full</mat-icon>
+                                </span>
+                                <mat-hint>Set Hours.</mat-hint>
+                                <mat-error *ngIf="f.labHours.errors?.max">Cannot set more than 3</mat-error>
+                                <mat-error *ngIf="f.labHours.errors?.min">Cannot set less than 1</mat-error>
+                                <mat-error *ngIf="f.labHours.errors?.required">Missing Hours</mat-error>
+                            </mat-form-field>
+    
+                            <mat-form-field fxFlex class="small-width"
+                                appearance="outline">
+                                <mat-label>Minutes</mat-label>
+                                <input 
+                                    matInput 
+                                    type="number" 
+                                    placeholder="Minutes"
+                                    formControlName="labMinutes"
+                                    min="0"
+                                    max="59">
+                                <span matSuffix>
+                                    <mat-icon>hourglass_bottom</mat-icon>
+                                </span>
+                                <mat-hint>Set Minutes.</mat-hint>
+                                <mat-error *ngIf="f.labMinutes.errors?.max">Cannot set more than 59</mat-error>
+                                <mat-error *ngIf="f.labMinutes.errors?.min">Cannot set less than 0</mat-error>
+                                <mat-error *ngIf="f.labMinutes.errors?.required">Missing Minutes</mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+
+                <div fxLayout.lt-sm="column" fxLayout="row" fxFlex>
                     <mat-form-field fxFlex
                         appearance="outline">
                         <mat-label>Max Theories</mat-label>

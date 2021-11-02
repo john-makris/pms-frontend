@@ -5,6 +5,8 @@ export interface CourseScheduleResponseData {
     id: number,
     maxTheoryLectures: number,
     maxLabLectures: number,
+    theoryLectureDuration: number,
+    labLectureDuration: number,
     academicYear: string,
     course: Course,
     teachingStuff: UserData[],

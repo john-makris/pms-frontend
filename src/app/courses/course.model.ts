@@ -1,5 +1,5 @@
 import { Department } from "../departments/department.model";
-import { Semester } from "./semester.model";
+import { Semester } from "./semesters/semester.model";
 
 export class Course {
     

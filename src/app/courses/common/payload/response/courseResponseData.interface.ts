@@ -1,5 +1,4 @@
-import { Course } from "src/app/courses/course.model";
-import { Semester } from "src/app/courses/semester.model";
+import { Semester } from "src/app/courses/semesters/semester.model";
 import { Department } from "src/app/departments/department.model";
 
 export interface CourseResponseData {
