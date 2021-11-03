@@ -8,14 +8,11 @@ import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model'
 import { DepartmentService } from 'src/app/departments/department.service';
 import { LectureRequestData } from '../common/payload/request/lectureRecuestData.interface';
 import { LectureTypeService } from '../lecture-types/lecture-type.service';
-import { Lecture } from '../lecture.model';
 import { LectureService } from '../lecture.service';
 import { Room } from '../rooms/room.model';
-import { RoomService } from '../rooms/room.service';
 import { CourseScheduleSelectDialogService } from './services/course-schedule-select-dialog.sevice';
-import * as moment from 'moment';
-import { DateValidator } from 'src/app/common/helpers/date.validator';
 import { LectureType } from '../lecture-types/lecture-type.model';
+import { Lecture } from '../lecture.model';
 
 @Component({
   selector: 'app-lecture-edit',
@@ -30,7 +27,7 @@ export class LectureEditComponent implements OnInit, OnDestroy {
   submitted: boolean = false;
 
   lectureTypes: LectureType[] = [];
-  selectedLectureTypeId: string = '';
+  selectedLectureType: LectureType | string = '';
   rooms: Room[] = [];
   selectedRoomId: string = '';
 
@@ -67,13 +64,11 @@ export class LectureEditComponent implements OnInit, OnDestroy {
     private courseScheduleSelectDialogService: CourseScheduleSelectDialogService,
     private lectureService: LectureService,
     private lectureTypeService: LectureTypeService,
-    private roomService: RoomService,
     private snackbarService: SnackbarService
   ) { }
 
   ngOnInit(): void {
     this.loadLectureTypes();
-    this.loadRooms();
 
     this.id = this.route.snapshot.params['id'];
     this.routeSubscription = this.route.params
@@ -88,16 +83,12 @@ export class LectureEditComponent implements OnInit, OnDestroy {
                 this.currentLecture = currentLectureData;
                 this.departmentService.departmentIdSubject.next(this.currentLecture.courseSchedule.course.department.id);
                 this.lectureForm.patchValue({
-                  lectureTypeId: currentLectureData.lectureType.id,
+                  lectureType: currentLectureData.lectureType,
                   title: currentLectureData.title,
-                  duration: currentLectureData.duration,
-                  startTimestamp: currentLectureData.startTimestamp,
-                  roomId: currentLectureData.room.id,
                   courseSchedule: currentLectureData.courseSchedule
                 });
                 this.currentCourseSchedule = currentLectureData.courseSchedule;
-                this.selectedRoomId = currentLectureData.room.id.toString();
-                this.selectedLectureTypeId = currentLectureData.lectureType.id.toString();
+                this.selectedLectureType = currentLectureData.lectureType;
               });
           }
         }
@@ -113,11 +104,7 @@ export class LectureEditComponent implements OnInit, OnDestroy {
     console.log("BEFORE FORM INITIALIZATION: ");
     this.lectureForm = this.formBuilder.group({
       courseSchedule: [null, Validators.required],
-      lectureTypeId: [this.selectedLectureTypeId, Validators.required],
-      hours: [null, [Validators.required, Validators.max(3), Validators.min(1)]],
-      minutes: [null, [Validators.required, Validators.max(59), Validators.min(0)]],
-      startTimestamp: [null, Validators.required],
-      roomId: [this.selectedRoomId, Validators.required],
+      lectureType: [this.selectedLectureType, Validators.required],
       title: [null, Validators.required]
     });
 
@@ -156,31 +143,25 @@ export class LectureEditComponent implements OnInit, OnDestroy {
     }
 
     this.isLoading = true;
-    /*
+
     const lectureData: LectureRequestData = {
       courseSchedule: this.lectureForm.value.courseSchedule,
       lectureType: this.lectureForm.value.lectureType,
-      duration: this.durationCalculatorInSeconds(),
-      startTimestamp: this.lectureForm.value.startTimestamp,
-      room: this.lectureForm.value.room,
       title: this.lectureForm.value.title
-    };*/
+    };
 
     console.log("Lecture Form: ");
     console.log("Course Schedule: "+JSON.stringify(this.lectureForm.value.courseSchedule));
     console.log("Lecture Type Id: "+this.lectureForm.value.lectureTypeId);
-    console.log("Duration in seconds: "+this.durationCalculatorInSeconds());
-    console.log("Start Time Stamp: "+this.formatDateTime());
-    console.log("Room Id: "+this.lectureForm.value.roomId);
     console.log("Title: "+this.lectureForm.value.title);
+
     //this.courseScheduleForm.reset();
 
-    /*
     if (this.isAddMode) {
       this.createLecture(lectureData);
     } else {
       this.updateLecture(lectureData);
-    }*/
+    }
   }
 
   private createLecture(lectureData: LectureRequestData) {
@@ -209,26 +190,6 @@ export class LectureEditComponent implements OnInit, OnDestroy {
       this.lectureTypes = lectureTypes;
       console.log(this.lectureTypes);
     });
-  }
-
-  loadRooms() {
-    this.roomSubscription = this.roomService.getAllRooms()
-    .pipe(first())
-    .subscribe(rooms => {
-      this.rooms = rooms;
-      console.log(this.rooms);
-    });
-  }
-
-  formatDateTime(): String {
-    const momentDate = new Date(this.lectureForm.controls.startTimestamp.value); // Replace event.value with your date value
-    const formattedDate: String = moment(momentDate).format("YYYY/MM/DD HH:mm");
-    console.log("Formated Date: "+formattedDate);
-    return formattedDate;
-  }
-
-  durationCalculatorInSeconds(): number {
-    return ((this.lectureForm.value.hours * 3600) + (this.lectureForm.value.minutes * 60));
   }
 
   onCancel() {

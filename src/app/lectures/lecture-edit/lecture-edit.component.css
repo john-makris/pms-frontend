@@ -18,10 +18,7 @@
     margin-top: 0.6em;
     margin-left: 0.4em;
     margin-right: 0.4em;
-}
-
-.fix-position {
-    margin-top: 1.4em;
+    padding-bottom: 0.5em;
 }
 
 .border-invalid {
@@ -42,21 +39,17 @@
     margin-left: 4%;
 }
 
+.selection-text {
+    margin-left: 4%;
+}
+
 .aligner {
     margin-left: 0.42em;
     margin-right: 0.42em;
 }
 
-mat-form-field {
-    padding: 0.35em;
-}
-
-.small-width {
-    width: 3em;
-}
-
-.large-width {
-    width: 8em;
+.lecture-type-position {
+    background-color: #f00;
 }
 
 mat-card-actions {

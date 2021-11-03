@@ -8,8 +8,6 @@ import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
-import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model';
-import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
 import { Department } from 'src/app/departments/department.model';
 import { DepartmentService } from 'src/app/departments/department.service';
 import { LecturesDataSource } from '../common/tableDataHelper/lectures.datasource';
@@ -23,8 +21,6 @@ import { LectureService } from '../lecture.service';
 export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   selectDepartmentForm!: FormGroup;
-  hideRequiredControl = new FormControl(false);
-  floatLabelControl = new FormControl('auto');
 
   isLoading: boolean = false;
   submitted: boolean = false;
@@ -100,13 +96,12 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentActivityState = state.message;
         if(this.currentActivityState.includes('added')) {
           //console.log('Current State: '+this.currentState);
+          console.log("Selected Department Id: "+this.selectedDepartmentId);
           this.selectDepartmentForm.setValue(
             {
-              courseScheduleId: this.selectedDepartmentId,
-              hideRequired: this.hideRequiredControl,
-              floatLabel: this.floatLabelControl
+              departmentId: this.selectedDepartmentId
             });
-          this.selectedDepartmentId = this.selectDepartmentForm.value.courseScheduleId;
+          this.selectedDepartmentId = this.selectDepartmentForm.value.departmentId;
           this.paginator.pageIndex = 0;
           this.refreshTable();
         } else if(this.currentActivityState.includes('deleted') && this.currentPageItems === 1) {

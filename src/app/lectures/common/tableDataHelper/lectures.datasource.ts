@@ -5,6 +5,7 @@ import {catchError, finalize, first} from "rxjs/operators";
 import { PageDetail } from "../../../common/models/pageDetail.model";
 import { Lecture } from "../../lecture.model";
 import { LectureService } from "../../lecture.service";
+import { LecturesResponseData } from "../payload/response/lecturesResponseData.interface";
 
 export class LecturesDataSource implements DataSource<Lecture> {
 
@@ -25,14 +26,14 @@ export class LecturesDataSource implements DataSource<Lecture> {
 
     constructor(private lectureService: LectureService) { }
 
-    loadLectures(courseScheduleId: number,
+    loadLectures(departmentId: number,
                 filter:string,
                 pageIndex:number,
                 pageSize:number,
                 sortDirection:string,
                 currentColumnDef:string) {
 
-        let params: HttpParams = this.createParams(courseScheduleId,
+        let params: HttpParams = this.createParams(departmentId,
             filter, pageIndex, pageSize, sortDirection, currentColumnDef);
             console.log("PARAMS: "+params);
 
@@ -56,7 +57,7 @@ export class LecturesDataSource implements DataSource<Lecture> {
             });
         } else {
             //console.log("EXIST ID ?"+ params.has('id'));
-            this.lectureService.getAllPageLecturesByCourseScheduleId(params)
+            this.lectureService.getAllPageLecturesByDepartmentId(params)
             .pipe(
                 catchError(() => of([])),
                 finalize(() => this.loadingSubject.next(false))
@@ -69,15 +70,15 @@ export class LecturesDataSource implements DataSource<Lecture> {
         }
     }
 
-    checkData(response: any) {
+    checkData(response: LecturesResponseData) {
         if(response!==null) {
-            this.lectureSubject.next(response.departments);
+            this.lectureSubject.next(response.lectures);
             console.log(response);
             const pageDetail: PageDetail = new PageDetail(
                 response.currentPage,
                 response.totalItems,
                 response.totalPages,
-                response.departments.length);
+                response.lectures.length);
             this.pageDetailSubject.next(pageDetail);
         } else {
             this.lectureSubject.next([]);
@@ -91,7 +92,7 @@ export class LecturesDataSource implements DataSource<Lecture> {
     }
 
     createParams(
-        courseScheduleId: number,
+        departmentId: number,
         filter:string,
         pageIndex:number,
         pageSize:number,
@@ -100,9 +101,9 @@ export class LecturesDataSource implements DataSource<Lecture> {
 
             let params = new HttpParams();
 
-            if (courseScheduleId) {
+            if (departmentId) {
                 //console.log("ID: "+courseScheduleId);
-                params=params.set('id', courseScheduleId);
+                params=params.set('id', departmentId);
             }
 
             if (filter) {

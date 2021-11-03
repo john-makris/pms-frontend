@@ -6,13 +6,9 @@ export class Lecture {
     
     constructor(
         public id: number,
-        public lectureType: LectureType,
+        public nameIdentifier: string,
         public title: string,
-        public duration: number,
-        public startTimestamp: string,
-        public room: Room,
-        public excuseAbsencesLimit: number,
-        public presenceStatementStatus: boolean,
+        public lectureType: LectureType,
         public courseSchedule: CourseSchedule
     ) {}
 }

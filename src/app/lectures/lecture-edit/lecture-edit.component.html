@@ -8,132 +8,50 @@
         <mat-card
             class="mat-elevation-z8"
             fxFlex.xs="19em"
-            fxFlex.sm="40em" 
-            fxFlex.gt-sm="40em">
+            fxFlex.sm="25em" 
+            fxFlex.gt-sm="25em">
             <mat-card-title fxLayoutAlign="center">
                 <h1 *ngIf="isAddMode">Add Lecture</h1>
                 <h1 *ngIf="!isAddMode">Edit Lecture</h1>
             </mat-card-title>
-            <mat-card-content fxLayout="column" fxLayout.sm="row wrap" fxLayout.gt-sm="row wrap"
+            <mat-card-content fxLayout="column" fxLayoutGap="0.5em"
             fxLayoutAlign="center">
 
-                <div fxLayout="row" fxFlex>
-                    <div fxLayout="column" fxFlex
-                        class="non-form-field-course-schedule" *ngIf="isAddMode">
-                        <!-- Course Schedule -->
-                        <button
-                        [class.border-invalid]="f.courseSchedule.invalid && f.courseSchedule.touched"
-                            [ngClass.gt-xs]="{'course-schedule-button': true}"
-                            type="button"
-                            mat-stroked-button color="primary"
-                            (click)="selectCourseSchedule()">
-                            Choose Course Schedule</button>
-                            <mat-label *ngIf="currentCourseSchedule">Selected: {{ currentCourseSchedule.course.name }}</mat-label>
-                            <mat-error class="validation-text" *ngIf="f.courseSchedule.errors?.required && f.courseSchedule.touched">Missing Course Schedule</mat-error>
-                    </div>
-
-                    <div fxLayout="column" fxFlex
-                        class="non-form-field-teacher">
-                        <!-- Lecture Type -->
-                        <mat-form-field
-                        appearance="outline">
-                                <mat-select
-                                [(value)]="selectedLectureTypeId"
-                                panelClass="mat-select-panel"
-                                formControlName="lectureTypeId">
-                                <mat-option
-                                    [value]="''">-- None --</mat-option>
-                                <mat-option *ngFor="let lectureType of lectureTypes" [value]="lectureType.id.toString()">
-                                    <p>{{ lectureType.name }}</p>
-                                </mat-option>
-                            </mat-select>
-                            <mat-label><mat-icon>event_note</mat-icon> <b> Lecture Type</b></mat-label>
-                            <mat-hint>Choose Lecture Type</mat-hint>
-                            <mat-error>Lecture Type is required.</mat-error>
-                        </mat-form-field>
-                    </div>
+                <div fxLayout="column" fxFlex
+                    class="non-form-field-course-schedule" *ngIf="isAddMode">
+                    <!-- Course Schedule -->
+                    <button
+                    [class.border-invalid]="f.courseSchedule.invalid && f.courseSchedule.touched"
+                        [ngClass.gt-xs]="{'course-schedule-button': true}"
+                        type="button"
+                        mat-stroked-button color="primary"
+                        (click)="selectCourseSchedule()">
+                        Choose Course Schedule</button>
+                        <mat-label *ngIf="currentCourseSchedule"
+                            class="selection-text">Selected: {{ currentCourseSchedule.course.name }}</mat-label>
+                        <mat-error class="validation-text" *ngIf="f.courseSchedule.errors?.required && f.courseSchedule.touched">Missing Course Schedule</mat-error>
                 </div>
 
-                <div fxLayout="row" fxFlex>
-                    <div fxLayout="column" fxFlex>
-                        <div>
-                            <mat-form-field fxFlex class="small-width"
-                                appearance="outline">
-                                <mat-label>Hours</mat-label>
-                                <input 
-                                    matInput 
-                                    type="number" 
-                                    placeholder="Hours"
-                                    formControlName="hours"
-                                    min="1"
-                                    max="3">
-                                <span matSuffix>
-                                    <mat-icon>hourglass_full</mat-icon>
-                                </span>
-                                <mat-hint>Set Hours.</mat-hint>
-                                <mat-error *ngIf="f.hours.errors?.max">Cannot set more than 3</mat-error>
-                                <mat-error *ngIf="f.hours.errors?.min">Cannot set less than 1</mat-error>
-                                <mat-error *ngIf="f.hours.errors?.required">Missing Hours</mat-error>
-                            </mat-form-field>
-
-                            <mat-form-field fxFlex class="small-width"
-                                appearance="outline">
-                                <mat-label>Minutes</mat-label>
-                                <input 
-                                    matInput 
-                                    type="number" 
-                                    placeholder="Minutes"
-                                    formControlName="minutes"
-                                    min="0"
-                                    max="59">
-                                <span matSuffix>
-                                    <mat-icon>hourglass_bottom</mat-icon>
-                                </span>
-                                <mat-hint>Set Minutes.</mat-hint>
-                                <mat-error *ngIf="f.minutes.errors?.max">Cannot set more than 59</mat-error>
-                                <mat-error *ngIf="f.minutes.errors?.min">Cannot set less than 0</mat-error>
-                                <mat-error *ngIf="f.minutes.errors?.required">Missing Minutes</mat-error>
-                            </mat-form-field>
-                        </div>
-                    </div>
-
-                    <div fxLayout="column">
-                        <mat-form-field appearance="outline">
-                            <mat-label>Start Date & Time</mat-label>
-                            <input matInput [ngxMatDatetimePicker]="picker" #input
-                            placeholder="Start Date & Time" formControlName="startTimestamp" [disabled]="true">
-                            
-                            <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
-                    
-                            <ngx-mat-datetime-picker [touchUi]="true" #picker [disabled]="false"></ngx-mat-datetime-picker>
-                
-                            <mat-hint>Set Start Date & Time</mat-hint>
-                            <mat-error *ngIf="f.startTimestamp.errors?.required">Missing Start Date & Time</mat-error>
-                        </mat-form-field>
-                    </div>
-                </div>
-
-                <div fxLayout="row" fxFlex
-                    class="non-form-field-teacher">
-                    <!-- Room -->
-                    <mat-form-field fxFlex
-                        appearance="outline">
+            <!-- Lecture Type -->
+                <mat-form-field fxLayout="column" fxFlex class="aligner"
+                appearance="outline">
                         <mat-select
-                        [(value)]="selectedRoomId"
+                        [(value)]="selectedLectureType"
                         panelClass="mat-select-panel"
-                        formControlName="roomId">
+                        formControlName="lectureType">
                         <mat-option
                             [value]="''">-- None --</mat-option>
-                        <mat-option *ngFor="let room of rooms" [value]="room.id.toString()">
-                            <p>{{ room.roomIdentifier }}</p>
+                        <mat-option *ngFor="let lectureType of lectureTypes" [value]="lectureType">
+                            <p>{{ lectureType.name }}</p>
                         </mat-option>
                     </mat-select>
-                    <mat-label><mat-icon>event_note</mat-icon> <b> Room</b></mat-label>
-                    <mat-hint>Choose Room</mat-hint>
-                    <mat-error>Room is required.</mat-error>
-                    </mat-form-field>
+                    <mat-label><mat-icon>event_note</mat-icon> <b> Lecture Type</b></mat-label>
+                    <mat-hint>Choose Lecture Type</mat-hint>
+                    <mat-error>Lecture Type is required.</mat-error>
+                </mat-form-field>
 
-                    <mat-form-field fxFlex="1:1"
+                <div fxLayout="row" fxFlex>
+                    <mat-form-field fxFlex class="aligner"
                         appearance="outline">
                         <!-- Title -->
                         <mat-label>Title</mat-label>

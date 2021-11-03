@@ -20,8 +20,8 @@ export class LectureService {
         return this.http.get<Lecture[]>(API_URL + 'all/paginated_sorted_filtered', { params });
     }
 
-    getAllPageLecturesByCourseScheduleId(params: HttpParams): Observable<any> {
-        return this.http.get<Lecture[]>(API_URL + 'all/by_course-schedule/paginated_sorted_filtered', { params });
+    getAllPageLecturesByDepartmentId(params: HttpParams): Observable<any> {
+        return this.http.get<Lecture[]>(API_URL + 'all/by_department/paginated_sorted_filtered', { params });
     }
 
     getAllLectures(): Observable<Lecture[]> {
