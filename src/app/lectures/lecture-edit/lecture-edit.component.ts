@@ -13,6 +13,8 @@ import { Room } from '../rooms/room.model';
 import { CourseScheduleSelectDialogService } from './services/course-schedule-select-dialog.sevice';
 import { LectureType } from '../lecture-types/lecture-type.model';
 import { Lecture } from '../lecture.model';
+import { MatSelect } from '@angular/material/select';
+import { SelectionHelper } from 'src/app/common/helpers/selectionHelper';
 
 @Component({
   selector: 'app-lecture-edit',
@@ -27,7 +29,7 @@ export class LectureEditComponent implements OnInit, OnDestroy {
   submitted: boolean = false;
 
   lectureTypes: LectureType[] = [];
-  selectedLectureType: LectureType | string = '';
+  selectedLectureType!: LectureType;
   rooms: Room[] = [];
   selectedRoomId: string = '';
 
@@ -46,6 +48,7 @@ export class LectureEditComponent implements OnInit, OnDestroy {
   floatLabelControl = new FormControl('auto');
 
   @ViewChild('input') input!: ElementRef;
+  @ViewChild(MatSelect) select!: MatSelect;
 
   lectureTypeSubscription!: Subscription;
   roomSubscription!: Subscription;
@@ -82,13 +85,15 @@ export class LectureEditComponent implements OnInit, OnDestroy {
               .subscribe((currentLectureData: Lecture) => {
                 this.currentLecture = currentLectureData;
                 this.departmentService.departmentIdSubject.next(this.currentLecture.courseSchedule.course.department.id);
-                this.lectureForm.patchValue({
+                this.lectureForm.setValue({
+                  courseSchedule: currentLectureData.courseSchedule,
                   lectureType: currentLectureData.lectureType,
-                  title: currentLectureData.title,
-                  courseSchedule: currentLectureData.courseSchedule
+                  title: currentLectureData.title
                 });
                 this.currentCourseSchedule = currentLectureData.courseSchedule;
                 this.selectedLectureType = currentLectureData.lectureType;
+                this.setSelectedValue(this.selectedLectureType, this.select.value);
+                console.log("Selected Lecture Type: "+ JSON.stringify(this.selectedLectureType));
               });
           }
         }
@@ -104,7 +109,7 @@ export class LectureEditComponent implements OnInit, OnDestroy {
     console.log("BEFORE FORM INITIALIZATION: ");
     this.lectureForm = this.formBuilder.group({
       courseSchedule: [null, Validators.required],
-      lectureType: [this.selectedLectureType, Validators.required],
+      lectureType: ['', Validators.required],
       title: [null, Validators.required]
     });
 
@@ -127,6 +132,10 @@ export class LectureEditComponent implements OnInit, OnDestroy {
           }
         }
     });
+  }
+
+  setSelectedValue(selectedType: any, valueOfSelect: any): boolean {
+    return SelectionHelper.objectComparisonFunction(selectedType, valueOfSelect);
   }
 
   get f() { return this.lectureForm.controls; }

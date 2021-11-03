@@ -25,7 +25,12 @@
 }
 
 .mat-column-name {
-    max-width: 87%;
+    max-width: 30%;
+    margin-left: 6%;
+}
+
+.mat-column-title {
+    max-width: 57%;
     margin-left: 6%;
 }
 

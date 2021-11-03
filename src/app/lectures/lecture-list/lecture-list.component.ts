@@ -41,6 +41,7 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   displayedColumns = [
     'id',
+    'name',
     'title'
   ];
 
