@@ -1,16 +1,22 @@
 import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatRadioButton } from '@angular/material/radio';
 import { MatSort } from '@angular/material/sort';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/operators';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
+import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model';
+import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
 import { Department } from 'src/app/departments/department.model';
 import { DepartmentService } from 'src/app/departments/department.service';
 import { LecturesDataSource } from '../common/tableDataHelper/lectures.datasource';
+import { CourseScheduleSelectDialogService } from '../lecture-edit/services/course-schedule-select-dialog.sevice';
+import { LectureType } from '../lecture-types/lecture-type.model';
+import { LectureTypeService } from '../lecture-types/lecture-type.service';
 import { LectureService } from '../lecture.service';
 
 @Component({
@@ -19,8 +25,7 @@ import { LectureService } from '../lecture.service';
   styleUrls: ['./lecture-list.component.css']
 })
 export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
-
-  selectDepartmentForm!: FormGroup;
+  searchLecturesForm!: FormGroup;
 
   isLoading: boolean = false;
   submitted: boolean = false;
@@ -28,6 +33,11 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource!: LecturesDataSource;
   departments!: Department[];
   selectedDepartmentId: string = '';
+  selectedCourseScheduleId: string = '';
+  selectedCourseSchedule: CourseSchedule | null = null;
+  selectedLectureTypeName: string = 'Theory';
+  lectureTypes: LectureType[] = [];
+  identifierSuffixList: Array<string> = [];
 
   totalItems: number = 0;
   currentPage: number = 0;
@@ -35,6 +45,8 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
   currentColumnDef: string = 'id';
   currentActivityState: string = '';
 
+  courseScheduleSelectDialogSubscription!: Subscription;
+  lectureTypeSubscription!: Subscription;
   snackbarSubscription!: Subscription;
   pageDetailSubscription!: Subscription;
   departmentsSubscription!: Subscription;
@@ -47,6 +59,7 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatRadioButton) radioButton!: MatRadioButton;
   @ViewChild('input') input!: ElementRef;
 
   constructor(
@@ -54,20 +67,45 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private lectureService: LectureService,
+    private lectureTypeService: LectureTypeService,
+    private courseScheduleService: CourseScheduleService,
+    private courseScheduleSelectDialogService: CourseScheduleSelectDialogService,
     private snackbarService: SnackbarService,
     private departmentService: DepartmentService) {}
 
 
   ngOnInit(): void {
+
+    this.lectureTypeSubscription = this.lectureTypeService.getAllLectureTypes()
+    .pipe(first())
+    .subscribe(lectureTypes => {
+      this.lectureTypes = lectureTypes;
+      console.log(this.lectureTypes);
+    });
+
     this.departmentsSubscription = this.departmentService.getAllDepartments()
     .pipe(first())
     .subscribe(departments => {
       this.departments = departments;
     });
 
-    this.selectDepartmentForm = this.formBuilder.group({
-      departmentId: [this.selectedDepartmentId]
+    this.searchLecturesForm = this.formBuilder.group({
+      departmentId: [this.selectedDepartmentId],
+      courseSchedule: [''],
+      isLectureTypeNameTheory : [true]
     });
+
+    /*this.lectureTypeSubscription = this.lectureTypeService.lectureTypeIdState.subscribe((lectureType: string) => {
+      console.log("I am inside lecture type subscriber: "+lectureType);
+      let isLectureTypeTheoryValue: boolean = false;
+      if (lectureType === 'Theory') {
+        isLectureTypeTheoryValue = true;
+      }
+      this.searchLecturesForm.patchValue({
+        isLectureTypeTheory: isLectureTypeTheoryValue
+      });
+      this.selectedLectureTypeModerator();
+    });*/
 
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
 
@@ -75,7 +113,11 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataSource = new LecturesDataSource(this.lectureService);
 
-    this.dataSource.loadLectures(this.selectDepartmentForm.value.courseScheduleId, '', 0, 3, 'asc', this.currentColumnDef);
+    if (+this.searchLecturesForm.value.departmentId && +this.selectedCourseScheduleId) {
+      this.dataSource.loadLectures(
+        +this.searchLecturesForm.value.departmentId, +this.selectedCourseScheduleId,
+        this.selectedLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
+    }
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -98,11 +140,6 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
         if(this.currentActivityState.includes('added')) {
           //console.log('Current State: '+this.currentState);
           console.log("Selected Department Id: "+this.selectedDepartmentId);
-          this.selectDepartmentForm.setValue(
-            {
-              departmentId: this.selectedDepartmentId
-            });
-          this.selectedDepartmentId = this.selectDepartmentForm.value.departmentId;
           this.paginator.pageIndex = 0;
           this.refreshTable();
         } else if(this.currentActivityState.includes('deleted') && this.currentPageItems === 1) {
@@ -119,29 +156,88 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     );
+
+    this.courseScheduleSelectDialogSubscription = this.courseScheduleSelectDialogService.courseScheduleSelectDialogState
+    .subscribe((_courseSchedule: CourseSchedule | null) => {
+      console.log("Course Schedule Data: "+JSON.stringify(_courseSchedule));
+      if (_courseSchedule !== null) {
+        console.log("CATCH COURSE SCHEDULE: "+_courseSchedule.course.name);
+        this.searchLecturesForm.patchValue({
+          courseSchedule: _courseSchedule
+        });
+        this.selectedCourseSchedule = _courseSchedule;
+        this.selectedCourseScheduleId = _courseSchedule.id.toString();
+        this.searchLecturesForm.patchValue({
+          isLectureTypeNameTheory: true
+        });
+        this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
+        this.onSearchLecturesFormSubmit();
+      }
+    });
   }
 
-  get f() { return this.selectDepartmentForm.controls; }
+  get slf() { return this.searchLecturesForm.controls; }
 
-  onSubmit() {
+  checkForCourseScheduleValue() {
+    if (this.searchLecturesForm.value.courseSchedule) {
+      this.clearCourseScheduleValue();
+    }
+  }
+
+  onSearchLecturesFormSubmit() {
     this.router.navigate(['/lectures'], { relativeTo: this.route });
     this.submitted = true;
     //console.log("HAAAAALOOOO!!!");
-    if(this.selectDepartmentForm.invalid) {
+    if(this.searchLecturesForm.invalid) {
       return;
     }
 
     this.isLoading = true;
-    //console.log("DEPARTMENT ID: "+ this.selectDepartmentForm.value.departmentId);
-    this.selectedDepartmentId = this.selectDepartmentForm.value.departmentId;
+    //console.log("Course Schedule ID: "+ this.selectCourseScheduleForm.value.courseSchedule.id);
+    this.selectedDepartmentId = this.searchLecturesForm.value.departmentId;
     this.paginator.pageIndex = 0;
     this.paginator.pageSize;
     this.sort.direction='asc'
-    this.currentColumnDef;
-    console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
+    //this.currentColumnDef;
+    console.log("Course Schedule ID: "+this.selectedCourseScheduleId);
     this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
 
+    console.log("Selected value: "+this.searchLecturesForm.value.isLectureTypeNameTheory);
+    this.selectedLectureTypeModerator();
+    console.log("Selected lecture type: "+this.selectedLectureTypeName);
+    this.publishLectureType();
+    this.identifierSuffixModerator();
+    this.lectureService.identifierSuffixesSubject.next(this.identifierSuffixList);
+
     this.refreshTable();
+  }
+
+  selectedLectureTypeModerator() {
+    this.selectedLectureTypeName = this.searchLecturesForm.value.isLectureTypeNameTheory ? 'Theory' : 'Lab';
+  }
+
+  clearCourseScheduleValue() {
+    this.searchLecturesForm.patchValue({
+      courseSchedule: '',
+      isLectureTypeNameTheory: true
+    });
+    this.selectedCourseSchedule = null;
+    this.selectedCourseScheduleId = '';
+    this.selectedLectureTypeName = 'Theory';
+    this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
+    this.router.navigate(['/lectures'], { relativeTo: this.route});
+    this.refreshTable();
+  }
+
+  onLectureTypeSelect(lectureTypeNameSelection: boolean) {
+    this.searchLecturesForm.patchValue({
+      isLectureTypeNameTheory: lectureTypeNameSelection
+    });
+    this.onSearchLecturesFormSubmit();
+  }
+
+  selectCourseSchedule() {
+    this.courseScheduleSelectDialogService.selectCourseSchedule(this.searchLecturesForm.value.courseSchedule);
   }
 
   ngAfterViewInit() {
@@ -173,6 +269,8 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
   loadLecturesPage() {
     this.dataSource.loadLectures(
         +this.selectedDepartmentId,
+        +this.selectedCourseScheduleId,
+        this.selectedLectureTypeName,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,
@@ -187,6 +285,7 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.clearInput();
     }
+    this.lectureService.lectureTableLoadedSubject.next(true);
   }
 
   clearInput() {
@@ -194,10 +293,40 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadLecturesPage();
   }
 
+  publishLectureType() {
+    if (this.lectureTypes.length !== 0) {
+      const found = this.lectureTypes.find(lectureType => lectureType.name === this.selectedLectureTypeName);
+      console.log("FOUND: "+JSON.stringify(found));
+      if (found) {
+        this.lectureTypeService.lectureTypeSubject.next(found);
+      }
+    }
+  }
+
+  identifierSuffixModerator() {
+      this.identifierSuffixList = [];
+      if (this.selectedCourseSchedule) {
+        if (this.selectedLectureTypeName === 'Theory') {
+          this.fillOutIdentifierSuffixList(this.selectedCourseSchedule.maxTheoryLectures);
+        } else if (this.selectedLectureTypeName === 'Lab') {
+          this.fillOutIdentifierSuffixList(this.selectedCourseSchedule.maxLabLectures);
+        } else {
+          this.identifierSuffixList = [];
+        }
+      }
+  }
+
+  fillOutIdentifierSuffixList(numberOfLectures: number) {
+    for (let i = 0; i < numberOfLectures; i++) {
+      this.identifierSuffixList.push((i+1).toString());
+    }
+  }
+
   ngOnDestroy(): void {
     this.departmentsSubscription.unsubscribe();
     this.pageDetailSubscription.unsubscribe();
     this.snackbarSubscription.unsubscribe();
+    this.lectureTypeSubscription.unsubscribe();
  }
  
 }

@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.service';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
-import { Lecture } from '../lecture.model';
+import { LectureResponseData } from '../common/payload/response/lectureResponseData.interface';
 import { LectureService } from '../lecture.service';
 
 @Component({
@@ -14,9 +14,12 @@ import { LectureService } from '../lecture.service';
 })
 export class LectureDetailComponent implements OnInit {
   id!: number;
-  lecture!: Lecture;
+  lecture!: LectureResponseData;
   private ensureDialogSubscription!: Subscription;
   ensureDialogStatus!: boolean;
+  lectureTable: boolean = false;
+
+  lectureTableLoadedSubscription!: Subscription;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -25,13 +28,22 @@ export class LectureDetailComponent implements OnInit {
     private ensureDialogService: EnsureDialogService) { }
 
   ngOnInit(): void {
+    this.lectureTableLoadedSubscription = this.lectureService.lectureTableLoadedState
+    .subscribe((tableStatus: boolean) => {
+      if (tableStatus) {
+        this.lectureTable = tableStatus;
+      } else {
+        this.router.navigate(['/lectures'], { relativeTo: this.route});
+      }
+    });
+
     this.route.params
       .subscribe(
         (params: Params) => {
           this.id = params['id'];
           this.lectureService.getLectureById(this.id)
           .pipe(first())
-          .subscribe((currentLecture: Lecture) => {
+          .subscribe((currentLecture: LectureResponseData) => {
             this.lecture = currentLecture;
             console.log("Lecture Details: "+JSON.stringify(this.lecture));
           });
@@ -42,7 +54,7 @@ export class LectureDetailComponent implements OnInit {
   editLecture() {
     this.router.navigate(['/lectures/edit/', this.id], { relativeTo: this.route });
   }
-
+  
   deleteLecture(id: number) {
     if (!this.lecture) return;
     this.ensureDialogService.openDialog('will be Deleted', 'Lecture '+this.lecture.courseSchedule.course.name+' '+this.lecture.nameIdentifier);
@@ -66,7 +78,7 @@ export class LectureDetailComponent implements OnInit {
         }
       );
   }
-
+  
   onCancel() {
     this.router.navigate(['../../'], { relativeTo: this.route });
   }
@@ -74,6 +86,9 @@ export class LectureDetailComponent implements OnInit {
   ngOnDestroy() {
     if(this.ensureDialogSubscription) {
       this.ensureDialogSubscription.unsubscribe();
+    }
+    if(this.lectureTableLoadedSubscription) {
+      this.lectureTableLoadedSubscription.unsubscribe();
     }
   }
 }

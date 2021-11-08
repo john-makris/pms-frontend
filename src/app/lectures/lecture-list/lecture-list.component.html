@@ -7,13 +7,14 @@
     fxFlex.lt-md="40em"
     fxFlex.lt-sm="20em"
 >
-    <div class="selectorContainer">
+    <div class="selectorContainer" fxLayout="column">
         <h1>Lectures</h1>
         <mat-divider></mat-divider>
         <br>
         <br>
+        <!-- Search Lectures Form -->
         <form fxLayout="column"
-        [formGroup]="selectDepartmentForm">
+            [formGroup]="searchLecturesForm" fxLayoutGap="0.5em">
             <mat-form-field
                 appearance="outline">
                 <mat-select
@@ -22,11 +23,11 @@
                     formControlName="departmentId">
                     <mat-option
                         [value]="''"
-                        (click)="onSubmit()">-- All Departments --</mat-option>
+                        (click)="checkForCourseScheduleValue()">-- None --</mat-option>
                     <mat-option 
                         *ngFor="let department of departments"
                         [value]="department.id.toString()"
-                        (click)="onSubmit()">
+                        (click)="checkForCourseScheduleValue()">
                         <p>
                             {{ department.name }}
                         </p>
@@ -35,19 +36,47 @@
                 <mat-label><mat-icon>domain</mat-icon> <b> Department</b></mat-label>
                 <mat-hint>Choose Department</mat-hint>
             </mat-form-field>
+            <div *ngIf="selectedDepartmentId">
+                <div fxLayout fxLayoutGap="0.5em">
+                    <button fxFlex
+                        class="course-schedule-text"
+                        type="button"
+                        mat-stroked-button
+                        (click)="selectCourseSchedule()">
+                        <div>{{'Selected: '}}{{ selectedCourseSchedule ? selectedCourseSchedule.course.name : ' -- None -- ' }}</div>
+                    </button>
+                    <div *ngIf="selectedCourseSchedule" class="aligner">
+                        <button class="mat-icon-button-search-form"
+                            type="button"
+                            mat-icon-button
+                            (click)="clearCourseScheduleValue()">
+                            <mat-icon inline="true">close</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <mat-hint class="course-schedule-hint-text">Choose Course Schedule</mat-hint>
+            </div>
+
+            <mat-radio-group *ngIf="selectedCourseSchedule"
+                formControlName="isLectureTypeNameTheory">
+                <div class="radio-container" fxLayoutGap="1em">
+                    <mat-radio-button [value]=true (click)="onLectureTypeSelect(true)">Theories</mat-radio-button>
+                    <mat-radio-button [value]=false (click)="onLectureTypeSelect(false)">Labs</mat-radio-button>
+                </div>
+            </mat-radio-group>
         </form>
     </div>
 
-    <span matTooltip="Select a Specific Department"
+    <span [matTooltip]="!selectedDepartmentId ? 'Select a Specific Department' : 'Select a Specific Course Schedule'"
         matTooltipPosition="after"
-        [matTooltipDisabled]="selectedDepartmentId !==''">
+        [matTooltipDisabled]="selectedDepartmentId !=='' && selectedCourseScheduleId !==''">
         <button
             *ngIf="departments"
             type="button"
             mat-raised-button
             color="primary"
             routerLink="add"
-            [disabled]="selectedDepartmentId === ''">Add Lecture</button>
+            [disabled]="selectedDepartmentId === '' || selectedCourseScheduleId ===''">Add Lecture</button>
     </span>
 
     <div class="table-container">
@@ -60,7 +89,7 @@
                     <mat-icon 
                         matSuffix 
                         inline="true">search</mat-icon>
-                    <button 
+                    <button class="mat-icon-button-table" 
                         mat-button 
                         *ngIf="input.value"
                         matSuffix 
@@ -71,7 +100,7 @@
             </mat-form-field>
         </div>
 
-        <div class="mat-elevation-z8">
+        <div class="mat-elevation-z8" id="table">
             <mat-table
                 [dataSource]="dataSource" matSort matSortActive="id"
                 matSortDirection="asc" matSortDisableClear>
@@ -81,8 +110,8 @@
                 </ng-container>
         
                 <ng-container matColumnDef="name">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-                    <mat-cell *matCellDef="let lecture">{{ lecture.courseSchedule.course.name + ', ' + lecture.nameIdentifier }}</mat-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Name Id</mat-header-cell>
+                    <mat-cell *matCellDef="let lecture">{{ lecture.nameIdentifier }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="title">

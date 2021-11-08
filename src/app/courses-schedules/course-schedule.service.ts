@@ -12,9 +12,9 @@ const API_URL = 'http://localhost:8080/pms/courses-schedules/';
 })
 export class CourseScheduleService {
 
-    courseScheduleIdSubject = new BehaviorSubject<number>(0);
+    courseScheduleSubject = new BehaviorSubject<CourseSchedule | null>(null);
 
-    courseScheduleIdState = this.courseScheduleIdSubject.asObservable();
+    courseScheduleState = this.courseScheduleSubject.asObservable();
 
     constructor(private http: HttpClient) { }
 

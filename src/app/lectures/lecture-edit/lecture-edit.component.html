@@ -1,4 +1,4 @@
-<section
+<section *ngIf="currentCourseSchedule && currentLectureType"
     [ngClass]="'container'"
     [ngClass.lt-md]="'min-container'"
     fxLayout>
@@ -11,28 +11,36 @@
             fxFlex.sm="25em" 
             fxFlex.gt-sm="25em">
             <mat-card-title fxLayoutAlign="center">
-                <h1 *ngIf="isAddMode">Add Lecture</h1>
-                <h1 *ngIf="!isAddMode && currentLecture">Edit {{ currentLecture.courseSchedule.course.name + ', ' + currentLecture.nameIdentifier }}</h1>
+                <h1 *ngIf="isAddMode">Add {{ currentLectureType.name }} Lecture</h1>
+                <h1 *ngIf="!isAddMode && currentLecture">Edit {{ currentLecture.nameIdentifier }}</h1>
             </mat-card-title>
             <mat-card-content fxLayout="column" fxLayoutGap="0.5em"
             fxLayoutAlign="center">
 
-                <div fxLayout="column" fxFlex
-                    class="non-form-field-course-schedule" *ngIf="isAddMode">
-                    <!-- Course Schedule -->
-                    <button
-                    [class.border-invalid]="f.courseSchedule.invalid && f.courseSchedule.touched"
-                        [ngClass.gt-xs]="{'course-schedule-button': true}"
-                        type="button"
-                        mat-stroked-button color="primary"
-                        (click)="selectCourseSchedule()">
-                        Choose Course Schedule</button>
-                        <mat-label *ngIf="currentCourseSchedule"
-                            class="selection-text">Selected: {{ currentCourseSchedule.course.name }}</mat-label>
-                        <mat-error class="validation-text" *ngIf="f.courseSchedule.errors?.required && f.courseSchedule.touched">Missing Course Schedule</mat-error>
+                <div fxLayout="row" fxFlex>
+                    <mat-form-field fxFlexLayout="column" fxFlex class="aligner"
+                    appearance="outline">
+                        <mat-select
+                            [(value)]="selectedIdentifierSuffix"
+                            panelClass="mat-select-panel"
+                            formControlName="identifierSuffix">
+                            <mat-option
+                                [value]="''">-- None --</mat-option>
+                            <mat-option 
+                                *ngFor="let lectureNumber of suffixes"
+                                [value]="lectureNumber">
+                                <p>
+                                    {{ currentLectureType.name === 'Theory' ? 'theory_' : 'lab_' }}{{ lectureNumber }}
+                                </p>
+                            </mat-option>
+                        </mat-select>
+                        <mat-label><mat-icon>subtitles</mat-icon> <b> Identifier</b></mat-label>
+                        <mat-hint>Choose Identifier</mat-hint>
+                        <mat-error>Identifier is required.</mat-error>
+                    </mat-form-field>
                 </div>
 
-            <!-- Lecture Type -->
+                <!-- Lecture Type 
                 <mat-form-field fxLayout="column" fxFlex class="aligner" *ngIf="isAddMode"
                 appearance="outline">
                         <mat-select
@@ -49,7 +57,7 @@
                     <mat-label><mat-icon>event_note</mat-icon> <b> Lecture Type</b></mat-label>
                     <mat-hint>Choose Lecture Type</mat-hint>
                     <mat-error>Lecture Type is required.</mat-error>
-                </mat-form-field>
+                </mat-form-field> -->
 
                 <div fxLayout="row" fxFlex>
                     <mat-form-field fxFlex class="aligner"
@@ -63,7 +71,7 @@
                             formControlName="title">
                         </textarea>
                         <span matSuffix>
-                            <mat-icon>note_add</mat-icon>
+                            <mat-icon>title</mat-icon>
                         </span>
                         <mat-hint>Set Title.</mat-hint>
                         <mat-error *ngIf="f.title.errors?.required">Missing Title</mat-error>

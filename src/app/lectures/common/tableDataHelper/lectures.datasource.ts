@@ -3,13 +3,13 @@ import { HttpParams } from "@angular/common/http";
 import {Observable, BehaviorSubject, of} from "rxjs";
 import {catchError, finalize, first} from "rxjs/operators";
 import { PageDetail } from "../../../common/models/pageDetail.model";
-import { Lecture } from "../../lecture.model";
 import { LectureService } from "../../lecture.service";
+import { LectureResponseData } from "../payload/response/lectureResponseData.interface";
 import { LecturesResponseData } from "../payload/response/lecturesResponseData.interface";
 
-export class LecturesDataSource implements DataSource<Lecture> {
+export class LecturesDataSource implements DataSource<LectureResponseData> {
 
-    private lectureSubject = new BehaviorSubject<Lecture[]>([]);
+    private lectureSubject = new BehaviorSubject<LectureResponseData[]>([]);
 
     private pageDetailSubject = new BehaviorSubject<PageDetail>({
         currentPage: 0,
@@ -27,25 +27,31 @@ export class LecturesDataSource implements DataSource<Lecture> {
     constructor(private lectureService: LectureService) { }
 
     loadLectures(departmentId: number,
+                courseScheduleId: number,
+                lectureTypeName: string,
                 filter:string,
                 pageIndex:number,
                 pageSize:number,
                 sortDirection:string,
                 currentColumnDef:string) {
 
-        let params: HttpParams = this.createParams(departmentId,
-            filter, pageIndex, pageSize, sortDirection, currentColumnDef);
-            console.log("PARAMS: "+params);
+        if (departmentId && courseScheduleId) {
+            let params: HttpParams = this.createParams(departmentId, courseScheduleId, lectureTypeName,
+                filter, pageIndex, pageSize, sortDirection, currentColumnDef);
+                console.log("PARAMS: "+params);
 
-        this.loadingSubject.next(true);
+            this.loadingSubject.next(true);
 
-        this.retrieveData(params);
+            this.retrieveData(params);
+        } else {
+            this.checkData(null);
+        }
+
     }
 
     retrieveData(params: HttpParams) {
-        if(!params.has('id')) {
-            //console.log("EXIST ID ?"+ params.has('id'));
-            this.lectureService.getAllPageLectures(params)
+        if (!params.has('name')) {
+            this.lectureService.getAllPageLecturesByDepartmentIdAndCourseScheduleId(params)
             .pipe(
                 catchError(() => of([])),
                 finalize(() => this.loadingSubject.next(false))
@@ -56,8 +62,7 @@ export class LecturesDataSource implements DataSource<Lecture> {
                 this.checkData(response);
             });
         } else {
-            //console.log("EXIST ID ?"+ params.has('id'));
-            this.lectureService.getAllPageLecturesByDepartmentId(params)
+            this.lectureService.getAllPageLecturesByDepartmentIdAndCourseScheduleIdPerType(params)
             .pipe(
                 catchError(() => of([])),
                 finalize(() => this.loadingSubject.next(false))
@@ -68,9 +73,10 @@ export class LecturesDataSource implements DataSource<Lecture> {
                 this.checkData(response);
             });
         }
+
     }
 
-    checkData(response: LecturesResponseData) {
+    checkData(response: LecturesResponseData | null) {
         if(response!==null) {
             this.lectureSubject.next(response.lectures);
             console.log(response);
@@ -93,6 +99,8 @@ export class LecturesDataSource implements DataSource<Lecture> {
 
     createParams(
         departmentId: number,
+        courseScheduleId: number,
+        lectureTypeName: string,
         filter:string,
         pageIndex:number,
         pageSize:number,
@@ -102,8 +110,18 @@ export class LecturesDataSource implements DataSource<Lecture> {
             let params = new HttpParams();
 
             if (departmentId) {
+                //console.log("ID: "+departmentId);
+                params=params.set('departmentId', departmentId);
+            }
+
+            if (courseScheduleId) {
                 //console.log("ID: "+courseScheduleId);
-                params=params.set('id', departmentId);
+                params=params.set('courseScheduleId', courseScheduleId);
+            }
+
+            if (lectureTypeName) {
+                //console.log("name: "+lectureType);
+                params=params.set('name', lectureTypeName);
             }
 
             if (filter) {

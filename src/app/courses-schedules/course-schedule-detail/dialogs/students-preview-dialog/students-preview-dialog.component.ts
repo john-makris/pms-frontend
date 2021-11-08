@@ -59,7 +59,7 @@ export class StudentsPreviewDialogComponent implements OnInit {
     this.dataSource = new UsersDataSource(this.userService);
 
     console.log("Active Course ID: "+JSON.stringify(this.data.activeCourseId));
-    this.dataSource.loadActiveCourseStudents(this.data.activeCourseId,'', 0, 3, 'asc', this.currentColumnDef);
+    this.dataSource.loadCourseScheduleStudents(this.data.activeCourseId,'', 0, 3, 'asc', this.currentColumnDef);
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -98,7 +98,7 @@ export class StudentsPreviewDialogComponent implements OnInit {
   }
 
   loadStudentsPage() {
-    this.dataSource.loadActiveCourseStudents(
+    this.dataSource.loadCourseScheduleStudents(
         this.data.activeCourseId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,

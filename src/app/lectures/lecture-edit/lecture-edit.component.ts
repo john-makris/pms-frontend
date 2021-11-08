@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/co
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { first, last } from 'rxjs/operators';
+import { first, last, tap } from 'rxjs/operators';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model';
 import { DepartmentService } from 'src/app/departments/department.service';
@@ -12,9 +12,10 @@ import { LectureService } from '../lecture.service';
 import { Room } from '../rooms/room.model';
 import { CourseScheduleSelectDialogService } from './services/course-schedule-select-dialog.sevice';
 import { LectureType } from '../lecture-types/lecture-type.model';
-import { Lecture } from '../lecture.model';
 import { MatSelect } from '@angular/material/select';
 import { SelectionHelper } from 'src/app/common/helpers/selectionHelper';
+import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
+import { LectureResponseData } from '../common/payload/response/lectureResponseData.interface';
 
 @Component({
   selector: 'app-lecture-edit',
@@ -28,10 +29,7 @@ export class LectureEditComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   submitted: boolean = false;
 
-  lectureTypes: LectureType[] = [];
-  selectedLectureType!: LectureType;
-  rooms: Room[] = [];
-  selectedRoomId: string = '';
+  selectedLectureNumber: string = '';
 
   delimeter: string = ',' + '\xa0';
   panelOpenState = false;
@@ -39,10 +37,13 @@ export class LectureEditComponent implements OnInit, OnDestroy {
   selectedFiles!: FileList | undefined;
   currentFile!: File | undefined;
 
+  suffixes: string[] = [];
+
   state: boolean = false;
   currentCourseSchedule!: CourseSchedule;
-  currentLecture!: Lecture;
-  selectedAcademicYear: string = '';
+  currentLectureType!: LectureType;
+  currentLecture!: LectureResponseData;
+  selectedIdentifierSuffix: string = '';
 
   hideRequiredControl = new FormControl(false);
   floatLabelControl = new FormControl('auto');
@@ -51,6 +52,7 @@ export class LectureEditComponent implements OnInit, OnDestroy {
   @ViewChild(MatSelect) select!: MatSelect;
 
   lectureTypeSubscription!: Subscription;
+  identifierSuffixesSubscription!: Subscription;
   roomSubscription!: Subscription;
   courseScheduleSelectDialogSubscription!: Subscription;
   routeSubscription!: Subscription;
@@ -64,15 +66,32 @@ export class LectureEditComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private departmentService: DepartmentService,
-    private courseScheduleSelectDialogService: CourseScheduleSelectDialogService,
+    private courseScheduleService: CourseScheduleService,
     private lectureService: LectureService,
     private lectureTypeService: LectureTypeService,
     private snackbarService: SnackbarService
   ) { }
 
   ngOnInit(): void {
-    this.loadLectureTypes();
 
+    this.courseScheduleService.courseScheduleState.subscribe((_courseSchedule: CourseSchedule | null) => {
+      if (_courseSchedule !== null) {
+        this.currentCourseSchedule = _courseSchedule;
+        console.log("Subscribed Lecture course schedule: "+JSON.stringify(_courseSchedule));
+      } else {
+        this.onCancel();
+      }
+    });
+
+    this.identifierSuffixesSubscription = this.lectureService.identifierSuffixesState.subscribe(
+      (suffixesList: Array<string>) => {
+        if (suffixesList.length !== 0) {
+          this.suffixes = suffixesList;
+        } else {
+          this.onCancel();
+        }
+    });
+    
     this.id = this.route.snapshot.params['id'];
     this.routeSubscription = this.route.params
       .subscribe(
@@ -82,67 +101,48 @@ export class LectureEditComponent implements OnInit, OnDestroy {
           if(!this.isAddMode) {
             this.lectureSubscription = this.lectureService.getLectureById(this.id)
               .pipe(first())
-              .subscribe((currentLectureData: Lecture) => {
-                this.currentLecture = currentLectureData;
-                this.departmentService.departmentIdSubject.next(this.currentLecture.courseSchedule.course.department.id);
-                this.lectureForm.setValue({
-                  courseSchedule: currentLectureData.courseSchedule,
-                  lectureType: currentLectureData.lectureType,
-                  title: currentLectureData.title
-                });
-                this.currentCourseSchedule = currentLectureData.courseSchedule;
-                this.selectedLectureType = currentLectureData.lectureType;
-                this.setSelectedValue(this.selectedLectureType, this.select.value);
-                console.log("Selected Lecture Type: "+ JSON.stringify(this.selectedLectureType));
+              .subscribe((currentLectureData: LectureResponseData) => {
+                if (currentLectureData !== null) {
+                  this.currentLecture = currentLectureData;
+                  this.departmentService.departmentIdSubject.next(this.currentLecture.courseSchedule.course.department.id);
+                  this.lectureForm.patchValue({
+                    identifierSuffix: currentLectureData.identifierSuffix,
+                    title: currentLectureData.title
+                  });
+                  this.currentCourseSchedule = currentLectureData.courseSchedule;
+                  this.currentLectureType = currentLectureData.lectureType;
+                  this.selectedIdentifierSuffix = currentLectureData.identifierSuffix;
+                  //this.setSelectedValue(this.selectedLectureType, this.select.value);
+                  console.log("Selected Lecture Type: "+ JSON.stringify(this.currentLectureType));
+                } else {
+                  this.onCancel();
+                }
               });
+          } else {
+            this.lectureTypeService.lectureTypeState.subscribe(
+              (_lectureType: LectureType | null) => {
+              if(_lectureType !== null) {
+                this.currentLectureType = _lectureType;
+              } else {
+                this.onCancel();
+              }
+            });
           }
         }
       );
 
-    this.departmentIdSubscription = this.departmentService.departmentIdState
-      .subscribe((departmentId: number) => {
-        if (departmentId === 0 && this.isAddMode) {
-          this.onCancel();
-        }
-    });
-
     console.log("BEFORE FORM INITIALIZATION: ");
     this.lectureForm = this.formBuilder.group({
-      courseSchedule: [null, Validators.required],
-      lectureType: ['', Validators.required],
+      identifierSuffix: ['', Validators.required],
       title: [null, Validators.required]
     });
-
-    this.courseScheduleSelectDialogSubscription = this.courseScheduleSelectDialogService.courseScheduleSelectDialogState
-      .subscribe((_courseSchedule: CourseSchedule | null) => {
-        this.lectureForm.controls.courseSchedule.markAsTouched();
-        console.log("Course Schedule Data: "+JSON.stringify(_courseSchedule));
-        if (_courseSchedule !== null) {
-          console.log("CATCH COURSE SCHEDULE: "+_courseSchedule.course.name);
-          this.lectureForm.patchValue({courseSchedule: _courseSchedule});
-          this.currentCourseSchedule = _courseSchedule;
-          console.log("Is course shcedule valid ? "+this.f.courseSchedule.valid);
-        } else {
-          if (!this.currentCourseSchedule) {
-            this.f.courseSchedule.setErrors({
-              'required': true
-            });
-          } else {
-            console.log("Is course schedule valid ? "+this.f.course.valid);
-          }
-        }
-    });
   }
 
-  setSelectedValue(selectedType: any, valueOfSelect: any): boolean {
+  /*setSelectedValue(selectedType: any, valueOfSelect: any): boolean {
     return SelectionHelper.objectComparisonFunction(selectedType, valueOfSelect);
-  }
+  }*/
 
   get f() { return this.lectureForm.controls; }
-  
-  selectCourseSchedule() {
-    this.courseScheduleSelectDialogService.selectCourseSchedule(this.lectureForm.value.courseSchedule);
-  }
 
   onSubmit() {
     this.submitted = true;
@@ -154,16 +154,17 @@ export class LectureEditComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     const lectureData: LectureRequestData = {
-      courseSchedule: this.lectureForm.value.courseSchedule,
-      lectureType: this.lectureForm.value.lectureType,
+      courseSchedule: this.currentCourseSchedule,
+      lectureType: this.currentLectureType,
+      identifierSuffix: this.lectureForm.value.identifierSuffix,
       title: this.lectureForm.value.title
     };
 
     console.log("Lecture Form: ");
-    console.log("Course Schedule: "+JSON.stringify(this.lectureForm.value.courseSchedule));
-    console.log("Lecture Type Id: "+this.lectureForm.value.lectureTypeId);
+    console.log("Course Schedule: "+JSON.stringify(this.currentCourseSchedule));
+    console.log("Lecture Type Id: "+this.currentLectureType.id);
+    console.log("Identifier Suffix: "+this.lectureForm.value.identifierSuffix);
     console.log("Title: "+this.lectureForm.value.title);
-
     //this.courseScheduleForm.reset();
 
     if (this.isAddMode) {
@@ -190,15 +191,6 @@ export class LectureEditComponent implements OnInit, OnDestroy {
         this.snackbarService.success('Lecture updated');
         this.router.navigate(['../../'], { relativeTo: this.route});
       }).add(() => this.isLoading = false);
-  }
-
-  loadLectureTypes() {
-    this.lectureTypeSubscription = this.lectureTypeService.getAllLectureTypes()
-    .pipe(first())
-    .subscribe(lectureTypes => {
-      this.lectureTypes = lectureTypes;
-      console.log(this.lectureTypes);
-    });
   }
 
   onCancel() {

@@ -1,4 +1,4 @@
-<section
+<section *ngIf="currentCourse"
     [ngClass]="'container'"
     [ngClass.lt-md]="'min-container'"
     fxLayout>
@@ -77,7 +77,7 @@
                                     min="1"
                                     max="3">
                                 <span matSuffix>
-                                    <mat-icon>hourglass_full</mat-icon>
+                                    <mat-icon>timer</mat-icon>
                                 </span>
                                 <mat-hint>Set Hours.</mat-hint>
                                 <mat-error *ngIf="f.theoryHours.errors?.max">Cannot set more than 3</mat-error>
@@ -96,7 +96,7 @@
                                     min="0"
                                     max="59">
                                 <span matSuffix>
-                                    <mat-icon>hourglass_bottom</mat-icon>
+                                    <mat-icon>schedule</mat-icon>
                                 </span>
                                 <mat-hint>Set Minutes.</mat-hint>
                                 <mat-error *ngIf="f.theoryMinutes.errors?.max">Cannot set more than 59</mat-error>
@@ -122,7 +122,7 @@
                                     min="1"
                                     max="3">
                                 <span matSuffix>
-                                    <mat-icon>hourglass_full</mat-icon>
+                                    <mat-icon>timer</mat-icon>
                                 </span>
                                 <mat-hint>Set Hours.</mat-hint>
                                 <mat-error *ngIf="f.labHours.errors?.max">Cannot set more than 3</mat-error>
@@ -141,7 +141,7 @@
                                     min="0"
                                     max="59">
                                 <span matSuffix>
-                                    <mat-icon>hourglass_bottom</mat-icon>
+                                    <mat-icon>schedule</mat-icon>
                                 </span>
                                 <mat-hint>Set Minutes.</mat-hint>
                                 <mat-error *ngIf="f.labMinutes.errors?.max">Cannot set more than 59</mat-error>

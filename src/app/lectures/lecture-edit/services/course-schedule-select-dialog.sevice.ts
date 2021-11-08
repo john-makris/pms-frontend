@@ -23,7 +23,7 @@ export class CourseScheduleSelectDialogService {
         const dialogRef = this.courseScheduleSelectDialog.open(CourseScheduleSelectDialogComponent, dialogConfig);
 
         dialogRef.afterClosed().subscribe((result: CourseSchedule) => {
-            console.log(`Dialog result: ${result}`);
+            console.log("Dialog result: "+JSON.stringify(result));
             this.courseScheduleSelectDialogSubject.next(result);
         });
     }

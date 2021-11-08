@@ -43,7 +43,7 @@ export class UsersDataSource implements DataSource<UserData> {
         this.retrieveData(params);
     }
 
-    loadActiveCourseStudents(activeCourseId: number,                
+    loadCourseScheduleStudents(activeCourseId: number,                
                     filter:string,
                     pageIndex:number,
                     pageSize:number,
@@ -147,7 +147,7 @@ export class UsersDataSource implements DataSource<UserData> {
     }
 
     createStudentParams(
-        activeCourseId: number,
+        courseScheduleId: number,
         filter:string,
         pageIndex:number,
         pageSize:number,
@@ -156,9 +156,9 @@ export class UsersDataSource implements DataSource<UserData> {
 
             let params = new HttpParams();
 
-            if (activeCourseId) {
-                //console.log("ID: "+departmentId);
-                params=params.set('id', activeCourseId);
+            if (courseScheduleId) {
+                //console.log("ID: "+courseScheduleId);
+                params=params.set('id', courseScheduleId);
             }
 
             if (filter) {
