@@ -13,10 +13,6 @@ const API_URL = 'http://localhost:8080/pms/lectures/';
 })
 export class LectureService {
 
-    lectureIdSubject = new BehaviorSubject<number>(0);
-
-    lectureIdState = this.lectureIdSubject.asObservable();
-
     lectureTableLoadedSubject = new BehaviorSubject<boolean>(false);
 
     lectureTableLoadedState = this.lectureTableLoadedSubject.asObservable();
@@ -56,7 +52,7 @@ export class LectureService {
     }
 
     deleteAllLectures(): Observable<Lecture[]> {
-        return this.http.delete<Lecture[]>(API_URL + 'delete/all')
+        return this.http.delete<Lecture[]>(API_URL + 'delete/all');
     }
 
     deleteLectureById(lectureId: number): Observable<Lecture> {

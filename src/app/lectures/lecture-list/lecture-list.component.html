@@ -100,9 +100,9 @@
             </mat-form-field>
         </div>
 
-        <div class="mat-elevation-z8" id="table">
+        <div class="mat-elevation-z8">
             <mat-table
-                [dataSource]="dataSource" matSort matSortActive="id"
+                [dataSource]="dataSource" matSort matSortActive="name"
                 matSortDirection="asc" matSortDisableClear>
                 <ng-container matColumnDef="id">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>

@@ -9,7 +9,7 @@ import { DepartmentService } from 'src/app/departments/department.service';
 import { LectureRequestData } from '../common/payload/request/lectureRecuestData.interface';
 import { LectureTypeService } from '../lecture-types/lecture-type.service';
 import { LectureService } from '../lecture.service';
-import { Room } from '../rooms/room.model';
+import { Room } from '../../classes-groups/rooms/room.model';
 import { CourseScheduleSelectDialogService } from './services/course-schedule-select-dialog.sevice';
 import { LectureType } from '../lecture-types/lecture-type.model';
 import { MatSelect } from '@angular/material/select';
