@@ -27,6 +27,10 @@
         <mat-icon>menu_book</mat-icon>
         <span class="nav-caption">Lectures</span>
     </a>
+    <a mat-list-item routerLink="/classes-groups" (click)="onClose()" *ngIf="isAuth">
+        <mat-icon>groups</mat-icon>
+        <span class="nav-caption">Classes Groups</span>
+    </a>
     <a mat-list-item routerLink="/users" (click)="onClose()" *ngIf="isAuth">
         <mat-icon>person</mat-icon>
         <span class="nav-caption">Users</span>

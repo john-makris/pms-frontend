@@ -1,0 +1,79 @@
+.container {
+    /*border: 2px solid black;*/
+    padding: 2em;
+}
+
+.min-container {
+    /*border: 2px solid black;*/
+    padding-top: 2em;
+    padding-bottom: 2em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.department-form-styles {
+    margin-bottom: 1em;
+}
+
+.course-schedule-hint-text {
+    font-size: 75%;
+    margin-top: 0.2em;
+    margin-left: 1em;
+}
+
+.course-schedule-text {
+    text-align: left;
+    font-weight: normal;
+    word-break: break-word;
+    white-space: pre-wrap !important;
+    padding-left: 0.6em;
+}
+
+.course-schedule-clear {
+    font-weight: normal;
+    text-align: right;
+}
+
+.table-row-style:hover {
+    cursor: pointer;
+    background-color: whitesmoke;
+}
+
+.table-container {
+    margin-top: 1em;
+}
+
+.mat-column-id {
+    max-width: 13%;
+}
+
+.mat-column-name {
+    max-width: 25%;
+    margin-right: 5%;
+}
+
+.mat-column-title {
+    max-width: 55%;
+}
+
+.selectorContainer {
+    padding-bottom: 1em;
+}
+
+.mat-icon-button-table {
+    height: 1em;
+    width: 1em;
+    font-size: 1em;
+    line-height: 1em;
+}
+
+.mat-icon-button-search-form {
+    font-size: 1.2em;
+    height: 1em;
+    width: 1em;
+    line-height: 1em;
+}
+
+.aligner {
+    padding-top: 0.45em;
+}

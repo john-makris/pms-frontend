@@ -35,6 +35,11 @@ const routes: Routes = [
   loadChildren: () => import('./lectures/lectures.module')
     .then(m => m.LecturesModule),
     canLoad: [AuthGuard]
+  },
+  { path: 'classes-groups',
+  loadChildren: () => import('./classes-groups/classes-groups.module')
+    .then(m => m.ClassesGroupsModule),
+    canLoad: [AuthGuard]
   }
 ];
 

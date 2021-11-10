@@ -20,6 +20,7 @@ import { CoursesModule } from './courses/courses.module';
 import { CoursesSchedulesModule } from './courses-schedules/courses-schedules.module';
 import { UsersModule } from './users/users.module';
 import { LecturesModule } from './lectures/lectures.module';
+import { ClassesGroupsModule } from './classes-groups/classes-groups.module';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { LecturesModule } from './lectures/lectures.module';
     DepartmentsModule,
     CoursesModule,
     CoursesSchedulesModule,
-    LecturesModule
+    LecturesModule,
+    ClassesGroupsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }

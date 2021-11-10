@@ -13,6 +13,10 @@ export class ClassGroupService {
 
     classGroupTableLoadedState = this.classGroupTableLoadedSubject.asObservable();
 
+    identifierSuffixesSubject = new BehaviorSubject<Array<string>>([]);
+
+    identifierSuffixesState = this.identifierSuffixesSubject.asObservable();
+
     constructor(private http: HttpClient) { }
 
     getAllPageClassesGroups(params: HttpParams): Observable<any> {

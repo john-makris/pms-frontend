@@ -1,4 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatRadioButton } from '@angular/material/radio';
+import { MatSort } from '@angular/material/sort';
+import { ActivatedRoute, Router } from '@angular/router';
+import { fromEvent, merge, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/operators';
+import { PageDetail } from 'src/app/common/models/pageDetail.model';
+import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
+import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
+import { CoursesSchedulesDataSource } from 'src/app/courses-schedules/common/tableDataHelper/coursesSchedules.datasource';
+import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model';
+import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
+import { Department } from 'src/app/departments/department.model';
+import { DepartmentService } from 'src/app/departments/department.service';
+import { CourseScheduleSelectDialogService } from 'src/app/lectures/lecture-edit/services/course-schedule-select-dialog.sevice';
+import { LectureType } from 'src/app/lectures/lecture-types/lecture-type.model';
+import { LectureTypeService } from 'src/app/lectures/lecture-types/lecture-type.service';
+import { LectureService } from 'src/app/lectures/lecture.service';
+import { ClassGroupService } from '../class-group.service';
+import { ClassesGroupsDataSource } from '../common/tableDataHelper/classes-groups.datasource';
 
 @Component({
   selector: 'app-class-group-list',
@@ -6,10 +27,308 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./class-group-list.component.css']
 })
 export class ClassGroupListComponent implements OnInit {
+  searchClassesGroupsForm!: FormGroup;
 
-  constructor() { }
+  isLoading: boolean = false;
+  submitted: boolean = false;
+  
+  dataSource!: ClassesGroupsDataSource;
+  departments!: Department[];
+  selectedDepartmentId: string = '';
+  selectedCourseScheduleId: string = '';
+  selectedCourseSchedule: CourseSchedule | null = null;
+  selectedLectureTypeName: string = 'Theory';
+  lectureTypes: LectureType[] = [];
+  identifierSuffixList: Array<string> = [];
+
+  totalItems: number = 0;
+  currentPage: number = 0;
+  currentPageItems: number = 0;
+  currentColumnDef: string = 'id';
+  currentActivityState: string = '';
+
+  courseScheduleSelectDialogSubscription!: Subscription;
+  lectureTypeSubscription!: Subscription;
+  snackbarSubscription!: Subscription;
+  pageDetailSubscription!: Subscription;
+  departmentsSubscription!: Subscription;
+
+  displayedColumns = [
+    'id',
+    'name',
+    'title'
+  ];
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatRadioButton) radioButton!: MatRadioButton;
+  @ViewChild('input') input!: ElementRef;
+
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private formBuilder: FormBuilder,
+    private classGroupService: ClassGroupService,
+    private lectureTypeService: LectureTypeService,
+    private courseScheduleService: CourseScheduleService,
+    private courseScheduleSelectDialogService: CourseScheduleSelectDialogService,
+    private snackbarService: SnackbarService,
+    private departmentService: DepartmentService) {}
+
 
   ngOnInit(): void {
+
+    this.lectureTypeSubscription = this.lectureTypeService.getAllLectureTypes()
+    .pipe(first())
+    .subscribe(lectureTypes => {
+      this.lectureTypes = lectureTypes;
+      console.log(this.lectureTypes);
+    });
+
+    this.departmentsSubscription = this.departmentService.getAllDepartments()
+    .pipe(first())
+    .subscribe(departments => {
+      this.departments = departments;
+    });
+
+    this.searchClassesGroupsForm = this.formBuilder.group({
+      departmentId: [this.selectedDepartmentId],
+      courseSchedule: [''],
+      isLectureTypeNameTheory : [true]
+    });
+
+    /*this.lectureTypeSubscription = this.lectureTypeService.lectureTypeIdState.subscribe((lectureType: string) => {
+      console.log("I am inside lecture type subscriber: "+lectureType);
+      let isLectureTypeTheoryValue: boolean = false;
+      if (lectureType === 'Theory') {
+        isLectureTypeTheoryValue = true;
+      }
+      this.searchLecturesForm.patchValue({
+        isLectureTypeTheory: isLectureTypeTheoryValue
+      });
+      this.selectedLectureTypeModerator();
+    });*/
+
+    console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
+
+    this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
+
+    this.dataSource = new ClassesGroupsDataSource(this.classGroupService);
+
+    if (+this.searchClassesGroupsForm.value.departmentId && +this.selectedCourseScheduleId) {
+      this.dataSource.loadClassesGroups(
+        +this.searchClassesGroupsForm.value.departmentId, +this.selectedCourseScheduleId,
+        this.selectedLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
+    }
+
+    this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
+      switchMap(async (pageDetail: PageDetail) => {
+        this.totalItems = pageDetail.totalItems;
+        this.currentPageItems = pageDetail.currentPageItems;
+        this.currentPage = pageDetail.currentPage;
+        //console.log("Entered to SwitchMap");
+        if(this.currentActivityState.includes('added')) {
+          //console.log("I am inside switchmap added state");
+            this.paginator.pageIndex = pageDetail.totalPages - 1;
+            this.refreshTable();
+            this.currentActivityState = '';
+        }
+      })
+    ).subscribe();
+    
+    this.snackbarSubscription = this.snackbarService.snackbarState.subscribe(
+      (state: SnackbarData) => {
+        this.currentActivityState = state.message;
+        if(this.currentActivityState.includes('added')) {
+          //console.log('Current State: '+this.currentState);
+          console.log("Selected Department Id: "+this.selectedDepartmentId);
+          this.paginator.pageIndex = 0;
+          this.refreshTable();
+        } else if(this.currentActivityState.includes('deleted') && this.currentPageItems === 1) {
+          //console.log("I am inside Deleted state");
+          //console.log("CURRENT PAGE: "+this.currentPage);
+          this.paginator.pageIndex = this.currentPage - 1;
+          this.refreshTable();
+          this.currentActivityState = '';
+        } else if(this.currentActivityState.includes('updated')) {
+          this.paginator.pageIndex = this.currentPage;
+          this.refreshTable();
+        } else {
+          this.refreshTable();
+        }
+      }
+    );
+
+    this.courseScheduleSelectDialogSubscription = this.courseScheduleSelectDialogService.courseScheduleSelectDialogState
+    .subscribe((_courseSchedule: CourseSchedule | null) => {
+      console.log("Course Schedule Data: "+JSON.stringify(_courseSchedule));
+      if (_courseSchedule !== null) {
+        console.log("CATCH COURSE SCHEDULE: "+_courseSchedule.course.name);
+        this.searchClassesGroupsForm.patchValue({
+          courseSchedule: _courseSchedule
+        });
+        this.selectedCourseSchedule = _courseSchedule;
+        this.selectedCourseScheduleId = _courseSchedule.id.toString();
+        this.searchClassesGroupsForm.patchValue({
+          isLectureTypeNameTheory: true
+        });
+        this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
+        this.onSearchLecturesFormSubmit();
+      }
+    });
   }
 
+  get slf() { return this.searchClassesGroupsForm.controls; }
+
+  checkForCourseScheduleValue() {
+    if (this.searchClassesGroupsForm.value.courseSchedule) {
+      this.clearCourseScheduleValue();
+    }
+  }
+
+  onSearchLecturesFormSubmit() {
+    this.router.navigate(['/classes-groups'], { relativeTo: this.route });
+    this.submitted = true;
+    //console.log("HAAAAALOOOO!!!");
+    if(this.searchClassesGroupsForm.invalid) {
+      return;
+    }
+
+    this.isLoading = true;
+    //console.log("Course Schedule ID: "+ this.selectCourseScheduleForm.value.courseSchedule.id);
+    this.selectedDepartmentId = this.searchClassesGroupsForm.value.departmentId;
+    this.paginator.pageIndex = 0;
+    this.paginator.pageSize;
+    this.sort.direction='asc'
+    //this.currentColumnDef;
+    console.log("Course Schedule ID: "+this.selectedCourseScheduleId);
+    this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
+
+    console.log("Selected value: "+this.searchClassesGroupsForm.value.isLectureTypeNameTheory);
+    this.selectedLectureTypeModerator();
+    console.log("Selected lecture type: "+this.selectedLectureTypeName);
+    this.publishLectureType();
+    this.identifierSuffixModerator();
+    this.classGroupService.identifierSuffixesSubject.next(this.identifierSuffixList);
+
+    this.refreshTable();
+  }
+
+  selectedLectureTypeModerator() {
+    this.selectedLectureTypeName = this.searchClassesGroupsForm.value.isLectureTypeNameTheory ? 'Theory' : 'Lab';
+  }
+
+  clearCourseScheduleValue() {
+    this.searchClassesGroupsForm.patchValue({
+      courseSchedule: '',
+      isLectureTypeNameTheory: true
+    });
+    this.selectedCourseSchedule = null;
+    this.selectedCourseScheduleId = '';
+    this.selectedLectureTypeName = 'Theory';
+    this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
+    this.router.navigate(['/classes-groups'], { relativeTo: this.route});
+    this.refreshTable();
+  }
+
+  onLectureTypeSelect(lectureTypeNameSelection: boolean) {
+    this.searchClassesGroupsForm.patchValue({
+      isLectureTypeNameTheory: lectureTypeNameSelection
+    });
+    this.onSearchLecturesFormSubmit();
+  }
+
+  selectCourseSchedule() {
+    this.courseScheduleSelectDialogService.selectCourseSchedule(this.searchClassesGroupsForm.value.courseSchedule);
+  }
+
+  ngAfterViewInit() {
+    this.sort.sortChange.subscribe(() => {
+      this.currentColumnDef = this.sort.active;
+      //console.log("SORT ACTIVE: "+this.sort.active);
+    //console.log("Sort changed "+this.sort.direction);
+      this.paginator.pageIndex = 0;
+    });
+    fromEvent(this.input.nativeElement,'keyup')
+        .pipe(
+            debounceTime(150),
+            distinctUntilChanged(),
+            tap(() => {
+                this.paginator.pageIndex = 0;
+
+                this.loadClassesGroupsPage();
+            })
+        )
+        .subscribe();
+
+    merge(this.sort.sortChange, this.paginator.page)
+    .pipe(
+        tap(() => this.loadClassesGroupsPage())
+    )
+    .subscribe();
+  }
+
+  loadClassesGroupsPage() {
+    this.dataSource.loadClassesGroups(
+        +this.selectedDepartmentId,
+        +this.selectedCourseScheduleId,
+        this.selectedLectureTypeName,
+        this.input.nativeElement.value,
+        this.paginator.pageIndex,
+        this.paginator.pageSize,
+        this.sort.direction,
+        this.currentColumnDef);
+  }
+  
+  refreshTable() {
+    //console.log("INPUT VALUE: "+this.input.nativeElement.value);
+    if (this.input.nativeElement.value === '') {
+      this.loadClassesGroupsPage();
+    } else {
+      this.clearInput();
+    }
+    this.classGroupService.classGroupTableLoadedSubject.next(true);
+  }
+
+  clearInput() {
+    this.input.nativeElement.value='';
+    this.loadClassesGroupsPage();
+  }
+
+  publishLectureType() {
+    if (this.lectureTypes.length !== 0) {
+      const found = this.lectureTypes.find(lectureType => lectureType.name === this.selectedLectureTypeName);
+      console.log("FOUND: "+JSON.stringify(found));
+      if (found) {
+        this.lectureTypeService.lectureTypeSubject.next(found);
+      }
+    }
+  }
+
+  identifierSuffixModerator() {
+      this.identifierSuffixList = [];
+      if (this.selectedCourseSchedule) {
+        if (this.selectedLectureTypeName === 'Theory') {
+          this.fillOutIdentifierSuffixList(this.selectedCourseSchedule.maxTheoryLectures);
+        } else if (this.selectedLectureTypeName === 'Lab') {
+          this.fillOutIdentifierSuffixList(this.selectedCourseSchedule.maxLabLectures);
+        } else {
+          this.identifierSuffixList = [];
+        }
+      }
+  }
+
+  fillOutIdentifierSuffixList(numberOfLectures: number) {
+    for (let i = 0; i < numberOfLectures; i++) {
+      this.identifierSuffixList.push((i+1).toString());
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.departmentsSubscription.unsubscribe();
+    this.pageDetailSubscription.unsubscribe();
+    this.snackbarSubscription.unsubscribe();
+    this.lectureTypeSubscription.unsubscribe();
+ }
+ 
 }
