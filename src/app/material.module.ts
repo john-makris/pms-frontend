@@ -31,9 +31,10 @@ import {
     NgxMatDateFormats,
     NgxMatDatetimePickerModule,
     NgxMatNativeDateModule,
-    NgxMatTimepickerModule,
     NGX_MAT_DATE_FORMATS
   } from '@angular-material-components/datetime-picker';
+
+import {NgxMatTimepickerModule} from 'ngx-mat-timepicker';
 
 const INTL_DATE_INPUT_FORMAT = {
     year: 'numeric',

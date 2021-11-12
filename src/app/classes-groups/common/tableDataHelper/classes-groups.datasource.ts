@@ -58,7 +58,7 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
             )
             .pipe(first())
             .subscribe((response: any) => {
-                //console.log("RESPONSE !!!!!!! "+response);
+                console.log("RESPONSE A !!!!!!! "+response);
                 this.checkData(response);
             });
         } else {
@@ -69,7 +69,7 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
             )
             .pipe(first())
             .subscribe((response: any) => {
-                //console.log("RESPONSE !!!!!!! "+response);
+                console.log("RESPONSE B !!!!!!! "+response);
                 this.checkData(response);
             });
         }

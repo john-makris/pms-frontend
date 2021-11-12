@@ -9,7 +9,6 @@ import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
-import { CoursesSchedulesDataSource } from 'src/app/courses-schedules/common/tableDataHelper/coursesSchedules.datasource';
 import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model';
 import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
 import { Department } from 'src/app/departments/department.model';
@@ -17,7 +16,6 @@ import { DepartmentService } from 'src/app/departments/department.service';
 import { CourseScheduleSelectDialogService } from 'src/app/lectures/lecture-edit/services/course-schedule-select-dialog.sevice';
 import { LectureType } from 'src/app/lectures/lecture-types/lecture-type.model';
 import { LectureTypeService } from 'src/app/lectures/lecture-types/lecture-type.service';
-import { LectureService } from 'src/app/lectures/lecture.service';
 import { ClassGroupService } from '../class-group.service';
 import { ClassesGroupsDataSource } from '../common/tableDataHelper/classes-groups.datasource';
 
@@ -44,7 +42,7 @@ export class ClassGroupListComponent implements OnInit {
   totalItems: number = 0;
   currentPage: number = 0;
   currentPageItems: number = 0;
-  currentColumnDef: string = 'id';
+  currentColumnDef: string = 'name';
   currentActivityState: string = '';
 
   courseScheduleSelectDialogSubscription!: Subscription;
@@ -56,7 +54,8 @@ export class ClassGroupListComponent implements OnInit {
   displayedColumns = [
     'id',
     'name',
-    'title'
+    'startTime',
+    'room'
   ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -96,18 +95,6 @@ export class ClassGroupListComponent implements OnInit {
       courseSchedule: [''],
       isLectureTypeNameTheory : [true]
     });
-
-    /*this.lectureTypeSubscription = this.lectureTypeService.lectureTypeIdState.subscribe((lectureType: string) => {
-      console.log("I am inside lecture type subscriber: "+lectureType);
-      let isLectureTypeTheoryValue: boolean = false;
-      if (lectureType === 'Theory') {
-        isLectureTypeTheoryValue = true;
-      }
-      this.searchLecturesForm.patchValue({
-        isLectureTypeTheory: isLectureTypeTheoryValue
-      });
-      this.selectedLectureTypeModerator();
-    });*/
 
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
 

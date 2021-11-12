@@ -1,1 +1,133 @@
-<p>class-group-edit works!</p>
+<section *ngIf="currentCourseSchedule && currentClassGroupType"
+    [ngClass]="'container'"
+    [ngClass.lt-md]="'min-container'"
+    fxLayout>
+    <form 
+        [formGroup]="classGroupForm"
+        (ngSubmit)="onSubmit()">
+        <mat-card
+            class="mat-elevation-z8"
+            fxFlex.xs="19em"
+            fxFlex.sm="25em" 
+            fxFlex.gt-sm="25em">
+            <mat-card-title fxLayoutAlign="center">
+                <h1 *ngIf="isAddMode">Add {{ currentClassGroupType.name }} Group</h1>
+                <h1 *ngIf="!isAddMode && currentClassGroup">Edit {{ currentClassGroup.nameIdentifier }}</h1>
+            </mat-card-title>
+            <mat-card-content fxLayout="column" fxLayoutGap="0.5em"
+            fxLayoutAlign="center">
+                <div fxFlex fxLayoutGap="0.25em">
+
+                    <mat-form-field fxFlex class="small-width"
+                        appearance="outline">
+                        <mat-label>id</mat-label>
+                        <input 
+                            matInput 
+                            type="number" 
+                            placeholder="id"
+                            formControlName="identifierSuffix"
+                            min="1"
+                            max="10">
+                        <span matSuffix>
+                            <mat-icon>subtitles</mat-icon>
+                        </span>
+                        <mat-hint>Set id.</mat-hint>
+                        <mat-error *ngIf="f.identifierSuffix.errors?.max">Cannot set number larger than 10</mat-error>
+                        <mat-error *ngIf="f.identifierSuffix.errors?.min">Cannot set number smaller than 1</mat-error>
+                        <mat-error *ngIf="f.identifierSuffix.errors?.required">Missing group_number</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field fxFlex class="small-width"
+                        appearance="outline">
+                        <mat-label>Capacity</mat-label>
+                        <input 
+                            matInput 
+                            type="number" 
+                            placeholder="Capacity"
+                            formControlName="capacity"
+                            min="1"
+                            max="300">
+                        <mat-hint>Set Capacity.</mat-hint>
+                        <mat-error *ngIf="f.capacity.errors?.max">Cannot set number larger than 300</mat-error>
+                        <mat-error *ngIf="f.capacity.errors?.min">Cannot set number smaller than 1</mat-error>
+                        <mat-error *ngIf="f.capacity.errors?.required">Missing Capacity</mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div fxFlex fxLayoutGap="0.25em">
+                    <mat-form-field fxFlex class="small-width"
+                        appearance="outline">
+                        <mat-label>Start Time</mat-label>
+                        <input matInput
+                            name="selected_time_B"
+                            [format]="24"
+                            [ngxMatTimepicker]="timePicker"
+                            formControlName="startTime"
+                            placeholder="timePicker"
+                            readonly>
+                        <mat-icon matSuffix
+                                (click)="timePicker.open()">
+                            watch_later
+                        </mat-icon>
+                        <mat-hint>Set Start Time.</mat-hint>
+                    </mat-form-field>
+                    <ngx-mat-timepicker #timePicker></ngx-mat-timepicker>
+                                
+                    <mat-form-field fxFlex class="small-width"
+                        appearance="outline">
+                        <mat-label>End Time</mat-label>
+                        <input matInput
+                            name="se"
+                            formControlName="endTime"
+                            placeholder="timePicker"
+                            readonly>
+                        <mat-icon matSuffix>
+                            watch_later
+                        </mat-icon>
+                    </mat-form-field> 
+                </div>
+
+                <mat-form-field fxFlex
+                    appearance="outline">
+                    <mat-select
+                        [(value)]="selectedRoom"
+                        [compareWith]="setSelectedValue"
+                        panelClass="mat-select-panel"
+                        formControlName="room">
+                        <mat-option
+                            [value]="''">-- None --</mat-option>
+                        <mat-option *ngFor="let room of rooms" [value]="room">
+                            <p>{{ room.roomIdentifier }}</p>
+                        </mat-option>
+                    </mat-select>
+                    <mat-label><mat-icon>event_note</mat-icon> <b> Room</b></mat-label>
+                    <mat-hint>Choose Room</mat-hint>
+                    <mat-error>Room is required.</mat-error>
+                </mat-form-field>
+      
+                <div fxLayoutAlign="center">
+                    <mat-spinner *ngIf="isLoading"></mat-spinner>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div
+                    *ngIf="!isLoading"
+                    fxLayout="row"
+                    fxLayoutAlign="start">
+                        <button 
+                            type="submit" 
+                            mat-raised-button color="primary" 
+                            [disabled]="classGroupForm.invalid || isLoading">
+                            {{ isAddMode ? 'Save' : 'Update' }}
+                        </button>
+                        <button 
+                            type="button" 
+                            mat-button color="primary" 
+                            (click)="onCancel()">
+                            Cancel
+                        </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </form>
+</section>

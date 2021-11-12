@@ -21,7 +21,7 @@
     margin-left: 1em;
 }
 
-.course-schedule-text {
+.collapse-text {
     text-align: left;
     font-weight: normal;
     word-break: break-word;
@@ -48,12 +48,15 @@
 }
 
 .mat-column-name {
-    max-width: 25%;
-    margin-right: 5%;
+    max-width: 30%;
 }
 
-.mat-column-title {
-    max-width: 55%;
+.mat-column-startTime {
+    max-width: 34%;
+}
+
+.mat-column-room {
+    max-width: 23%;
 }
 
 .selectorContainer {

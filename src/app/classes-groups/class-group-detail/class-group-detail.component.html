@@ -1,1 +1,67 @@
-<p>class-group-detail works!</p>
+<section *ngIf="classGroupTable"
+    [ngClass]="'container'"
+    [ngClass.lt-md]="'min-container'"
+    fxLayout>
+    <div *ngIf="classGroup">
+        <mat-card
+            class="mat-elevation-z8"
+            fxFlex.xs="19em"
+            fxFlex="22em">
+            <mat-card-title fxLayoutAlign="center">
+                Class Group Details
+            </mat-card-title>
+            <br>
+            <mat-card-content fxLayout="column" 
+            fxLayoutAlign="center"
+            fxLayoutGap="1em">
+                <div>
+                    <mat-label><strong>Category:</strong></mat-label>
+                    {{ classGroup?.lectureType?.name === 'Theory' ? 'Theories' : 'Labs' }}
+                </div>
+                <div>
+                    <mat-label><strong>Course Schedule:</strong></mat-label>
+                    {{ classGroup?.courseSchedule?.course?.name }}
+                </div>
+                <div>
+                    <mat-label><strong>Name:</strong></mat-label>
+                    {{ classGroup?.nameIdentifier }}
+                </div>
+                <div>
+                    <label><strong>Time:</strong></label>
+                    {{ classGroup?.startTime+' - '+classGroup?.endTime }}
+                </div>
+                <div>
+                    <label><strong>Room:</strong></label>
+                    {{ classGroup?.room?.roomIdentifier }}
+                </div>
+                <div>
+                    <label><strong>Capacity:</strong></label>
+                    {{ classGroup?.capacity }}
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div>
+                    <button
+                        mat-raised-button color="primary"
+                        (click)="editClassGroup()">
+                        Edit
+                    </button>
+              
+                    <button 
+                        mat-raised-button color="warn"
+                        (click)="deleteClassGroup(classGroup.id)">
+                        Delete
+                    </button>
+                </div>
+                <hr>
+                <div fxLayoutAlign="end">
+                    <button 
+                        mat-button color="primary"
+                        (click)="onCancel()">
+                        Cancel
+                    </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</section>

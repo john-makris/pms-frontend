@@ -5,7 +5,6 @@ import { LectureType } from "src/app/lectures/lecture-types/lecture-type.model";
 export interface ClassGroupRequestData {
     identifierSuffix: string,
     startTime: string,
-    endTime: string,
     capacity: number,
     lectureType: LectureType,
     courseSchedule: CourseSchedule,

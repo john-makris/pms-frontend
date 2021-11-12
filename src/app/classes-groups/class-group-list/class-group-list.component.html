@@ -39,7 +39,7 @@
             <div *ngIf="selectedDepartmentId">
                 <div fxLayout fxLayoutGap="0.5em">
                     <button fxFlex
-                        class="course-schedule-text"
+                        class="collapse-text"
                         type="button"
                         mat-stroked-button
                         (click)="selectCourseSchedule()">
@@ -106,17 +106,22 @@
                 matSortDirection="asc" matSortDisableClear>
                 <ng-container matColumnDef="id">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
-                    <mat-cell *matCellDef="let lecture">{{ lecture.id | number }}</mat-cell>
+                    <mat-cell *matCellDef="let classGroup">{{ classGroup.id | number }}</mat-cell>
                 </ng-container>
         
                 <ng-container matColumnDef="name">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Name Id</mat-header-cell>
-                    <mat-cell *matCellDef="let lecture">{{ lecture.nameIdentifier }}</mat-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Name</mat-header-cell>
+                    <mat-cell *matCellDef="let classGroup" class="collapse-text">{{ classGroup.nameIdentifier }}</mat-cell>
                 </ng-container>
 
-                <ng-container matColumnDef="title">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Title</mat-header-cell>
-                    <mat-cell *matCellDef="let lecture">{{ lecture.title }}</mat-cell>
+                <ng-container matColumnDef="startTime">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Time</mat-header-cell>
+                    <mat-cell *matCellDef="let classGroup" class="collapse-text">{{ classGroup.startTime+' - '+classGroup.endTime }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="room">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Room</mat-header-cell>
+                    <mat-cell *matCellDef="let classGroup" class="collapse-text">{{ classGroup.room.roomIdentifier }}</mat-cell>
                 </ng-container>
         
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
