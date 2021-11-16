@@ -39,7 +39,7 @@
             <div *ngIf="selectedDepartmentId">
                 <div fxLayout fxLayoutGap="0.5em">
                     <button fxFlex
-                        class="collapse-text"
+                        class="collapse-button-text"
                         type="button"
                         mat-stroked-button
                         (click)="selectCourseSchedule()">
@@ -85,7 +85,7 @@
                 <div fxLayout="row">
                     <input
                         matInput 
-                        placeholder="Search lectures" #input>
+                        placeholder="Search groups" #input>
                     <mat-icon 
                         matSuffix 
                         inline="true">search</mat-icon>
@@ -118,20 +118,46 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Time</mat-header-cell>
                     <mat-cell *matCellDef="let classGroup" class="collapse-text">{{ classGroup.startTime+' - '+classGroup.endTime }}</mat-cell>
                 </ng-container>
-
+                
                 <ng-container matColumnDef="room">
                     <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Room</mat-header-cell>
                     <mat-cell *matCellDef="let classGroup" class="collapse-text">{{ classGroup.room.roomIdentifier }}</mat-cell>
                 </ng-container>
+
+                <ng-container matColumnDef="capacity">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Capacity</mat-header-cell>
+                    <mat-cell *matCellDef="let classGroup" class="collapse-text">{{ classGroup.capacity - classGroup.groupsOfStudents+'/'+classGroup.capacity }}</mat-cell>
+                </ng-container>
+
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="subscription">
+                    <mat-header-cell *matHeaderCellDef class="collapse-text">Subscription</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <mat-checkbox
+                            [disabled]="selectedRow && !simpleCheck(row)"
+                            (click)="$event.stopPropagation()" (change)="selectHandler(row)"
+                            [checked]="selection.isSelected(row) || check(row)">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+
+                <div *ngIf="showStudentFeatures">
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row
+                        *matRowDef="let row; columns: displayedColumns;">
+                    </mat-row>
+                </div>
         
-                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row
-                    *matRowDef="let row; columns: displayedColumns;"
-                    routerLink="detail/{{row.id}}"
-                    routerLinkActive="active"
-                    class="table-row-style"
-                    matRipple>
-                </mat-row>
+                <div *ngIf="!showStudentFeatures">
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row
+                        *matRowDef="let row; columns: displayedColumns;"
+                        routerLink="detail/{{row.id}}"
+                        routerLinkActive="active"
+                        class="table-row-style"
+                        matRipple>
+                    </mat-row>
+                </div>
             </mat-table>
         
             <mat-paginator

@@ -1,11 +1,15 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { SelectionModel } from '@angular/cdk/collections';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatRadioButton } from '@angular/material/radio';
 import { MatSort } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fromEvent, merge, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, first, last, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
+import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.service';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
@@ -13,9 +17,14 @@ import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model'
 import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
 import { Department } from 'src/app/departments/department.model';
 import { DepartmentService } from 'src/app/departments/department.service';
+import { GroupStudentData } from 'src/app/groups-students/common/request/groupStudentData.interface';
+import { GroupStudent } from 'src/app/groups-students/group-student.model';
+import { GroupStudentService } from 'src/app/groups-students/group-student.service';
 import { CourseScheduleSelectDialogService } from 'src/app/lectures/lecture-edit/services/course-schedule-select-dialog.sevice';
 import { LectureType } from 'src/app/lectures/lecture-types/lecture-type.model';
 import { LectureTypeService } from 'src/app/lectures/lecture-types/lecture-type.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
+import { ClassGroup } from '../class-group.model';
 import { ClassGroupService } from '../class-group.service';
 import { ClassesGroupsDataSource } from '../common/tableDataHelper/classes-groups.datasource';
 
@@ -27,8 +36,14 @@ import { ClassesGroupsDataSource } from '../common/tableDataHelper/classes-group
 export class ClassGroupListComponent implements OnInit {
   searchClassesGroupsForm!: FormGroup;
 
+  currentUser: AuthUser | null = null;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
+
   isLoading: boolean = false;
   submitted: boolean = false;
+  ensureDialogStatus!: boolean;
   
   dataSource!: ClassesGroupsDataSource;
   departments!: Department[];
@@ -39,12 +54,20 @@ export class ClassGroupListComponent implements OnInit {
   lectureTypes: LectureType[] = [];
   identifierSuffixList: Array<string> = [];
 
+  selectedRow: ClassGroup | null = null;
+  selection = new SelectionModel<ClassGroup>(true, []);
+
+  haha: boolean = false;
+
   totalItems: number = 0;
   currentPage: number = 0;
   currentPageItems: number = 0;
   currentColumnDef: string = 'name';
   currentActivityState: string = '';
 
+  classGroupSubscription!: Subscription;
+  ensureDialogSubscription!: Subscription;
+  createGroupStudentSubscription!: Subscription;
   courseScheduleSelectDialogSubscription!: Subscription;
   lectureTypeSubscription!: Subscription;
   snackbarSubscription!: Subscription;
@@ -58,6 +81,7 @@ export class ClassGroupListComponent implements OnInit {
     'room'
   ];
 
+  @ViewChild(MatCheckbox) checkbox!: MatCheckbox;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatRadioButton) radioButton!: MatRadioButton;
@@ -72,10 +96,27 @@ export class ClassGroupListComponent implements OnInit {
     private courseScheduleService: CourseScheduleService,
     private courseScheduleSelectDialogService: CourseScheduleSelectDialogService,
     private snackbarService: SnackbarService,
-    private departmentService: DepartmentService) {}
+    private departmentService: DepartmentService,
+    private groupStudentService: GroupStudentService,
+    private authService: AuthService,
+    private ensureDialogService: EnsureDialogService) {}
 
 
   ngOnInit(): void {
+
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
+        this.showStudentFeatures = this.currentUser.roles.includes('STUDENT');
+
+        if (this.showStudentFeatures) {
+          this.displayedColumns = [];
+          this.displayedColumns = ['name', 'startTime', 'capacity', 'subscription'];
+        }
+      }
+    });
 
     this.lectureTypeSubscription = this.lectureTypeService.getAllLectureTypes()
     .pipe(first())
@@ -198,6 +239,17 @@ export class ClassGroupListComponent implements OnInit {
     this.identifierSuffixModerator();
     this.classGroupService.identifierSuffixesSubject.next(this.identifierSuffixList);
 
+    if (this.currentUser && this.showStudentFeatures) {
+      this.classGroupSubscription = this.groupStudentService.getClassGroupByStudentIdAndCourseScheduleIdAndGroupType(
+        this.currentUser.id, +this.selectedCourseScheduleId, this.selectedLectureTypeName)
+      .subscribe((classGroup: ClassGroup | null) => {
+        if (classGroup) {
+          this.selectedRow = classGroup;
+          console.log("Class Group: "+JSON.stringify(classGroup));
+        }
+      });
+    }
+
     this.refreshTable();
   }
 
@@ -311,11 +363,122 @@ export class ClassGroupListComponent implements OnInit {
     }
   }
 
+  simpleCheck(row: any): boolean {
+    let result: boolean = false;
+    if (this.selectedRow !== null) {
+      result = this.selectedRow.id === row.id;
+    }
+    if (!result) {
+      //this.selection.deselect(row);
+      if (this.selectedRow?.groupType.name !== row.groupType.name) {
+        return true;
+      }
+      return false;
+    } else {
+      //this.selection.isSelected(row);
+      //this.selection.select(row);
+      //console.log(row.id);
+      return true;
+    }
+  }
+
+  check(row: any): boolean {
+    let result: boolean = false;
+    if (this.selectedRow !== null) {
+      result = this.selectedRow.id === row.id;
+    }
+    if (!result) {
+      //console.log("Deselect");
+      this.selection.deselect(row);
+      return false;
+    } else {
+      //console.log("Select");
+      //this.selection.isSelected(row);
+      this.selection.select(row);
+      console.log(row.id);
+      return true;
+    }
+  }
+
+  selectHandler(row: ClassGroup) {
+    let result: boolean = false;
+    console.log("Select Handler:");
+    this.selection.toggle(row);
+    if (this.selectedRow !== null) {
+      result = this.selectedRow.id === row.id;
+    }
+    if (this.selection.isSelected(row)) {
+      if(!result) {
+        this.selectedRow = row;
+        console.log("New selection: "+row.courseSchedule.course.name+", "+row.nameIdentifier);
+        console.log("capacity: "+JSON.stringify(row));
+        //this.check(row);
+        if (this.currentUser) {
+          this.createGroupStudent(this.createGroupStudentData(this.selectedRow, this.currentUser.id));
+        }
+        this.haha = true;
+        console.log("Data pushed! "+this.selectedRow.courseSchedule.course.name+", "+this.selectedRow.nameIdentifier);
+      }
+    } else {
+        if (this.selectedRow && this.currentUser) {
+          this.deleteGroupStudent(this.selectedRow.id, this.currentUser.id, row);
+        }
+        this.haha = false;
+        //this.check(row);
+        console.log("Data removed! "+this.selectedRow);
+    }
+  }
+
+  unCheck(data: any) {
+    if (this.selectedRow !== null) {
+      if (data.id === this.selectedRow.id) {
+        console.log("Still exists ..."+data.courseSchedule.course.name+", "+data.nameIdentifier);
+      }
+      console.log("DELETE");
+      if (data.id === this.selectedRow.id) {
+        this.selectedRow = null;
+      }
+    }
+  }
+
+  createGroupStudentData(classGroup: ClassGroup, studentId: number): GroupStudentData {
+    const groupStudentData : GroupStudentData = {
+      classGroup: classGroup,
+      studentId: studentId
+    };
+    return groupStudentData;
+  }
+
+  private createGroupStudent(groupStudentData: GroupStudentData) {
+    this.createGroupStudentSubscription = this.groupStudentService.createGroupStudent(groupStudentData)
+    .pipe(last())
+      .subscribe(() => {
+        console.log("DATA: "+ "Entered sto subscribe");
+          this.snackbarService.success('You just subscribed to '+this.selectedLectureTypeName.toLowerCase()+'_'+this.selectedRow?.nameIdentifier);
+          this.router.navigate(['/classes-groups'], { relativeTo: this.route});
+        }).add(() => { this.isLoading = false; });
+  }
+
+  deleteGroupStudent(classGroupId: number, studentId: number, row: ClassGroup) {
+    console.log("Hallo "+this.ensureDialogStatus);
+    this.groupStudentService.deleteGroupStudentByClassGroupIdAndStudentId(classGroupId, studentId)
+        .pipe(first())
+        .subscribe(() => {
+          //this.groupStudent.isDeleting = false;
+          this.snackbarService.success('You just unsubscribed from '+this.selectedLectureTypeName.toLowerCase()+'_'+this.selectedRow?.nameIdentifier);
+          this.unCheck(row);
+          this.router.navigate(['/classes-groups'], { relativeTo: this.route});
+        });
+  }
+  
   ngOnDestroy(): void {
     this.departmentsSubscription.unsubscribe();
     this.pageDetailSubscription.unsubscribe();
     this.snackbarSubscription.unsubscribe();
     this.lectureTypeSubscription.unsubscribe();
+    if (this.classGroupSubscription) {
+      this.classGroupSubscription.unsubscribe();
+    }
  }
  
 }

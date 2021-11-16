@@ -57,7 +57,7 @@ export class ClassGroupDetailComponent implements OnInit {
   
   deleteClassGroup(id: number) {
     let groupType: string = '';
-    if (this.classGroup.lectureType.name === 'Theory') {
+    if (this.classGroup.groupType.name === 'Theory') {
       groupType = 'theories';
     } else {
       groupType = 'tabs';

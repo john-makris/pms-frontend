@@ -8,8 +8,9 @@ export interface ClassGroupResponseData {
     nameIdentifier: string,
     startTime: string,
     endTime: string,
+    groupsOfStudents: number,
     capacity: number,
-    lectureType: LectureType,
+    groupType: LectureType,
     courseSchedule: CourseSchedule,
     room: Room
 }

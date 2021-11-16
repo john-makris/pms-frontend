@@ -16,7 +16,7 @@
             fxLayoutGap="1em">
                 <div>
                     <mat-label><strong>Category:</strong></mat-label>
-                    {{ classGroup?.lectureType?.name === 'Theory' ? 'Theories' : 'Labs' }}
+                    {{ classGroup?.groupType?.name === 'Theory' ? 'Theories' : 'Labs' }}
                 </div>
                 <div>
                     <mat-label><strong>Course Schedule:</strong></mat-label>
@@ -36,7 +36,7 @@
                 </div>
                 <div>
                     <label><strong>Capacity:</strong></label>
-                    {{ classGroup?.capacity }}
+                    {{ classGroup.capacity - classGroup.groupsOfStudents+'/'+classGroup.capacity }}
                 </div>
             </mat-card-content>
             <mat-card-actions>

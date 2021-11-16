@@ -1,4 +1,3 @@
-import { NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSelect } from '@angular/material/select';
@@ -32,6 +31,7 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
   submitted: boolean = false;
 
   selectedGroupNumber: string = '';
+  currentStudentsOfGroup: number = 0;
 
   delimeter: string = ',' + '\xa0';
   panelOpenState = false;
@@ -110,7 +110,7 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
       identifierSuffix: ['', [Validators.required, Validators.min(1), Validators.max(10)]],
       startTime: [this.selectedStartTime, Validators.required],
       endTime: ['', Validators.required],
-      capacity: ['', [Validators.required, Validators.min(1), Validators.max(300)]],
+      capacity: ['', [Validators.required, Validators.min(this.currentStudentsOfGroup), Validators.max(300)]],
       room: ['', Validators.required]
     });
     
@@ -134,8 +134,9 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
                     capacity: currentClassGroupData.capacity,
                     room: currentClassGroupData.room
                   });
+                  this.currentStudentsOfGroup = currentClassGroupData.groupsOfStudents;
                   this.currentCourseSchedule = currentClassGroupData.courseSchedule;
-                  this.currentClassGroupType = currentClassGroupData.lectureType;
+                  this.currentClassGroupType = currentClassGroupData.groupType;
                   this.selectedIdentifierSuffix = currentClassGroupData.identifierSuffix;
                   //this.setSelectedValue(this.selectedLectureType, this.select.value);
                   console.log("Selected Lecture Type: "+ JSON.stringify(this.currentClassGroupType));
@@ -183,7 +184,7 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
 
     const classGroupData: ClassGroupRequestData = {
       courseSchedule: this.currentCourseSchedule,
-      lectureType: this.currentClassGroupType,
+      groupType: this.currentClassGroupType,
       identifierSuffix: this.classGroupForm.value.identifierSuffix,
       startTime: this.classGroupForm.value.startTime,
       capacity: this.classGroupForm.value.capacity,
@@ -192,7 +193,7 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
 
     console.log("Class Group Request Data: ");
     console.log("Course Schedule: "+JSON.stringify(this.currentCourseSchedule));
-    console.log("Lecture Type: "+JSON.stringify(this.currentClassGroupType));
+    console.log("Group Type: "+JSON.stringify(this.currentClassGroupType));
     console.log("Identifier Suffix: "+this.classGroupForm.value.identifierSuffix);
     console.log("Start time: "+this.classGroupForm.value.startTime);
     console.log("Capacity: "+this.classGroupForm.value.capacity);

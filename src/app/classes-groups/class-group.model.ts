@@ -10,7 +10,7 @@ export class ClassGroup {
         public startTime: string,
         public endTime: string,
         public capacity: number,
-        public lectureType: LectureType,
+        public groupType: LectureType,
         public room: Room,
         public courseSchedule: CourseSchedule
     ) {}

@@ -1,4 +1,4 @@
-<section *ngIf="currentCourseSchedule && currentClassGroupType"
+<section *ngIf="rooms"
     [ngClass]="'container'"
     [ngClass.lt-md]="'min-container'"
     fxLayout>
@@ -12,7 +12,7 @@
             fxFlex.gt-sm="25em">
             <mat-card-title fxLayoutAlign="center">
                 <h1 *ngIf="isAddMode">Add {{ currentClassGroupType.name }} Group</h1>
-                <h1 *ngIf="!isAddMode && currentClassGroup">Edit {{ currentClassGroup.nameIdentifier }}</h1>
+                <h1 *ngIf="!isAddMode && currentClassGroup">Edit {{ currentClassGroupType.name+'_'+currentClassGroup.nameIdentifier | lowercase }}</h1>
             </mat-card-title>
             <mat-card-content fxLayout="column" fxLayoutGap="0.5em"
             fxLayoutAlign="center">
@@ -49,7 +49,7 @@
                             max="300">
                         <mat-hint>Set Capacity.</mat-hint>
                         <mat-error *ngIf="f.capacity.errors?.max">Cannot set number larger than 300</mat-error>
-                        <mat-error *ngIf="f.capacity.errors?.min">Cannot set number smaller than 1</mat-error>
+                        <mat-error *ngIf="f.capacity.errors?.min">Cannot set number smaller than {{ currentStudentsOfGroup===0 ? 1 :  currentStudentsOfGroup}}</mat-error>
                         <mat-error *ngIf="f.capacity.errors?.required">Missing Capacity</mat-error>
                     </mat-form-field>
                 </div>

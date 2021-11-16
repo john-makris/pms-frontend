@@ -6,7 +6,7 @@ export interface ClassGroupRequestData {
     identifierSuffix: string,
     startTime: string,
     capacity: number,
-    lectureType: LectureType,
+    groupType: LectureType,
     courseSchedule: CourseSchedule,
     room: Room
 }
