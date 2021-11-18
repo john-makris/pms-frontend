@@ -124,6 +124,11 @@
                     <mat-cell *matCellDef="let classGroup" class="collapse-text">{{ classGroup.room.roomIdentifier }}</mat-cell>
                 </ng-container>
 
+                <ng-container matColumnDef="status">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Status</mat-header-cell>
+                    <mat-cell *matCellDef="let classGroup" class="collapse-text">{{ classGroup.status ? 'Opened' : 'Closed' }}</mat-cell>
+                </ng-container>
+
                 <ng-container matColumnDef="capacity">
                     <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Capacity</mat-header-cell>
                     <mat-cell *matCellDef="let classGroup" class="collapse-text">{{ classGroup.capacity - classGroup.groupsOfStudents+'/'+classGroup.capacity }}</mat-cell>
@@ -133,8 +138,10 @@
                 <ng-container matColumnDef="subscription">
                     <mat-header-cell *matHeaderCellDef class="collapse-text">Subscription</mat-header-cell>
                     <mat-cell *matCellDef="let row">
-                        <mat-checkbox
-                            [disabled]="selectedRow && !simpleCheck(row)"
+                        <mat-checkbox matTooltip="Group is closed"
+                            matTooltipPosition="after"
+                            [matTooltipDisabled]="row.status"
+                            [disabled]="selectedRow && !simpleCheck(row) || !row.status"
                             (click)="$event.stopPropagation()" (change)="selectHandler(row)"
                             [checked]="selection.isSelected(row) || check(row)">
                         </mat-checkbox>

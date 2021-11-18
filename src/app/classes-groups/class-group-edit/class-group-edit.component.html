@@ -54,7 +54,7 @@
                     </mat-form-field>
                 </div>
 
-                <div fxFlex fxLayoutGap="0.25em">
+                <div fxFlex fxLayoutGap="0.15em">
                     <mat-form-field fxFlex class="small-width"
                         appearance="outline">
                         <mat-label>Start Time</mat-label>
@@ -105,6 +105,14 @@
                     <mat-error>Room is required.</mat-error>
                 </mat-form-field>
       
+                <mat-radio-group
+                    formControlName="status">
+                    <div class="radio-container">
+                        <mat-radio-button [value]=true>Opened</mat-radio-button>
+                        <mat-radio-button [value]=false>Closed</mat-radio-button>
+                    </div>
+                </mat-radio-group>
+
                 <div fxLayoutAlign="center">
                     <mat-spinner *ngIf="isLoading"></mat-spinner>
                 </div>

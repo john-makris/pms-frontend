@@ -11,6 +11,7 @@ export interface ClassGroupResponseData {
     groupsOfStudents: number,
     capacity: number,
     groupType: LectureType,
+    status: boolean,
     courseSchedule: CourseSchedule,
     room: Room
 }

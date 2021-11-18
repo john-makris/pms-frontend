@@ -52,8 +52,16 @@
     background-color: #f00;
 }
 
+mat-form-field {
+    padding: 0.35em;
+}
+
 mat-card-actions {
     margin-left: 0.4em;
+}
+
+.radio-container {
+    padding-left: 0.5em;
 }
 
 .mat-radio-button ~ .mat-radio-button {

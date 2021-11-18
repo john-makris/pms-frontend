@@ -111,7 +111,8 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
       startTime: [this.selectedStartTime, Validators.required],
       endTime: ['', Validators.required],
       capacity: ['', [Validators.required, Validators.min(this.currentStudentsOfGroup), Validators.max(300)]],
-      room: ['', Validators.required]
+      room: ['', Validators.required],
+      status: [false, Validators.required]
     });
     
     this.id = this.route.snapshot.params['id'];
@@ -132,7 +133,8 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
                     startTime: currentClassGroupData.startTime,
                     endTime: currentClassGroupData.endTime,
                     capacity: currentClassGroupData.capacity,
-                    room: currentClassGroupData.room
+                    room: currentClassGroupData.room,
+                    status: currentClassGroupData.status
                   });
                   this.currentStudentsOfGroup = currentClassGroupData.groupsOfStudents;
                   this.currentCourseSchedule = currentClassGroupData.courseSchedule;
@@ -188,7 +190,8 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
       identifierSuffix: this.classGroupForm.value.identifierSuffix,
       startTime: this.classGroupForm.value.startTime,
       capacity: this.classGroupForm.value.capacity,
-      room: this.classGroupForm.value.room
+      room: this.classGroupForm.value.room,
+      status: this.classGroupForm.value.status
     };
 
     console.log("Class Group Request Data: ");
@@ -197,6 +200,7 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
     console.log("Identifier Suffix: "+this.classGroupForm.value.identifierSuffix);
     console.log("Start time: "+this.classGroupForm.value.startTime);
     console.log("Capacity: "+this.classGroupForm.value.capacity);
+    console.log("Status: "+this.classGroupForm.value.status);
     console.log("Room: "+JSON.stringify(this.classGroupForm.value.room));
     //this.courseScheduleForm.reset();
     

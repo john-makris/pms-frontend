@@ -78,7 +78,8 @@ export class ClassGroupListComponent implements OnInit {
     'id',
     'name',
     'startTime',
-    'room'
+    'room',
+    'status'
   ];
 
   @ViewChild(MatCheckbox) checkbox!: MatCheckbox;

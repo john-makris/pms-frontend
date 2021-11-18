@@ -63,7 +63,12 @@
 }
 
 .mat-column-room {
-    max-width: 33%;
+    max-width: 15%;
+    margin-left: 2em;
+}
+
+.mat-column-status {
+    max-width: 18%;
 }
 
 .mat-column-capacity {

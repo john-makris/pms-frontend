@@ -11,6 +11,7 @@ export class ClassGroup {
         public endTime: string,
         public capacity: number,
         public groupType: LectureType,
+        public status: boolean,
         public room: Room,
         public courseSchedule: CourseSchedule
     ) {}

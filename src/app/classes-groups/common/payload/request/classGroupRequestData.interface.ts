@@ -7,6 +7,7 @@ export interface ClassGroupRequestData {
     startTime: string,
     capacity: number,
     groupType: LectureType,
+    status: boolean,
     courseSchedule: CourseSchedule,
     room: Room
 }

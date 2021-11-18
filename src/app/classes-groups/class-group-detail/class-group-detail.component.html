@@ -38,6 +38,10 @@
                     <label><strong>Capacity:</strong></label>
                     {{ classGroup.capacity - classGroup.groupsOfStudents+'/'+classGroup.capacity }}
                 </div>
+                <div>
+                    <label><strong>Status:</strong></label>
+                    {{ classGroup?.status ? 'Opened' : 'Closed' }}
+                </div>
             </mat-card-content>
             <mat-card-actions>
                 <div>
