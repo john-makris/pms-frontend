@@ -21,6 +21,8 @@ import { CoursesSchedulesModule } from './courses-schedules/courses-schedules.mo
 import { UsersModule } from './users/users.module';
 import { LecturesModule } from './lectures/lectures.module';
 import { ClassesGroupsModule } from './classes-groups/classes-groups.module';
+import { GroupsStudentsModule } from './groups-students/groups-students.module';
+import { ClassesSessionsModule } from './classes-sessions/classes-sessions.module';
 
 @NgModule({
   declarations: [
@@ -45,7 +47,9 @@ import { ClassesGroupsModule } from './classes-groups/classes-groups.module';
     CoursesModule,
     CoursesSchedulesModule,
     LecturesModule,
-    ClassesGroupsModule
+    ClassesGroupsModule,
+    GroupsStudentsModule,
+    ClassesSessionsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
