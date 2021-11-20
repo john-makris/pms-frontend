@@ -9,7 +9,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, first, last, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
-import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.service';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
@@ -17,8 +16,7 @@ import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model'
 import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
 import { Department } from 'src/app/departments/department.model';
 import { DepartmentService } from 'src/app/departments/department.service';
-import { GroupStudentData } from 'src/app/groups-students/common/request/groupStudentData.interface';
-import { GroupStudent } from 'src/app/groups-students/group-student.model';
+import { GroupStudentRequestData } from 'src/app/groups-students/common/payload/request/groupStudentRequestData.interface';
 import { GroupStudentService } from 'src/app/groups-students/group-student.service';
 import { CourseScheduleSelectDialogService } from 'src/app/lectures/lecture-edit/services/course-schedule-select-dialog.sevice';
 import { LectureType } from 'src/app/lectures/lecture-types/lecture-type.model';
@@ -99,8 +97,7 @@ export class ClassGroupListComponent implements OnInit {
     private snackbarService: SnackbarService,
     private departmentService: DepartmentService,
     private groupStudentService: GroupStudentService,
-    private authService: AuthService,
-    private ensureDialogService: EnsureDialogService) {}
+    private authService: AuthService) {}
 
 
   ngOnInit(): void {
@@ -146,7 +143,7 @@ export class ClassGroupListComponent implements OnInit {
 
     if (+this.searchClassesGroupsForm.value.departmentId && +this.selectedCourseScheduleId) {
       this.dataSource.loadClassesGroups(
-        +this.searchClassesGroupsForm.value.departmentId, +this.selectedCourseScheduleId,
+        +this.selectedCourseScheduleId,
         this.selectedLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
     }
 
@@ -310,7 +307,6 @@ export class ClassGroupListComponent implements OnInit {
 
   loadClassesGroupsPage() {
     this.dataSource.loadClassesGroups(
-        +this.selectedDepartmentId,
         +this.selectedCourseScheduleId,
         this.selectedLectureTypeName,
         this.input.nativeElement.value,
@@ -442,15 +438,15 @@ export class ClassGroupListComponent implements OnInit {
     }
   }
 
-  createGroupStudentData(classGroup: ClassGroup, studentId: number): GroupStudentData {
-    const groupStudentData : GroupStudentData = {
+  createGroupStudentData(classGroup: ClassGroup, studentId: number): GroupStudentRequestData {
+    const groupStudentData : GroupStudentRequestData = {
       classGroup: classGroup,
       studentId: studentId
     };
     return groupStudentData;
   }
 
-  private createGroupStudent(groupStudentData: GroupStudentData) {
+  private createGroupStudent(groupStudentData: GroupStudentRequestData) {
     this.createGroupStudentSubscription = this.groupStudentService.createGroupStudent(groupStudentData)
     .pipe(last())
       .subscribe(() => {
@@ -473,12 +469,29 @@ export class ClassGroupListComponent implements OnInit {
   }
   
   ngOnDestroy(): void {
-    this.departmentsSubscription.unsubscribe();
-    this.pageDetailSubscription.unsubscribe();
-    this.snackbarSubscription.unsubscribe();
-    this.lectureTypeSubscription.unsubscribe();
     if (this.classGroupSubscription) {
       this.classGroupSubscription.unsubscribe();
+    }
+    if (this.ensureDialogSubscription) {
+      this.ensureDialogSubscription.unsubscribe();
+    }
+    if (this.createGroupStudentSubscription) {
+      this.createGroupStudentSubscription.unsubscribe();
+    }
+    if (this.courseScheduleSelectDialogSubscription) {
+      this.courseScheduleSelectDialogSubscription.unsubscribe();
+    }
+    if (this.lectureTypeSubscription) {
+      this.lectureTypeSubscription.unsubscribe();
+    }
+    if (this.snackbarSubscription) {
+      this.snackbarSubscription.unsubscribe();
+    }
+    if (this.pageDetailSubscription) {
+      this.pageDetailSubscription.unsubscribe();
+    }
+    if (this.departmentsSubscription) {
+      this.departmentsSubscription.unsubscribe();
     }
  }
  

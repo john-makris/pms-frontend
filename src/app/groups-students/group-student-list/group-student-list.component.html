@@ -1,0 +1,171 @@
+<div 
+    [ngClass]="'container'"
+    [ngClass.lt-sm]="'min-container'"
+    fxFlex="40em"
+    fxFlex.gt-md="40em"
+    fxFlex.md="40em"
+    fxFlex.lt-md="40em"
+    fxFlex.lt-sm="20em"
+>
+    <div class="selectorContainer" fxLayout="column">
+        <h1>Students of Groups</h1>
+        <mat-divider></mat-divider>
+        <br>
+        <br>
+        <!-- Search StudentsOfGroups Form -->
+        <form fxLayout="column"
+            [formGroup]="searchStudentsOfGroupsForm" fxLayoutGap="0.5em">
+            <mat-form-field
+                appearance="outline">
+                <mat-select
+                    [(value)]="selectedDepartmentId"
+                    panelClass="mat-select-panel"
+                    formControlName="departmentId">
+                    <mat-option
+                        [value]="''"
+                        (click)="checkForCourseScheduleAndGroupValue()">-- None --</mat-option>
+                    <mat-option 
+                        *ngFor="let department of departments"
+                        [value]="department.id.toString()"
+                        (click)="checkForCourseScheduleAndGroupValue()">
+                        <p>
+                            {{ department.name }}
+                        </p>
+                    </mat-option>
+                </mat-select>
+                <mat-label><mat-icon>domain</mat-icon> <b> Department</b></mat-label>
+                <mat-hint>Choose Department</mat-hint>
+            </mat-form-field>
+            <div *ngIf="selectedDepartmentId">
+                <div fxLayout fxLayoutGap="0.5em">
+                    <button fxFlex
+                        class="collapse-button-text"
+                        type="button"
+                        mat-stroked-button
+                        (click)="selectCourseSchedule()">
+                        <div>{{'Selected: '}}{{ selectedCourseSchedule ? selectedCourseSchedule.course.name : ' -- None -- ' }}</div>
+                    </button>
+                    <div *ngIf="selectedCourseSchedule" class="aligner">
+                        <button class="mat-icon-button-search-form"
+                            type="button"
+                            mat-icon-button
+                            (click)="clearFormValues()">
+                            <mat-icon inline="true">close</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <mat-hint class="course-schedule-hint-text">Choose Course Schedule</mat-hint>
+            </div>
+
+            <div fxFlex>
+                <mat-radio-group *ngIf="selectedCourseSchedule"
+                    formControlName="isLectureTypeNameTheory">
+                    <div class="radio-container" fxLayoutGap="1em">
+                        <mat-radio-button [value]=true (click)="onLectureTypeSelect(true)">Theory Groups</mat-radio-button>
+                        <mat-radio-button [value]=false (click)="onLectureTypeSelect(false)">Lab Groups</mat-radio-button>
+                    </div>
+                </mat-radio-group>
+            </div>
+
+            <div *ngIf="selectedDepartmentId && selectedCourseScheduleId" fxLayout="column" fxFlex="1:2">
+                <div fxFlex fxLayoutGap="0.5em">
+                    <button fxFlex
+                        class="collapse-button-text"
+                        type="button"
+                        mat-stroked-button
+                        (click)="selectClassGroup()">
+                        <div>{{'Selected: '}}{{ selectedClassGroup ? selectedClassGroup.nameIdentifier : ' -- None -- ' }}</div>
+                    </button>
+                    <div *ngIf="selectedClassGroup" class="aligner">
+                        <button class="mat-icon-button-search-form"
+                            type="button"
+                            mat-icon-button
+                            (click)="clearClassGroupAndRefresh()">
+                            <mat-icon inline="true">close</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <mat-hint class="course-schedule-hint-text">Choose Class Group</mat-hint>
+            </div>
+
+        </form>
+    </div>
+
+    <span [matTooltip]="!selectedDepartmentId ? 'Select a Specific Department' : 'Select a Specific Course Schedule'"
+        matTooltipPosition="after"
+        [matTooltipDisabled]="selectedDepartmentId !=='' && selectedCourseScheduleId !==''">
+        <button
+            *ngIf="departments"
+            type="button"
+            mat-raised-button
+            color="primary"
+            routerLink="add"
+            [disabled]="selectedDepartmentId === '' || selectedCourseScheduleId ===''">Add Student to Group</button>
+    </span>
+
+    <div class="table-container">
+        <div fxLayoutAlign="center">
+            <mat-form-field fxFlex="60%">
+                <div fxLayout="row">
+                    <input
+                        matInput 
+                        placeholder="Search students" #input>
+                    <mat-icon 
+                        matSuffix 
+                        inline="true">search</mat-icon>
+                    <button class="mat-icon-button-table" 
+                        mat-button 
+                        *ngIf="input.value"
+                        matSuffix 
+                        mat-icon-button (click)="clearInput()">
+                        <mat-icon inline="true">close</mat-icon>
+                    </button>
+                </div>
+            </mat-form-field>
+        </div>
+
+        <div class="mat-elevation-z8">
+            <mat-table
+                [dataSource]="dataSource" matSort matSortActive="name"
+                matSortDirection="asc" matSortDisableClear>
+                <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">ID</mat-header-cell>
+                    <mat-cell *matCellDef="let student" class="collapse-text">{{ student.id | number }}</mat-cell>
+                </ng-container>
+        
+                <ng-container matColumnDef="username">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Username</mat-header-cell>
+                    <mat-cell *matCellDef="let student" class="collapse-text">{{ student.username }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="firstname">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">First Name</mat-header-cell>
+                    <mat-cell *matCellDef="let student" class="collapse-text">{{ student.firstname }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="lastname">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Last Name</mat-header-cell>
+                    <mat-cell *matCellDef="let student" class="collapse-text">{{ student.lastname }}</mat-cell>
+                </ng-container>
+        
+                <div>
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row
+                        *matRowDef="let row; columns: displayedColumns;"
+                        routerLink="detail/{{row.id}}/{{selectedClassGroupId}}"
+                        routerLinkActive="active"
+                        class="table-row-style"
+                        matRipple>
+                    </mat-row>
+                </div>
+            </mat-table>
+        
+            <mat-paginator
+                [length]="totalItems"
+                [pageSize]="3" 
+                [pageSizeOptions]="[3, 5]"
+                showFirstLastButtons>
+            </mat-paginator>
+        </div>
+    </div>
+</div>

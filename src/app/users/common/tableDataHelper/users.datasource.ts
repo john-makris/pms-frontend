@@ -43,22 +43,54 @@ export class UsersDataSource implements DataSource<UserData> {
         this.retrieveData(params);
     }
 
-    loadCourseScheduleStudents(activeCourseId: number,                
+    loadCourseScheduleStudents(courseScheduleId: number,                
                     filter:string,
                     pageIndex:number,
                     pageSize:number,
                     sortDirection:string,
                     currentColumnDef:string) {
-        let params: HttpParams = this.createStudentParams(activeCourseId, filter,
+        let params: HttpParams = this.createStudentParams(courseScheduleId, filter,
             pageIndex, pageSize, sortDirection, currentColumnDef);
             console.log("PARAMS: "+params);
 
         this.loadingSubject.next(true);
 
-        this.retrieveActiveCourseStudents(params);             
+        this.retrieveCourseScheduleStudents(params);             
     }
 
-    retrieveActiveCourseStudents(params: HttpParams) {
+    loadStudentsWithoutGroup(courseScheduleId: number,
+        classGroupTypeId: number,              
+        filter:string,
+        pageIndex:number,
+        pageSize:number,
+        sortDirection:string,
+        currentColumnDef:string) {
+        let params: HttpParams = this.createStudentWithoutGroupParams(courseScheduleId, classGroupTypeId, filter,
+        pageIndex, pageSize, sortDirection, currentColumnDef);
+        console.log("PARAMS: "+params);
+
+        this.loadingSubject.next(true);
+
+        console.log("Course Schedule Id Param: "+courseScheduleId);
+        console.log("Class Group Type Id: "+classGroupTypeId);
+
+        this.retrieveStudentsWithoutGroup(params);
+    }
+
+    retrieveStudentsWithoutGroup(params: HttpParams) {
+        this.userService.getAllPageStudentsByCourseScheduleIdAndClassGroupTypeId(params)
+        .pipe(
+            catchError(() => of([])),
+            finalize(() => this.loadingSubject.next(false))
+        )
+        .pipe(first())
+        .subscribe((response: UserPageResponseData) => {
+            //console.log("RESPONSE !!!!!!! "+response);
+            this.checkData(response);
+        });
+    }
+
+    retrieveCourseScheduleStudents(params: HttpParams) {
         this.userService.getAllPageStudentsByCourseSchedule(params)
         .pipe(
             catchError(() => of([])),
@@ -144,6 +176,49 @@ export class UsersDataSource implements DataSource<UserData> {
                 currentPageItems: 0
             });
         }
+    }
+
+    createStudentWithoutGroupParams(
+        courseScheduleId: number,
+        classGroupTypeId: number,
+        filter:string,
+        pageIndex:number,
+        pageSize:number,
+        sortDirection:string,
+        currentColumnDef:string): HttpParams {
+
+            let params = new HttpParams();
+
+            if (courseScheduleId) {
+                console.log("courseScheduleId: "+courseScheduleId);
+                params=params.set('courseScheduleId', courseScheduleId);
+            }
+
+            if (classGroupTypeId) {
+                console.log("classGroupTypeId: "+classGroupTypeId);
+                params=params.set('classGroupTypeId', classGroupTypeId);
+            }
+
+            if (filter) {
+                //console.log("Filter: "+filter);
+                params=params.set('filter', filter);
+            }
+    
+            if (pageIndex) {
+                //console.log("pageIndex: "+pageIndex);
+                params=params.set('page', pageIndex);
+            }
+        
+            if (pageSize) {
+                //console.log("pageSize: "+pageSize);
+                params=params.set('size', pageSize);
+            }
+        
+            if (sortDirection && currentColumnDef) {
+                params=params.set('sort', currentColumnDef+","+sortDirection);
+                //console.log("SORT: "+currentColumnDef+","+sortDirection);
+            }
+        return params;
     }
 
     createStudentParams(

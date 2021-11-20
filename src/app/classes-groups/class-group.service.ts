@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
+import { ClassGroupResponseData } from "./common/payload/response/classGroupResponseData.interface";
 
 const API_URL = 'http://localhost:8080/pms/classes-groups/';
 
@@ -8,6 +9,10 @@ const API_URL = 'http://localhost:8080/pms/classes-groups/';
     providedIn: 'root'
 })
 export class ClassGroupService {
+
+    classGroupSubject = new BehaviorSubject<ClassGroupResponseData | null>(null);
+
+    classGroupState = this.classGroupSubject.asObservable();
 
     classGroupTableLoadedSubject = new BehaviorSubject<boolean>(false);
 
@@ -35,8 +40,8 @@ export class ClassGroupService {
         return this.http.get<any[]>(API_URL + 'all/by_course-schedule_per_department/paginated_sorted_filtered', { params });
     }
 
-    getAllPageClassesGroupsByDepartmentIdAndCourseScheduleIdPerType(params: HttpParams): Observable<any> {
-        return this.http.get<any[]>(API_URL + 'all/by_course-scheduleId_and_type_per_department/paginated_sorted_filtered', { params });
+    getAllPageClassesGroupsByCourseScheduleIdPerType(params: HttpParams): Observable<any> {
+        return this.http.get<any[]>(API_URL + 'all/by_course-scheduleId_and_type/paginated_sorted_filtered', { params });
     }
 
     getAllClassesGroups(): Observable<any[]> {

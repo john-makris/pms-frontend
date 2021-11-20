@@ -40,6 +40,11 @@ const routes: Routes = [
   loadChildren: () => import('./classes-groups/classes-groups.module')
     .then(m => m.ClassesGroupsModule),
     canLoad: [AuthGuard]
+  },
+  { path: 'students-of-groups',
+  loadChildren: () => import('./groups-students/groups-students.module')
+    .then(m => m.GroupsStudentsModule),
+    canLoad: [AuthGuard]
   }
 ];
 

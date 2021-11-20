@@ -12,22 +12,16 @@
     margin-top: 1em;
 }
 
-.mat-column-id {
-    max-width: 13%;
+.mat-column-name {
+    max-width: 24%;
 }
 
-.mat-column-username {
+.mat-column-startTime {
+    max-width: 56%;
+}
+
+.mat-column-status {
     max-width: 20%;
-    margin-right: 3%;
-}
-
-.mat-column-firstname {
-    max-width: 33%;
-    margin-right: 3%;
-}
-
-.mat-column-lastname {
-    max-width: 34%;
 }
 
 .selectorContainer {

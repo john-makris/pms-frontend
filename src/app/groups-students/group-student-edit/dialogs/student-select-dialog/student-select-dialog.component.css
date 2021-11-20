@@ -17,17 +17,18 @@
 }
 
 .mat-column-username {
-    max-width: 20%;
-    margin-right: 3%;
+    max-width: 24%;
+    margin-left: 1em;
 }
 
 .mat-column-firstname {
-    max-width: 33%;
-    margin-right: 3%;
+    max-width: 30%;
+    margin-left: 1em;
 }
 
 .mat-column-lastname {
-    max-width: 34%;
+    max-width: 33%;
+    margin-left: 1em;
 }
 
 .selectorContainer {

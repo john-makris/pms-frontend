@@ -1,0 +1,53 @@
+<section *ngIf="classGroupTable"
+    [ngClass]="'container'"
+    [ngClass.lt-md]="'min-container'"
+    fxLayout>
+    <div *ngIf="studentOfGroup">
+        <mat-card
+            class="mat-elevation-z8"
+            fxFlex.xs="19em"
+            fxFlex="22em">
+            <mat-card-title fxLayoutAlign="center">
+                Student Details
+            </mat-card-title>
+            <br>
+            <mat-card-content fxLayout="column" 
+            fxLayoutAlign="center"
+            fxLayoutGap="1em">
+                <div>
+                    <mat-label><strong>Username:</strong></mat-label>
+                    {{ studentOfGroup?.username }}
+                </div>
+                <div>
+                    <mat-label><strong>First Name:</strong></mat-label>
+                    {{ studentOfGroup?.firstname }}
+                </div>
+                <div>
+                    <mat-label><strong>Last Name:</strong></mat-label>
+                    {{ studentOfGroup?.lastname }}
+                </div>
+                <div>
+                    <mat-label><strong>Email:</strong></mat-label>
+                    {{ studentOfGroup?.email }}
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div>              
+                    <button 
+                        mat-raised-button color="warn"
+                        (click)="deleteGroupStudent(studentId, classGroupId)">
+                        Unsubscribe student
+                    </button>
+                </div>
+                <hr>
+                <div fxLayoutAlign="end">
+                    <button 
+                        mat-button color="primary"
+                        (click)="onCancel()">
+                        Cancel
+                    </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</section>

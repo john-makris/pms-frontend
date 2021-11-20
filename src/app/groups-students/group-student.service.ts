@@ -36,6 +36,14 @@ export class GroupStudentService {
         return this.http.get<any[]>(API_URL + 'all/by_course-scheduleId_and_type_per_department/paginated_sorted_filtered', { params });
     }
 
+    getStudentsOfGroup(params: HttpParams): Observable<any> {
+        return this.http.get<any[]>(API_URL + 'all/students_of_group', { params });
+    }
+
+    getStudentOfGroup(studentId: number, classGroupId: number): Observable<any> {
+        return this.http.get<any[]>(API_URL + 'by_student_id_and_classGroup_id/' +studentId+ '/' +classGroupId);
+    }
+
     getAllGroupsOfStudents(): Observable<any[]> {
         return this.http.get<any[]>(API_URL + 'all');
     }

@@ -3,13 +3,13 @@ import { HttpParams } from "@angular/common/http";
 import {Observable, BehaviorSubject, of} from "rxjs";
 import {catchError, finalize, first} from "rxjs/operators";
 import { PageDetail } from "src/app/common/models/pageDetail.model";
-import { ClassGroupService } from "../../class-group.service";
-import { ClassesGroupsResponseData } from "../payload/response/classesGroupsResponseData.interface";
-import { ClassGroupResponseData } from "../payload/response/classGroupResponseData.interface";
+import { GroupStudentService } from "../../group-student.service";
+import { StudentOfGroupResponseData } from "../payload/response/studentOfGroupResponseData.interface";
+import { StudentsOfGroupResponseData } from "../payload/response/studentsOfGroupResponseData.interface";
 
-export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseData> {
+export class StudentsOfGroupDataSource implements DataSource<StudentOfGroupResponseData> {
 
-    private classGroupSubject = new BehaviorSubject<ClassGroupResponseData[]>([]);
+    private studentsOfGroupSubject = new BehaviorSubject<StudentOfGroupResponseData[]>([]);
 
     private pageDetailSubject = new BehaviorSubject<PageDetail>({
         currentPage: 0,
@@ -24,56 +24,59 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
 
     public loading$ = this.loadingSubject.asObservable();
 
-    constructor(private classGroupService: ClassGroupService) { }
+    constructor(private groupStudentService: GroupStudentService) { }
 
-    loadClassesGroups(
-                courseScheduleId: number,
-                lectureTypeName: string,
+    loadStudentsOfGroup(
+                classGroupId: number,
                 filter:string,
                 pageIndex:number,
                 pageSize:number,
                 sortDirection:string,
                 currentColumnDef:string) {
 
-        if (courseScheduleId) {
-            let params: HttpParams = this.createParams(courseScheduleId, lectureTypeName,
-                filter, pageIndex, pageSize, sortDirection, currentColumnDef);
-                console.log("PARAMS: "+params);
-
-            this.loadingSubject.next(true);
-
-            this.retrieveData(params);
-        } else {
-            this.checkData(null);
-        }
-
+            if (classGroupId) {
+                let params: HttpParams = this.createParams(
+                    classGroupId,
+                    filter, 
+                    pageIndex, 
+                    pageSize, 
+                    sortDirection, 
+                    currentColumnDef);
+                    console.log("PARAMS: "+params);
+    
+                this.loadingSubject.next(true);
+    
+                this.retrieveData(params);
+            } else {
+                this.checkData(null);
+            }
     }
 
     retrieveData(params: HttpParams) {
-        this.classGroupService.getAllPageClassesGroupsByCourseScheduleIdPerType(params)
+        this.groupStudentService.getStudentsOfGroup(params)
         .pipe(
             catchError(() => of([])),
             finalize(() => this.loadingSubject.next(false))
         )
         .pipe(first())
-        .subscribe((response: any) => {
-            console.log("RESPONSE B !!!!!!! "+response);
+        .subscribe((response: StudentsOfGroupResponseData) => {
+            console.log("RESPONSE Students of Group !!!!!!! "+response);
             this.checkData(response);
         });
     }
 
-    checkData(response: ClassesGroupsResponseData | null) {
+    checkData(response: StudentsOfGroupResponseData | null) {
         if(response!==null) {
-            this.classGroupSubject.next(response.classesGroups);
+            this.studentsOfGroupSubject.next(response.studentsOfGroup);
             console.log(response);
             const pageDetail: PageDetail = new PageDetail(
                 response.currentPage,
                 response.totalItems,
                 response.totalPages,
-                response.classesGroups.length);
+                response.studentsOfGroup.length);
             this.pageDetailSubject.next(pageDetail);
         } else {
-            this.classGroupSubject.next([]);
+            this.studentsOfGroupSubject.next([]);
             this.pageDetailSubject.next({
                 currentPage: 0,
                 totalItems: 0,
@@ -84,8 +87,7 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
     }
 
     createParams(
-        courseScheduleId: number,
-        lectureTypeName: string,
+        classGroupId: number,
         filter:string,
         pageIndex:number,
         pageSize:number,
@@ -94,14 +96,9 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
 
             let params = new HttpParams();
 
-            if (courseScheduleId) {
-                //console.log("ID: "+courseScheduleId);
-                params=params.set('courseScheduleId', courseScheduleId);
-            }
-
-            if (lectureTypeName) {
-                //console.log("name: "+lectureType);
-                params=params.set('name', lectureTypeName);
+            if (classGroupId) {
+                //console.log("Class Group ID: "+classGroupId);
+                params=params.set('classGroupId', classGroupId);
             }
 
             if (filter) {
@@ -128,11 +125,11 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
 
     connect(collectionViewer: CollectionViewer): Observable<any[]> {
         console.log("Connecting data source");
-        return this.classGroupSubject.asObservable();
+        return this.studentsOfGroupSubject.asObservable();
     }
 
     disconnect(collectionViewer: CollectionViewer): void {
-        this.classGroupSubject.complete();
+        this.studentsOfGroupSubject.complete();
         this.loadingSubject.complete();
         this.pageDetailSubject.complete();
     }

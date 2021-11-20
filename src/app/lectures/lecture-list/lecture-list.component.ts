@@ -1,9 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatRadioButton } from '@angular/material/radio';
 import { MatSort } from '@angular/material/sort';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/operators';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
@@ -327,6 +327,9 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pageDetailSubscription.unsubscribe();
     this.snackbarSubscription.unsubscribe();
     this.lectureTypeSubscription.unsubscribe();
+    if (this.courseScheduleSelectDialogSubscription) {
+      this.courseScheduleSelectDialogSubscription.unsubscribe();
+    }
  }
  
 }
