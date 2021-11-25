@@ -39,7 +39,6 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
   selectedFiles!: FileList | undefined;
   currentFile!: File | undefined;
 
-  suffixes: string[] = [];
   rooms: Room[] = [];
   selectedRoom: Room | string = '';
 
@@ -47,7 +46,6 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
   currentCourseSchedule!: CourseSchedule;
   currentClassGroupType!: LectureType;
   currentClassGroup!: ClassGroupResponseData;
-  selectedIdentifierSuffix: string = '';
 
   hideRequiredControl = new FormControl(false);
   floatLabelControl = new FormControl('auto');
@@ -94,17 +92,6 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
       }
     });
 
-
-
-    this.identifierSuffixesSubscription = this.classGroupService.identifierSuffixesState.subscribe(
-      (suffixesList: Array<string>) => {
-        if (suffixesList.length !== 0) {
-          this.suffixes = suffixesList;
-        } else {
-          this.onCancel();
-        }
-    });
-
     console.log("BEFORE FORM INITIALIZATION: ");
     this.classGroupForm = this.formBuilder.group({
       identifierSuffix: ['', [Validators.required, Validators.min(1), Validators.max(10)]],
@@ -139,7 +126,6 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
                   this.currentStudentsOfGroup = currentClassGroupData.groupsOfStudents;
                   this.currentCourseSchedule = currentClassGroupData.courseSchedule;
                   this.currentClassGroupType = currentClassGroupData.groupType;
-                  this.selectedIdentifierSuffix = currentClassGroupData.identifierSuffix;
                   //this.setSelectedValue(this.selectedLectureType, this.select.value);
                   console.log("Selected Lecture Type: "+ JSON.stringify(this.currentClassGroupType));
                 } else {

@@ -114,8 +114,7 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataSource = new LecturesDataSource(this.lectureService);
 
     if (+this.searchLecturesForm.value.departmentId && +this.selectedCourseScheduleId) {
-      this.dataSource.loadLectures(
-        +this.searchLecturesForm.value.departmentId, +this.selectedCourseScheduleId,
+      this.dataSource.loadLectures( +this.selectedCourseScheduleId,
         this.selectedLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
     }
 
@@ -268,7 +267,6 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loadLecturesPage() {
     this.dataSource.loadLectures(
-        +this.selectedDepartmentId,
         +this.selectedCourseScheduleId,
         this.selectedLectureTypeName,
         this.input.nativeElement.value,

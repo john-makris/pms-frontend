@@ -1,1 +1,101 @@
-<p>class-session-edit works!</p>
+<section
+    [ngClass]="'container'"
+    [ngClass.lt-md]="'min-container'"
+    fxLayout>
+    <form 
+        [formGroup]="classSessionForm"
+        (ngSubmit)="onSubmit()">
+        <mat-card
+            class="mat-elevation-z8"
+            fxFlex.xs="19em"
+            fxFlex.sm="25em" 
+            fxFlex.gt-sm="25em">
+            <mat-card-title fxLayoutAlign="center">
+                <h1 *ngIf="isAddMode">Add class session</h1>
+                <h1 *ngIf="!isAddMode && currentClassGroup">Edit </h1>
+            </mat-card-title>
+            <mat-card-content fxLayout="column"
+            fxLayoutAlign="center">
+
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Date</mat-label>
+                    <input matInput 
+                        [matDatepickerFilter]="datePickerFilter"
+                        [matDatepicker]="picker"
+                        formControlName="date"
+                        placeholder="date"
+                        readonly>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker fxFlex></mat-datepicker>
+                    <mat-hint>Set date</mat-hint>
+                    <mat-error *ngIf="f.date.errors?.required">Missing date</mat-error>
+                </mat-form-field>
+
+                <div fxFlex fxLayoutGap="0.15em" fxLayout="row">
+                    <mat-form-field fxFlex class="timeInputWidth"
+                        appearance="outline">
+                        <mat-label>Timespan</mat-label>
+                        <input matInput
+                            name="timeSpan"
+                            formControlName="timeSpan"
+                            placeholder="timespan"
+                            readonly>
+                    </mat-form-field> 
+                    
+                    <mat-form-field fxFlex class="small-width"
+                        appearance="outline">
+                        <mat-label>No.</mat-label>
+                        <input 
+                            matInput 
+                            type="number" 
+                            placeholder="number"
+                            formControlName="identifierSuffix"
+                            min="1"
+                            max="10">
+                        <span matSuffix>
+                            <mat-icon>subtitles</mat-icon>
+                        </span>
+                        <mat-hint>Set number.</mat-hint>
+                        <mat-error *ngIf="f.identifierSuffix.errors?.max">Cannot set number larger than 10</mat-error>
+                        <mat-error *ngIf="f.identifierSuffix.errors?.min">Cannot set number smaller than 1</mat-error>
+                        <mat-error *ngIf="f.identifierSuffix.errors?.required">Missing number</mat-error>
+                    </mat-form-field>
+                </div>
+      
+                <div *ngIf="!isAddMode" fxLayout="column" fxLayoutGap="0.5em">
+                    <mat-label class="aligner">Presence Statement:</mat-label>
+                    <mat-radio-group
+                        formControlName="presence_statement">
+                        <div class="radio-container">
+                            <mat-radio-button [value]=true>Opened</mat-radio-button>
+                            <mat-radio-button [value]=false>Closed</mat-radio-button>
+                        </div>
+                    </mat-radio-group>
+                </div>
+
+                <div fxLayoutAlign="center">
+                    <mat-spinner *ngIf="isLoading"></mat-spinner>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div
+                    *ngIf="!isLoading"
+                    fxLayout="row"
+                    fxLayoutAlign="start">
+                        <button 
+                            type="submit" 
+                            mat-raised-button color="primary" 
+                            [disabled]="classSessionForm.invalid || isLoading">
+                            {{ isAddMode ? 'Save' : 'Update' }}
+                        </button>
+                        <button 
+                            type="button" 
+                            mat-button color="primary" 
+                            (click)="onCancel()">
+                            Cancel
+                        </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </form>
+</section>

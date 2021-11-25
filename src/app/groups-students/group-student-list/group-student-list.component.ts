@@ -219,7 +219,6 @@ export class GroupStudentListComponent implements OnInit {
       this.isLoading = true;
 
       this.paginator.pageIndex = 0;
-      this.paginator.pageSize;
       this.sort.direction='asc'
   
       this.refreshTable();

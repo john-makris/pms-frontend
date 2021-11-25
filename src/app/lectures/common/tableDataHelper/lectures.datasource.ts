@@ -26,8 +26,7 @@ export class LecturesDataSource implements DataSource<LectureResponseData> {
 
     constructor(private lectureService: LectureService) { }
 
-    loadLectures(departmentId: number,
-                courseScheduleId: number,
+    loadLectures(courseScheduleId: number,
                 lectureTypeName: string,
                 filter:string,
                 pageIndex:number,
@@ -35,8 +34,8 @@ export class LecturesDataSource implements DataSource<LectureResponseData> {
                 sortDirection:string,
                 currentColumnDef:string) {
 
-        if (departmentId && courseScheduleId) {
-            let params: HttpParams = this.createParams(departmentId, courseScheduleId, lectureTypeName,
+        if (courseScheduleId) {
+            let params: HttpParams = this.createParams(courseScheduleId, lectureTypeName,
                 filter, pageIndex, pageSize, sortDirection, currentColumnDef);
                 console.log("PARAMS: "+params);
 
@@ -50,30 +49,16 @@ export class LecturesDataSource implements DataSource<LectureResponseData> {
     }
 
     retrieveData(params: HttpParams) {
-        if (!params.has('name')) {
-            this.lectureService.getAllPageLecturesByDepartmentIdAndCourseScheduleId(params)
-            .pipe(
-                catchError(() => of([])),
-                finalize(() => this.loadingSubject.next(false))
-            )
-            .pipe(first())
-            .subscribe((response: any) => {
-                //console.log("RESPONSE !!!!!!! "+response);
-                this.checkData(response);
-            });
-        } else {
-            this.lectureService.getAllPageLecturesByDepartmentIdAndCourseScheduleIdPerType(params)
-            .pipe(
-                catchError(() => of([])),
-                finalize(() => this.loadingSubject.next(false))
-            )
-            .pipe(first())
-            .subscribe((response: any) => {
-                //console.log("RESPONSE !!!!!!! "+response);
-                this.checkData(response);
-            });
-        }
-
+        this.lectureService.getAllPageLecturesByCourseScheduleIdPerType(params)
+        .pipe(
+            catchError(() => of([])),
+            finalize(() => this.loadingSubject.next(false))
+        )
+        .pipe(first())
+        .subscribe((response: any) => {
+            console.log("RESPONSE !!!!!!! "+JSON.stringify(response)+" You call me !");
+            this.checkData(response);
+        });
     }
 
     checkData(response: LecturesResponseData | null) {
@@ -98,7 +83,6 @@ export class LecturesDataSource implements DataSource<LectureResponseData> {
     }
 
     createParams(
-        departmentId: number,
         courseScheduleId: number,
         lectureTypeName: string,
         filter:string,
@@ -108,11 +92,6 @@ export class LecturesDataSource implements DataSource<LectureResponseData> {
         currentColumnDef:string): HttpParams {
 
             let params = new HttpParams();
-
-            if (departmentId) {
-                //console.log("ID: "+departmentId);
-                params=params.set('departmentId', departmentId);
-            }
 
             if (courseScheduleId) {
                 //console.log("ID: "+courseScheduleId);

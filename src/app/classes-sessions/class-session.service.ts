@@ -1,6 +1,8 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
+import { ClassSessionRequestData } from "./common/payload/request/classSessionRequestData.interface";
+import { ClassSessionResponseData } from "./common/payload/response/classSessionResponseData.interface";
 
 const API_URL = 'http://localhost:8080/pms/classes-sessions/';
 
@@ -9,7 +11,7 @@ const API_URL = 'http://localhost:8080/pms/classes-sessions/';
 })
 export class ClassSessionService {
 
-    classSessionSubject = new BehaviorSubject<any | null>(null);
+    classSessionSubject = new BehaviorSubject<ClassSessionResponseData | null>(null);
 
     classSessionState = this.classSessionSubject.asObservable();
 
@@ -47,7 +49,7 @@ export class ClassSessionService {
         return this.http.get<any[]>(API_URL + 'all');
     }
 
-    getClassSessionById(classSessionId: number): Observable<any> {
+    getClassSessionById(classSessionId: number): Observable<ClassSessionResponseData> {
         return this.http.get<any>(API_URL + classSessionId);
     }
 
@@ -59,11 +61,11 @@ export class ClassSessionService {
         return this.http.delete<any>(API_URL + 'delete/' + classSessionId);
     }
 
-    createClassSession(classSessionData: any): Observable<any> {
+    createClassSession(classSessionData: ClassSessionRequestData): Observable<ClassSessionRequestData> {
         return this.http.post<any>(API_URL + 'create/', classSessionData);
     }
 
-    updateClassSession(classSessionId: number, classSessionData: any): Observable<any> {
+    updateClassSession(classSessionId: number, classSessionData: ClassSessionRequestData): Observable<any> {
         return this.http.put(API_URL + 'update/' + classSessionId, classSessionData);
     }
 }

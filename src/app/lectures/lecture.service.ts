@@ -13,6 +13,10 @@ const API_URL = 'http://localhost:8080/pms/lectures/';
 })
 export class LectureService {
 
+    lectureSubject = new BehaviorSubject<LectureResponseData | null>(null);
+
+    lectureState = this.lectureSubject.asObservable();
+
     lectureTableLoadedSubject = new BehaviorSubject<boolean>(false);
 
     lectureTableLoadedState = this.lectureTableLoadedSubject.asObservable();
@@ -39,8 +43,8 @@ export class LectureService {
         return this.http.get<LecturesResponseData[]>(API_URL + 'all/by_course-schedule_per_department/paginated_sorted_filtered', { params });
     }
 
-    getAllPageLecturesByDepartmentIdAndCourseScheduleIdPerType(params: HttpParams): Observable<any> {
-        return this.http.get<LecturesResponseData[]>(API_URL + 'all/by_course-scheduleId_and_type_per_department/paginated_sorted_filtered', { params });
+    getAllPageLecturesByCourseScheduleIdPerType(params: HttpParams): Observable<any> {
+        return this.http.get<LecturesResponseData[]>(API_URL + 'all/by_course-schedule_Id_and_type/paginated_sorted_filtered', { params });
     }
 
     getAllLectures(): Observable<Lecture[]> {

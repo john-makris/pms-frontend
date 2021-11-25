@@ -30,7 +30,6 @@ export class GroupStudentEditComponent implements OnInit, OnDestroy {
   panelOpenState = false;
 
   currentStudent!: UserResponseData | null;
-  currentCourseSchedule!: CourseSchedule;
   currentClassGroup!: ClassGroupResponseData;
 
   studentSelectDialogSubscription!: Subscription;
@@ -109,14 +108,14 @@ export class GroupStudentEditComponent implements OnInit, OnDestroy {
     };
 
     console.log("Group Student Request Data: ");
-    console.log("Class Group: "+JSON.stringify(groupStudentData.classGroup));
+    console.log("Group Student Data: "+JSON.stringify(groupStudentData.classGroup));
     console.log("Student Id: "+groupStudentData.studentId);
     
     this.createGroupStudent(groupStudentData);
   }
 
-  private createGroupStudent(classGroupData: GroupStudentRequestData) {
-    this.createGroupStudentSubscription = this.groupStudentService.createGroupStudent(classGroupData)
+  private createGroupStudent(groupStudentData: GroupStudentRequestData) {
+    this.createGroupStudentSubscription = this.groupStudentService.createGroupStudent(groupStudentData)
     .pipe(last())
       .subscribe(() => {
         console.log("DATA: "+ "Mpike sto subscribe");

@@ -1,1 +1,59 @@
-<p>class-session-detail works!</p>
+<section *ngIf="classSessionTable"
+    [ngClass]="'container'"
+    [ngClass.lt-md]="'min-container'"
+    fxLayout>
+    <div *ngIf="classSession">
+        <mat-card
+            class="mat-elevation-z8"
+            fxFlex.xs="19em"
+            fxFlex="22em">
+            <mat-card-title fxLayoutAlign="center">
+                Class Session Details
+            </mat-card-title>
+            <br>
+            <mat-card-content fxLayout="column" 
+            fxLayoutAlign="center"
+            fxLayoutGap="1em">
+                <div>
+                    <mat-label><strong>Name:</strong></mat-label>
+                    {{ classSession?.nameIdentifier }}
+                </div>
+                <div>
+                    <mat-label><strong>Date:</strong></mat-label>
+                    {{ classSession?.date }}
+                </div>
+                <div>
+                    <mat-label><strong>Time:</strong></mat-label>
+                    {{ classSession?.classGroup?.startTime+' - '+classSession?.classGroup?.endTime }}
+                </div>
+                <div>
+                    <label><strong>Presence Statement:</strong></label>
+                    {{ classSession?.presenceStatementStatus ? 'Opened' : 'Closed' }}
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div>
+                    <button
+                        mat-raised-button color="primary"
+                        (click)="editClassSession()">
+                        Edit
+                    </button>
+              
+                    <button 
+                        mat-raised-button color="warn"
+                        (click)="deleteClassSession(classSession.id)">
+                        Delete
+                    </button>
+                </div>
+                <hr>
+                <div fxLayoutAlign="end">
+                    <button 
+                        mat-button color="primary"
+                        (click)="onCancel()">
+                        Cancel
+                    </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</section>

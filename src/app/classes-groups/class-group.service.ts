@@ -48,7 +48,7 @@ export class ClassGroupService {
         return this.http.get<any[]>(API_URL + 'all');
     }
 
-    getClassGroupById(classGroupId: number): Observable<any> {
+    getClassGroupById(classGroupId: number): Observable<ClassGroupResponseData> {
         return this.http.get<any>(API_URL + classGroupId);
     }
 

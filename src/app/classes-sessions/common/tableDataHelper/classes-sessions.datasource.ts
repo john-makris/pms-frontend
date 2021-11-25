@@ -4,10 +4,12 @@ import {Observable, BehaviorSubject, of} from "rxjs";
 import {catchError, finalize, first} from "rxjs/operators";
 import { PageDetail } from "src/app/common/models/pageDetail.model";
 import { ClassSessionService } from "../../class-session.service";
+import { ClassesSessionsResponseData } from "../payload/response/classesSessionsResponseData.interface";
+import { ClassSessionResponseData } from "../payload/response/classSessionResponseData.interface";
 
-export class ClassesGroupsDataSource implements DataSource<any> {
+export class ClassesSessionsDataSource implements DataSource<ClassSessionResponseData> {
 
-    private classSessionSubject = new BehaviorSubject<any[]>([]);
+    private classSessionSubject = new BehaviorSubject<ClassSessionResponseData[]>([]);
 
     private pageDetailSubject = new BehaviorSubject<PageDetail>({
         currentPage: 0,
@@ -26,7 +28,7 @@ export class ClassesGroupsDataSource implements DataSource<any> {
 
     loadClassesSessions(
                 lectureId: number,
-                classGroupId: string,
+                classGroupId: number,
                 filter:string,
                 pageIndex:number,
                 pageSize:number,
@@ -54,21 +56,21 @@ export class ClassesGroupsDataSource implements DataSource<any> {
             finalize(() => this.loadingSubject.next(false))
         )
         .pipe(first())
-        .subscribe((response: any) => {
+        .subscribe((response: ClassesSessionsResponseData) => {
             console.log("RESPONSE B !!!!!!! "+response);
             this.checkData(response);
         });
     }
 
-    checkData(response: any | null) {
+    checkData(response: ClassesSessionsResponseData | null) {
         if(response!==null) {
-            this.classSessionSubject.next(response.classesGroups);
+            this.classSessionSubject.next(response.classesSessions);
             console.log(response);
             const pageDetail: PageDetail = new PageDetail(
                 response.currentPage,
                 response.totalItems,
                 response.totalPages,
-                response.classesGroups.length);
+                response.classesSessions.length);
             this.pageDetailSubject.next(pageDetail);
         } else {
             this.classSessionSubject.next([]);
@@ -83,7 +85,7 @@ export class ClassesGroupsDataSource implements DataSource<any> {
 
     createParams(
         lectureId: number,
-        classGroupId: string,
+        classGroupId: number,
         filter:string,
         pageIndex:number,
         pageSize:number,

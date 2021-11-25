@@ -1,0 +1,46 @@
+.container {
+    /*border: 2px solid black;*/
+    min-width: 100%;
+}
+
+.table-row-style:hover {
+    cursor: pointer;
+    background-color: whitesmoke;
+}
+
+.table-container {
+    margin-top: 1em;
+}
+
+.mat-column-id {
+    max-width: 13%;
+}
+
+.mat-column-name {
+    max-width: 25%;
+    margin-right: 5%;
+}
+
+.mat-column-title {
+    max-width: 55%;
+}
+
+.selectorContainer {
+    padding-bottom: 1em;
+}
+
+.mat-icon-button {
+    height: 1em;
+    width: 1em;
+    font-size: 1em;
+    line-height: 1em;
+}
+
+.mat-row.hovered {
+    cursor: pointer;
+    background: #eee;
+}
+
+.mat-row.highlighted {
+  background: #999;
+}

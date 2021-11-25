@@ -25,7 +25,10 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatTooltipModule } from '@angular/material/tooltip'; 
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { MomentDateModule } from '@angular/material-moment-adapter';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
 
 import {
     NgxMatDateFormats,
@@ -45,7 +48,7 @@ const INTL_DATE_INPUT_FORMAT = {
     minute: '2-digit'
 };
   
-const MAT_DATE_FORMATS: NgxMatDateFormats = {
+const _NGX_MAT_DATE_FORMATS: NgxMatDateFormats = {
     parse: {
         dateInput: INTL_DATE_INPUT_FORMAT,
     },
@@ -55,6 +58,18 @@ const MAT_DATE_FORMATS: NgxMatDateFormats = {
         dateA11yLabel: { year: 'numeric', month: 'long', day: 'numeric' },
         monthYearA11yLabel: { year: 'numeric', month: 'long' },
     }
+};
+
+const _MAT_DATE_FORMATS = {
+    parse: {
+      dateInput: 'YYYY-MM-DD',
+    },
+    display: {
+      dateInput: 'YYYY-MM-DD',
+      monthYearLabel: 'MMM YYYY',
+      dateA11yLabel: 'LL',
+      monthYearA11yLabel: 'MMMM YYYY'
+    },
 };
 
 @NgModule({
@@ -86,6 +101,7 @@ const MAT_DATE_FORMATS: NgxMatDateFormats = {
         MatRadioModule,
         MatProgressBarModule,
         MatTooltipModule,
+       // MomentDateModule,
 
         NgxMatDatetimePickerModule,
         NgxMatTimepickerModule,
@@ -119,12 +135,14 @@ const MAT_DATE_FORMATS: NgxMatDateFormats = {
         MatRadioModule,
         MatProgressBarModule,
         MatTooltipModule,
+       // MomentDateModule,
 
         NgxMatDatetimePickerModule,
         NgxMatTimepickerModule,
         NgxMatNativeDateModule
     ],
-    providers: [{ provide: NGX_MAT_DATE_FORMATS, useValue: MAT_DATE_FORMATS }],
+    providers: [{ provide: NGX_MAT_DATE_FORMATS, useValue: _NGX_MAT_DATE_FORMATS },
+        { provide: MAT_DATE_FORMATS, useValue: _MAT_DATE_FORMATS }]
 
 })
 export class MaterialModule {}
