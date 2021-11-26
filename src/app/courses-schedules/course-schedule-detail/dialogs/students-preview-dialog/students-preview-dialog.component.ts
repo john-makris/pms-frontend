@@ -1,6 +1,4 @@
-import { SelectionModel } from '@angular/cdk/collections';
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -9,10 +7,12 @@ import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { TeachersSelectDialogComponent } from 'src/app/courses-schedules/course-schedule-edit/dialogs/teachers-select-dialog/teachers-select-dialog.component';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
-import { DepartmentService } from 'src/app/departments/department.service';
-import { UserData } from 'src/app/users/common/payload/response/userData.interface';
 import { UsersDataSource } from 'src/app/users/common/tableDataHelper/users.datasource';
 import { UserService } from 'src/app/users/user.service';
+import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
+import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model';
+import { ClassSessionService } from 'src/app/classes-sessions/class-session.service';
+import { ClassSessionResponseData } from 'src/app/classes-sessions/common/payload/response/classSessionResponseData.interface';
 
 @Component({
   selector: 'app-students-preview-dialog',
@@ -34,6 +34,11 @@ export class StudentsPreviewDialogComponent implements OnInit {
   currentPageItems: number = 0;
   currentColumnDef: string = 'id';
 
+  currentCourseSchedule: CourseSchedule | null = null;
+  currentClassSession: ClassSessionResponseData | null = null;
+
+  classSessionSubscription!: Subscription;
+  courseScheduleSubscription!: Subscription;
   departmentIdSubscription!: Subscription;
   pageDetailSubscription!: Subscription;
 
@@ -50,16 +55,33 @@ export class StudentsPreviewDialogComponent implements OnInit {
 
   constructor(
     private userService: UserService,
+    private courseScheduleService: CourseScheduleService,
+    private classSessionService: ClassSessionService,
     private dialogRef: MatDialogRef<TeachersSelectDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data :{activeCourseId: number}) {}
+    @Inject(MAT_DIALOG_DATA) public data :{searchId: number}) {}
 
 
   ngOnInit(): void {
 
     this.dataSource = new UsersDataSource(this.userService);
 
-    console.log("Active Course ID: "+JSON.stringify(this.data.activeCourseId));
-    this.dataSource.loadCourseScheduleStudents(this.data.activeCourseId,'', 0, 3, 'asc', this.currentColumnDef);
+    this.courseScheduleSubscription = this.courseScheduleService.courseScheduleState
+    .subscribe((_courseSchedule: CourseSchedule | null) => {
+      this.currentCourseSchedule = _courseSchedule;
+      if (_courseSchedule && _courseSchedule.id === this.data.searchId) {
+        console.log("Course Schedule ID: "+JSON.stringify(this.data.searchId));
+        this.dataSource.loadCourseScheduleStudents(this.data.searchId,'', 0, 3, 'asc', this.currentColumnDef);
+      }
+    });
+
+    this.classSessionSubscription = this.classSessionService.classSessionState
+    .subscribe((_classSession: ClassSessionResponseData | null) => {
+      this.currentClassSession = _classSession;
+      if (_classSession && _classSession.id === this.data.searchId) {
+        console.log("Class Session ID: "+JSON.stringify(this.data.searchId));
+        this.dataSource.loadClassSessionStudents(this.data.searchId,'', 0, 3, 'asc', this.currentColumnDef);
+      }
+    });
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -98,13 +120,25 @@ export class StudentsPreviewDialogComponent implements OnInit {
   }
 
   loadStudentsPage() {
-    this.dataSource.loadCourseScheduleStudents(
-        this.data.activeCourseId,
+    if (this.currentCourseSchedule) {
+      this.dataSource.loadCourseScheduleStudents(
+        this.data.searchId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,
         this.sort.direction,
         this.currentColumnDef);
+    }
+
+    if (this.currentClassSession) {
+      this.dataSource.loadClassSessionStudents(
+        this.data.searchId,
+        this.input.nativeElement.value,
+        this.paginator.pageIndex,
+        this.paginator.pageSize,
+        this.sort.direction,
+        this.currentColumnDef);
+    }
   }
   
   refreshTable() {
@@ -135,6 +169,12 @@ export class StudentsPreviewDialogComponent implements OnInit {
     }
     if (this.departmentIdSubscription) {
       this.departmentIdSubscription.unsubscribe();
+    }
+    if (this.classSessionSubscription) {
+      this.classSessionSubscription.unsubscribe();
+    }
+    if (this.courseScheduleSubscription) {
+      this.courseScheduleSubscription.unsubscribe();
     }
   }
 

@@ -41,8 +41,8 @@ export class ClassSessionService {
         return this.http.get<any[]>(API_URL + 'all/by_course-schedule_per_department/paginated_sorted_filtered', { params });
     }
 
-    getAllPageClassesSessionsByLectureIdAndClassGroupId(params: HttpParams): Observable<any> {
-        return this.http.get<any[]>(API_URL + 'all/by_lecture_Id_and_class_group_Id/paginated_sorted_filtered', { params });
+    getAllPageClassesSessionsByLectureId(params: HttpParams): Observable<any> {
+        return this.http.get<any[]>(API_URL + 'all/by_lecture_Id/paginated_sorted_filtered', { params });
     }
 
     getAllClassesSessions(): Observable<any[]> {

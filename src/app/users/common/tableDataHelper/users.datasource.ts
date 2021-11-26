@@ -91,7 +91,7 @@ export class UsersDataSource implements DataSource<UserData> {
 
         console.log("Class Session Id Param: "+classSessionId);
 
-        this.retrieveStudentsWithoutGroup(params);
+        this.retrieveClassSessionStudents(params);
     }
 
     retrieveClassSessionStudents(params: HttpParams) {

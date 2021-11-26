@@ -15,7 +15,7 @@ import { StudentsPreviewDialogService } from './services/students-preview-dialog
 })
 export class CourseScheduleDetailComponent implements OnInit, OnDestroy {
   id!: number;
-  courseSchedule!: CourseScheduleResponseData;
+  courseSchedule!: CourseScheduleResponseData | any;
   private ensureDialogSubscription!: Subscription;
   ensureDialogStatus!: boolean;
   
@@ -44,6 +44,7 @@ export class CourseScheduleDetailComponent implements OnInit, OnDestroy {
           .pipe(first())
           .subscribe((currentCourseSchedule: CourseScheduleResponseData) => {
             this.courseSchedule = currentCourseSchedule;
+            this.courseScheduleService.courseScheduleSubject.next(this.courseSchedule);
             this.calcHoursAndMinutes();
             console.log("Course Schedule Details: "+JSON.stringify(this.courseSchedule));
           });

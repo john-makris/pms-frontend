@@ -1,4 +1,4 @@
-<section
+<section *ngIf="tableLoaded"
     [ngClass]="'container'"
     [ngClass.lt-md]="'min-container'"
     fxLayout>
@@ -12,11 +12,34 @@
             fxFlex.gt-sm="25em">
             <mat-card-title fxLayoutAlign="center">
                 <h1 *ngIf="isAddMode">Add class session</h1>
-                <h1 *ngIf="!isAddMode && currentClassGroup">Edit </h1>
+                <h1 *ngIf="!isAddMode">Edit </h1>
             </mat-card-title>
             <mat-card-content fxLayout="column"
             fxLayoutAlign="center">
 
+                <div *ngIf="isAddMode" fxLayout="column" class="class-group-aligner">
+                    <div fxLayout fxLayoutGap="0.1em">
+                        <button fxFlex
+                        [class.border-invalid]="f.classGroup.invalid && f.classGroup.touched"
+                            class="collapse-button-text"
+                            type="button"
+                            mat-stroked-button
+                            (click)="selectClassGroup()">
+                            <div>{{'Selected: '}}{{ currentClassGroup ? currentClassGroup.nameIdentifier : ' -- None -- ' }}</div>
+                        </button>
+                        <div *ngIf="currentClassGroup" class="aligner">
+                            <button class="mat-icon-button-search-form"
+                                type="button"
+                                mat-icon-button
+                                (click)="clearClassGroupValue()">
+                                <mat-icon inline="true">close</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <mat-hint *ngIf="!(f.classGroup.errors?.required && f.classGroup.touched)" class="course-schedule-hint-text">Choose Class Group</mat-hint>
+                    <mat-error  class="course-schedule-hint-text" *ngIf="f.classGroup.errors?.required && f.classGroup.touched">Missing Class Group</mat-error>                
+                </div>
+                
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Date</mat-label>
                     <input matInput 
@@ -63,7 +86,7 @@
                 </div>
       
                 <div *ngIf="!isAddMode" fxLayout="column" fxLayoutGap="0.5em">
-                    <mat-label class="aligner">Presence Statement:</mat-label>
+                    <mat-label class="radio-button-aligner">Presence Statement:</mat-label>
                     <mat-radio-group
                         formControlName="presence_statement">
                         <div class="radio-container">

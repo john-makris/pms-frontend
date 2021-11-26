@@ -28,15 +28,14 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
 
     loadClassesSessions(
                 lectureId: number,
-                classGroupId: number,
                 filter:string,
                 pageIndex:number,
                 pageSize:number,
                 sortDirection:string,
                 currentColumnDef:string) {
 
-        if (lectureId && classGroupId) {
-            let params: HttpParams = this.createParams(lectureId, classGroupId,
+        if (lectureId) {
+            let params: HttpParams = this.createParams(lectureId,
                 filter, pageIndex, pageSize, sortDirection, currentColumnDef);
                 console.log("PARAMS: "+params);
 
@@ -50,7 +49,7 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
     }
 
     retrieveData(params: HttpParams) {
-        this.classSessionService.getAllPageClassesSessionsByLectureIdAndClassGroupId(params)
+        this.classSessionService.getAllPageClassesSessionsByLectureId(params)
         .pipe(
             catchError(() => of([])),
             finalize(() => this.loadingSubject.next(false))
@@ -85,7 +84,6 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
 
     createParams(
         lectureId: number,
-        classGroupId: number,
         filter:string,
         pageIndex:number,
         pageSize:number,
@@ -97,11 +95,6 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
             if (lectureId) {
                 //console.log("Lecture Id: "+lectureId);
                 params=params.set('lectureId', lectureId);
-            }
-
-            if (classGroupId) {
-                //console.log("Class Group Id: "+classGroupId);
-                params=params.set('classGroupId', classGroupId);
             }
 
             if (filter) {

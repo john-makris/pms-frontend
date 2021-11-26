@@ -23,8 +23,18 @@
                     {{ classSession?.date }}
                 </div>
                 <div>
+                    <mat-label><strong>Class Group:</strong></mat-label>
+                    {{ classSession?.classGroup?.nameIdentifier }}
+                </div>
+                <div>
                     <mat-label><strong>Time:</strong></mat-label>
                     {{ classSession?.classGroup?.startTime+' - '+classSession?.classGroup?.endTime }}
+                </div>
+                <div>
+                    <label><strong>Students: </strong></label>
+                    <button 
+                        mat-stroked-button color="primary"
+                        (click)="previewStudents()">Preview</button>
                 </div>
                 <div>
                     <label><strong>Presence Statement:</strong></label>

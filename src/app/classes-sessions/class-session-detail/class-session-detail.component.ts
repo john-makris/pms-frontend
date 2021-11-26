@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.service';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
+import { StudentsPreviewDialogService } from 'src/app/courses-schedules/course-schedule-detail/services/students-preview-dialog.service';
 import { ClassSessionService } from '../class-session.service';
 import { ClassSessionResponseData } from '../common/payload/response/classSessionResponseData.interface';
 
@@ -25,7 +26,8 @@ export class ClassSessionDetailComponent implements OnInit {
     private router: Router,
     private classSessionService: ClassSessionService,
     private snackbarService: SnackbarService,
-    private ensureDialogService: EnsureDialogService) { }
+    private ensureDialogService: EnsureDialogService,
+    private studentsPreviewDialogService: StudentsPreviewDialogService) { }
 
   ngOnInit(): void {
     this.classGroupTableLoadedSubscription = this.classSessionService.classSessionTableLoadedState
@@ -45,6 +47,7 @@ export class ClassSessionDetailComponent implements OnInit {
           .pipe(first())
           .subscribe((currentClassSession: ClassSessionResponseData) => {
             this.classSession = currentClassSession;
+            this.classSessionService.classSessionSubject.next(this.classSession);
             console.log("Class Session Details: "+JSON.stringify(this.classSession));
           });
       }
@@ -87,6 +90,10 @@ export class ClassSessionDetailComponent implements OnInit {
       );
   }
   
+  previewStudents() {
+    this.studentsPreviewDialogService.showStudents(this.classSession.id);
+  }
+
   onCancel() {
     this.router.navigate(['../../'], { relativeTo: this.route });
   }

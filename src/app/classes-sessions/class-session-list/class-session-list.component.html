@@ -86,7 +86,7 @@
                     </div>
                     <mat-hint class="course-schedule-hint-text">Choose Lecture</mat-hint>
                 </div>
-    
+                <!--
                 <div *ngIf="selectedLectureId">
                     <div fxLayout fxLayoutGap="0.5em">
                         <button fxFlex
@@ -106,24 +106,22 @@
                         </div>
                     </div>
                     <mat-hint class="course-schedule-hint-text">Choose Class Group</mat-hint>
-                </div>
+                </div> -->
             </div>
         </form>
     </div>
 
     <span [matTooltip]="'Select a Specific '+ (!selectedDepartmentId ? 'Department' :
-        !selectedCourseScheduleId ? 'Course Schedule' : 
-        !selectedLectureId ? 'Lecture' : 
-        'Class Group')"
+        !selectedCourseScheduleId ? 'Course Schedule' : 'Lecture')"
         matTooltipPosition="after"
-        [matTooltipDisabled]="selectedDepartmentId !=='' && selectedCourseScheduleId !=='' && selectedLectureId !=='' && selectedClassGroupId !==''">
+        [matTooltipDisabled]="selectedDepartmentId !=='' && selectedCourseScheduleId !=='' && selectedLectureId !==''">
         <button
             *ngIf="departments"
             type="button"
             mat-raised-button
             color="primary"
             routerLink="add"
-            [disabled]="selectedDepartmentId === '' || selectedCourseScheduleId ==='' || selectedLectureId ==='' || selectedClassGroupId===''">Add Class Session</button>
+            [disabled]="selectedDepartmentId === '' || selectedCourseScheduleId ==='' || selectedLectureId ===''">Add Class Session</button>
     </span>
 
     <div class="table-container">
@@ -165,9 +163,14 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Date</mat-header-cell>
                     <mat-cell *matCellDef="let classSession" class="collapse-text">{{ classSession.date }}</mat-cell>
                 </ng-container>
+
+                <ng-container matColumnDef="classGroup">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Class Group</mat-header-cell>
+                    <mat-cell *matCellDef="let classSession" class="collapse-text">{{ classSession.classGroup.nameIdentifier }}</mat-cell>
+                </ng-container>
                 
                 <ng-container matColumnDef="presenceStatementStatus">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Presence Statement</mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">P.s Status</mat-header-cell>
                     <mat-cell *matCellDef="let classSession" class="collapse-text">{{ classSession.presenceStatementStatus ? 'Opened' : 'Closed' }}</mat-cell>
                 </ng-container>
 

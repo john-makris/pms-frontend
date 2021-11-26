@@ -61,8 +61,8 @@ export class ClassSessionListComponent implements OnInit {
   selectedLectureId: string = '';
   selectedLecture: LectureResponseData | null = null;
 
-  selectedClassGroupId: string = '';
-  selectedClassGroup: ClassGroupResponseData | null = null;
+  //selectedClassGroupId: string = '';
+  //selectedClassGroup: ClassGroupResponseData | null = null;
 
   selectedLectureTypeName: string = 'Theory';
 
@@ -83,7 +83,7 @@ export class ClassSessionListComponent implements OnInit {
   createGroupStudentSubscription!: Subscription;
 
 
-  classGroupSelectDialogSubscription!: Subscription;
+  //classGroupSelectDialogSubscription!: Subscription;
   courseScheduleSelectDialogSubscription!: Subscription;
   lectureSelectDialogSubscription!: Subscription;
 
@@ -97,6 +97,7 @@ export class ClassSessionListComponent implements OnInit {
     'id',
     'nameIdentifier',
     'date',
+    'classGroup',
     'presenceStatementStatus'
   ];
 
@@ -111,13 +112,11 @@ export class ClassSessionListComponent implements OnInit {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private classSessionService: ClassSessionService,
-    private classGroupService: ClassGroupService,
     private lectureTypeService: LectureTypeService,
     private courseScheduleService: CourseScheduleService,
     private courseScheduleSelectDialogService: CourseScheduleSelectDialogService,
     private lectureService: LectureService,
     private lectureSelectDialogService: LectureSelectDialogService,
-    private classGroupSelectDialogService: ClassGroupSelectDialogService,
     private snackbarService: SnackbarService,
     private departmentService: DepartmentService,
     private authService: AuthService) {}
@@ -157,8 +156,7 @@ export class ClassSessionListComponent implements OnInit {
       departmentId: [this.selectedDepartmentId],
       courseSchedule: ['', Validators.required],
       isLectureTypeNameTheory : [true, Validators.required],
-      lecture: ['', Validators.required],
-      classGroup: ['', Validators.required]
+      lecture: ['', Validators.required]
     });
 
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
@@ -169,8 +167,7 @@ export class ClassSessionListComponent implements OnInit {
 
     if (this.searchClassesSessionsForm.valid) {
       this.dataSource.loadClassesSessions(
-        +this.selectedLectureId,
-        +this.selectedClassGroupId, '', 0, 3, 'asc', this.currentColumnDef);
+        +this.selectedLectureId, '', 0, 3, 'asc', this.currentColumnDef);
     }
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
@@ -242,21 +239,6 @@ export class ClassSessionListComponent implements OnInit {
         this.selectedLectureId = _lecture.id.toString();
 
         this.lectureService.lectureSubject.next(this.selectedLecture);
-      }
-    });
-
-    this.classGroupSelectDialogSubscription = this.classGroupSelectDialogService.classGroupSelectDialogState
-    .subscribe((_classGroup: ClassGroupResponseData | null) => {
-      console.log("Class Group Data: "+JSON.stringify(_classGroup));
-      if (_classGroup !== null) {
-        console.log("CATCH Class Group: "+_classGroup.nameIdentifier);
-        this.searchClassesSessionsForm.patchValue({
-          classGroup: _classGroup
-        });
-        this.selectedClassGroup = _classGroup;
-        this.selectedClassGroupId = _classGroup.id.toString();
-
-        this.classGroupService.classGroupSubject.next(this.selectedClassGroup);
         this.onSearchClassesSessionsFormSubmit();
       }
     });
@@ -276,11 +258,12 @@ export class ClassSessionListComponent implements OnInit {
     }
   }
 
+  /*
   checkForGroupValue() {
     if (this.searchClassesSessionsForm.value.classGroup) {
       this.clearClassGroupValue();
     }
-  }
+  } */
 
   onSearchClassesSessionsFormSubmit() {
     this.router.navigate(['/classes-sessions'], { relativeTo: this.route });
@@ -295,8 +278,8 @@ export class ClassSessionListComponent implements OnInit {
     this.paginator.pageIndex = 0;
     this.sort.direction='asc'
 
-    this.identifierSuffixModerator();
-    this.classSessionService.identifierSuffixesSubject.next(this.identifierSuffixList);
+    //this.identifierSuffixModerator();
+    //this.classSessionService.identifierSuffixesSubject.next(this.identifierSuffixList);
 
     /* For future usage in Presence Maybe
     if (this.currentUser && this.showStudentFeatures) {
@@ -327,7 +310,7 @@ export class ClassSessionListComponent implements OnInit {
     this.selectedLectureTypeName = 'Theory';
     this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
     this.clearLectureValue();
-    this.clearClassGroupValue();
+    //this.clearClassGroupValue();
     this.router.navigate(['/classes-sessions'], { relativeTo: this.route});
     this.refreshTable();
   }
@@ -337,10 +320,11 @@ export class ClassSessionListComponent implements OnInit {
     this.refreshTable();
   }
 
+  /*
   clearClassGroupAndRefresh() {
     this.clearClassGroupValue();
     this.refreshTable();
-  }
+  }*/
 
   clearLectureValue() {
     this.searchClassesSessionsForm.patchValue({
@@ -351,9 +335,10 @@ export class ClassSessionListComponent implements OnInit {
     this.selectedLectureId = '';
 
     this.lectureService.lectureSubject.next(this.selectedLecture);
-    this.clearClassGroupValue();
+    //this.clearClassGroupValue();
   }
 
+  /*
   clearClassGroupValue() {
     this.searchClassesSessionsForm.patchValue({
       classGroup: ''
@@ -362,7 +347,7 @@ export class ClassSessionListComponent implements OnInit {
     this.selectedClassGroup = null;
     this.selectedClassGroupId = '';
     this.classGroupService.classGroupSubject.next(this.selectedClassGroup);
-  }
+  }*/
 
   onLectureTypeSelect(lectureTypeNameSelection: boolean) {
     this.searchClassesSessionsForm.patchValue({
@@ -371,7 +356,7 @@ export class ClassSessionListComponent implements OnInit {
     this.selectedLectureTypeModerator();
     this.publishLectureType();
     this.checkForLectureValue();
-    this.checkForGroupValue();
+    //this.checkForGroupValue();
     this.refreshTable();
   }
 
@@ -383,9 +368,9 @@ export class ClassSessionListComponent implements OnInit {
     this.lectureSelectDialogService.selectLecture(this.searchClassesSessionsForm.value.lecture);
   }
 
-  selectClassGroup() {
+  /*selectClassGroup() {
     this.classGroupSelectDialogService.selectClassGroup(this.searchClassesSessionsForm.value.classGroup);
-  }
+  }*/
 
   ngAfterViewInit() {
     this.sort.sortChange.subscribe(() => {
@@ -416,7 +401,6 @@ export class ClassSessionListComponent implements OnInit {
   loadClassesGroupsPage() {
     this.dataSource.loadClassesSessions(
         +this.selectedLectureId,
-        +this.selectedClassGroupId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,

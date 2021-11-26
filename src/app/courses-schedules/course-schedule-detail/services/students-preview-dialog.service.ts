@@ -11,12 +11,12 @@ export class StudentsPreviewDialogService {
 
     constructor(private studentsPreviewDialog: MatDialog) { }
 
-    showStudents(activeCourseId: number): void {
+    showStudents(searchId: number): void {
         const dialogConfig = new MatDialogConfig();
 
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
-        dialogConfig.data = {activeCourseId};
+        dialogConfig.data = {searchId: searchId};
         dialogConfig.maxWidth = '30em';
         dialogConfig.minWidth = 'min-content';
     

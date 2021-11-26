@@ -54,15 +54,19 @@
 }
 
 .mat-column-nameIdentifier {
-    max-width: 24%;
+    max-width: 20%;
 }
 
 .mat-column-date {
-    max-width: 38%;
+    max-width: 24%;
+}
+
+.mat-column-classGroup {
+    max-width: 20%;
 }
 
 .mat-column-presence_statement {
-    max-width: 25%;
+    max-width: 22%;
 }
 
 
