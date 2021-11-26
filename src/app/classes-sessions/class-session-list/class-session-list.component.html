@@ -149,7 +149,7 @@
 
         <div class="mat-elevation-z8">
             <mat-table
-                [dataSource]="dataSource" matSort matSortActive="name"
+                [dataSource]="dataSource" matSort matSortActive="nameIdentifier"
                 matSortDirection="asc" matSortDisableClear>
                 <ng-container matColumnDef="id">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
@@ -161,7 +161,7 @@
                     <mat-cell *matCellDef="let classSession" class="collapse-text">{{ classSession.nameIdentifier }}</mat-cell>
                 </ng-container>
 
-                <ng-container matColumnDef="startDateTime">
+                <ng-container matColumnDef="date">
                     <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Date</mat-header-cell>
                     <mat-cell *matCellDef="let classSession" class="collapse-text">{{ classSession.date }}</mat-cell>
                 </ng-container>

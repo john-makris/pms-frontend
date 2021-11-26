@@ -72,7 +72,7 @@ export class ClassSessionListComponent implements OnInit {
   totalItems: number = 0;
   currentPage: number = 0;
   currentPageItems: number = 0;
-  currentColumnDef: string = 'name';
+  currentColumnDef: string = 'nameIdentifier';
   currentActivityState: string = '';
 
   selectedRow: ClassSession | null = null;
@@ -96,7 +96,7 @@ export class ClassSessionListComponent implements OnInit {
   displayedColumns = [
     'id',
     'nameIdentifier',
-    'startDateTime',
+    'date',
     'presenceStatementStatus'
   ];
 
