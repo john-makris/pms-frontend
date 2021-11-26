@@ -52,6 +52,10 @@ export class UserService {
         return this.http.get<UserPageResponseData>(API_URL + 'all/per_course_schedule_and_class_group/paginated_sorted_filtered', { params });
     }
 
+    getAllPageStudentsByClassSessionId(params: HttpParams): Observable<any> {
+        return this.http.get<UserPageResponseData>(API_URL + 'all/class_session_students/paginated_sorted_filtered', { params });
+    }
+
     getUserById(userId: number): Observable<UserResponseData> {
         return this.http.get<UserResponseData>(API_URL + userId);
     }
