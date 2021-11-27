@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
-import { LectureRequestData } from "./common/payload/request/lectureRecuestData.interface";
+import { LectureRequestData } from "./common/payload/request/lectureRequestData.interface";
 import { LectureResponseData } from "./common/payload/response/lectureResponseData.interface";
 import { LecturesResponseData } from "./common/payload/response/lecturesResponseData.interface";
 import { Lecture } from "./lecture.model";

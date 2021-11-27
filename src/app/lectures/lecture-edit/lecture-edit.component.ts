@@ -6,7 +6,7 @@ import { first, last, tap } from 'rxjs/operators';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model';
 import { DepartmentService } from 'src/app/departments/department.service';
-import { LectureRequestData } from '../common/payload/request/lectureRecuestData.interface';
+import { LectureRequestData } from '../common/payload/request/lectureRequestData.interface';
 import { LectureTypeService } from '../lecture-types/lecture-type.service';
 import { LectureService } from '../lecture.service';
 import { Room } from '../../classes-groups/rooms/room.model';

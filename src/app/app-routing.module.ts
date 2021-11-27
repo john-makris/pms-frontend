@@ -50,6 +50,11 @@ const routes: Routes = [
   loadChildren: () => import('./classes-sessions/classes-sessions.module')
     .then(m => m.ClassesSessionsModule),
     canLoad: [AuthGuard]
+  },
+  { path: 'presences',
+  loadChildren: () => import('./presences/presences.module')
+    .then(m => m.PresencesModule),
+    canLoad: [AuthGuard]
   }
 ];
 

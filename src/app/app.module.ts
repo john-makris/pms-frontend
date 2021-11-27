@@ -23,6 +23,7 @@ import { LecturesModule } from './lectures/lectures.module';
 import { ClassesGroupsModule } from './classes-groups/classes-groups.module';
 import { GroupsStudentsModule } from './groups-students/groups-students.module';
 import { ClassesSessionsModule } from './classes-sessions/classes-sessions.module';
+import { PresencesModule } from './presences/presences.module';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { ClassesSessionsModule } from './classes-sessions/classes-sessions.modul
     LecturesModule,
     ClassesGroupsModule,
     GroupsStudentsModule,
-    ClassesSessionsModule
+    ClassesSessionsModule,
+    PresencesModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
