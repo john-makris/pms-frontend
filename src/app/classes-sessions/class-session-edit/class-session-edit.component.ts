@@ -58,6 +58,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
   @ViewChild('input') input!: ElementRef;
   @ViewChild(MatSelect) select!: MatSelect;
 
+  tableLoadedStateSubscription!: Subscription
   classGroupSelectDialogSubscription!: Subscription;
   classSessionFormDateChangesSubscription!: Subscription;
   roomSubscription!: Subscription;
@@ -87,7 +88,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
       presence_statement: [false, Validators.required]
     });
 
-    this.classSessionService.classSessionTableLoadedState
+    this.tableLoadedStateSubscription = this.classSessionService.classSessionTableLoadedState
     .subscribe((loaded: boolean) => {
       if (loaded) {
         this.tableLoaded = loaded;
@@ -284,6 +285,9 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
     }
     if (this.classGroupSelectDialogSubscription) {
       this.classGroupSelectDialogSubscription.unsubscribe();
+    }
+    if (this.tableLoadedStateSubscription) {
+      this.tableLoadedStateSubscription.unsubscribe();
     }
   }
 

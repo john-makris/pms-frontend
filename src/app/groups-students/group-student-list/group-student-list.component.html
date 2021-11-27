@@ -91,16 +91,17 @@
         </form>
     </div>
 
-    <span [matTooltip]="!selectedDepartmentId ? 'Select a Specific Department' : 'Select a Specific Course Schedule'"
+    <span [matTooltip]="'Select a Specific '+ (!selectedDepartmentId ? 'Department' :
+    !selectedCourseScheduleId ? 'Course Schedule' : 'Class Group')"
         matTooltipPosition="after"
-        [matTooltipDisabled]="selectedDepartmentId !=='' && selectedCourseScheduleId !==''">
+        [matTooltipDisabled]="selectedDepartmentId !=='' && selectedCourseScheduleId !=='' && selectedClassGroupId !==''">
         <button
             *ngIf="departments"
             type="button"
             mat-raised-button
             color="primary"
             routerLink="add"
-            [disabled]="selectedDepartmentId === '' || selectedCourseScheduleId ===''">Add Student to Group</button>
+            [disabled]="selectedDepartmentId === '' || selectedCourseScheduleId ==='' || selectedClassGroupId ===''">Add Student to Group</button>
     </span>
 
     <div class="table-container">

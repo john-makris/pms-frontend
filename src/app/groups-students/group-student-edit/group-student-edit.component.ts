@@ -26,12 +26,14 @@ export class GroupStudentEditComponent implements OnInit, OnDestroy {
   selectedGroupNumber: string = '';
   currentStudentsOfGroup: number = 0;
 
+  tableLoaded: boolean = false;
   delimeter: string = ',' + '\xa0';
   panelOpenState = false;
 
   currentStudent!: UserResponseData | null;
   currentClassGroup!: ClassGroupResponseData;
 
+  tableLoadedStateSubscription!: Subscription;
   studentSelectDialogSubscription!: Subscription;
   routeSubscription!: Subscription;
   classGroupSubscription!: Subscription;
@@ -54,7 +56,17 @@ export class GroupStudentEditComponent implements OnInit, OnDestroy {
       studentId: ['', Validators.required]
     });
 
-    this.classGroupService.classGroupSubject.subscribe((classGroup: ClassGroupResponseData | null) => {
+    this.tableLoadedStateSubscription = this.groupStudentService.groupStudentTableLoadedState
+    .subscribe((loaded: boolean) => {
+      if (loaded) {
+        this.tableLoaded = loaded;
+      } else {
+        this.tableLoaded = false;
+        this.onCancel();
+      }
+    });
+
+    this.classGroupSubscription = this.classGroupService.classGroupSubject.subscribe((classGroup: ClassGroupResponseData | null) => {
       if (classGroup) {
        this.currentClassGroup = classGroup;
        console.log("Here is the Class Group: "+JSON.stringify(this.currentClassGroup));
@@ -137,6 +149,12 @@ export class GroupStudentEditComponent implements OnInit, OnDestroy {
     }
     if (this.createGroupStudentSubscription) {
       this.createGroupStudentSubscription.unsubscribe();
+    }
+    if (this.studentSelectDialogSubscription) {
+      this.studentSelectDialogSubscription.unsubscribe();
+    }
+    if (this.tableLoadedStateSubscription) {
+      this.tableLoadedStateSubscription.unsubscribe();
     }
   }
 
