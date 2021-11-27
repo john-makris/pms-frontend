@@ -1,12 +1,11 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 import { first, last } from 'rxjs/operators';
 import { ClassGroup } from 'src/app/classes-groups/class-group.model';
-import { ClassGroupService } from 'src/app/classes-groups/class-group.service';
 import { ClassGroupResponseData } from 'src/app/classes-groups/common/payload/response/classGroupResponseData.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { ClassGroupSelectDialogService } from 'src/app/groups-students/group-student-list/services/class-group-select-dialog.service';

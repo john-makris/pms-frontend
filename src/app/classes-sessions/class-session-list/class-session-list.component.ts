@@ -78,11 +78,6 @@ export class ClassSessionListComponent implements OnInit {
   selectedRow: ClassSession | null = null;
   selection = new SelectionModel<ClassSession>(true, []);
 
-  classGroupSubscription!: Subscription;
-  ensureDialogSubscription!: Subscription;
-  createGroupStudentSubscription!: Subscription;
-
-
   //classGroupSelectDialogSubscription!: Subscription;
   courseScheduleSelectDialogSubscription!: Subscription;
   lectureSelectDialogSubscription!: Subscription;
@@ -454,7 +449,24 @@ export class ClassSessionListComponent implements OnInit {
 
   
   OnDestroy() {
-
+    if (this.courseScheduleSelectDialogSubscription) {
+      this.courseScheduleSelectDialogSubscription.unsubscribe();
+    }
+    if (this.lectureSelectDialogSubscription) {
+      this.lectureSelectDialogSubscription.unsubscribe();
+    }
+    if (this.lectureTypeSubscription) {
+      this.lectureTypeSubscription.unsubscribe();
+    }
+    if (this.snackbarSubscription) {
+      this.snackbarSubscription.unsubscribe();
+    }
+    if (this.pageDetailSubscription) {
+      this.pageDetailSubscription.unsubscribe();
+    }
+    if (this.departmentsSubscription) {
+      this.departmentsSubscription.unsubscribe();
+    }
   }
   
 }
