@@ -1,5 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatPaginator } from '@angular/material/paginator';
@@ -9,8 +9,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
-import { ClassGroup } from 'src/app/classes-groups/class-group.model';
-import { ClassGroupService } from 'src/app/classes-groups/class-group.service';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
@@ -18,27 +16,23 @@ import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model'
 import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
 import { Department } from 'src/app/departments/department.model';
 import { DepartmentService } from 'src/app/departments/department.service';
-import { GroupStudentService } from 'src/app/groups-students/group-student.service';
 import { CourseScheduleSelectDialogService } from 'src/app/lectures/lecture-edit/services/course-schedule-select-dialog.sevice';
 import { LectureSelectDialogService } from 'src/app/classes-sessions/class-session-list/services/lecture-select-dialog.service';
 import { LectureType } from 'src/app/lectures/lecture-types/lecture-type.model';
 import { LectureTypeService } from 'src/app/lectures/lecture-types/lecture-type.service';
-import { Lecture } from 'src/app/lectures/lecture.model';
 import { LectureService } from 'src/app/lectures/lecture.service';
 import { AuthUser } from 'src/app/users/auth-user.model';
 import { ClassSession } from '../class-session.model';
 import { ClassSessionService } from '../class-session.service';
 import { ClassesSessionsDataSource } from '../common/tableDataHelper/classes-sessions.datasource';
 import { LectureResponseData } from 'src/app/lectures/common/payload/response/lectureResponseData.interface';
-import { ClassGroupSelectDialogService } from 'src/app/groups-students/group-student-list/services/class-group-select-dialog.service';
-import { ClassGroupResponseData } from 'src/app/classes-groups/common/payload/response/classGroupResponseData.interface';
 
 @Component({
   selector: 'app-class-session-list',
   templateUrl: './class-session-list.component.html',
   styleUrls: ['./class-session-list.component.css']
 })
-export class ClassSessionListComponent implements OnInit {
+export class ClassSessionListComponent implements OnInit, OnDestroy {
   searchClassesSessionsForm!: FormGroup;
 
   currentUser: AuthUser | null = null;
@@ -381,19 +375,19 @@ export class ClassSessionListComponent implements OnInit {
             tap(() => {
                 this.paginator.pageIndex = 0;
 
-                this.loadClassesGroupsPage();
+                this.loadClassesSessionsPage();
             })
         )
         .subscribe();
 
     merge(this.sort.sortChange, this.paginator.page)
     .pipe(
-        tap(() => this.loadClassesGroupsPage())
+        tap(() => this.loadClassesSessionsPage())
     )
     .subscribe();
   }
 
-  loadClassesGroupsPage() {
+  loadClassesSessionsPage() {
     this.dataSource.loadClassesSessions(
         +this.selectedLectureId,
         this.input.nativeElement.value,
@@ -406,7 +400,7 @@ export class ClassSessionListComponent implements OnInit {
   refreshTable() {
     //console.log("INPUT VALUE: "+this.input.nativeElement.value);
     if (this.input.nativeElement.value === '') {
-      this.loadClassesGroupsPage();
+      this.loadClassesSessionsPage();
     } else {
       this.clearInput();
     }
@@ -415,7 +409,7 @@ export class ClassSessionListComponent implements OnInit {
 
   clearInput() {
     this.input.nativeElement.value='';
-    this.loadClassesGroupsPage();
+    this.loadClassesSessionsPage();
   }
 
   publishLectureType() {
@@ -427,28 +421,8 @@ export class ClassSessionListComponent implements OnInit {
       }
     }
   }
-
-  identifierSuffixModerator() {
-      this.identifierSuffixList = [];
-      if (this.selectedCourseSchedule) {
-        if (this.selectedLectureTypeName === 'Theory') {
-          this.fillOutIdentifierSuffixList(this.selectedCourseSchedule.maxTheoryLectures);
-        } else if (this.selectedLectureTypeName === 'Lab') {
-          this.fillOutIdentifierSuffixList(this.selectedCourseSchedule.maxLabLectures);
-        } else {
-          this.identifierSuffixList = [];
-        }
-      }
-  }
-
-  fillOutIdentifierSuffixList(numberOfLectures: number) {
-    for (let i = 0; i < numberOfLectures; i++) {
-      this.identifierSuffixList.push((i+1).toString());
-    }
-  }
-
   
-  OnDestroy() {
+  ngOnDestroy(): void {
     if (this.courseScheduleSelectDialogSubscription) {
       this.courseScheduleSelectDialogSubscription.unsubscribe();
     }

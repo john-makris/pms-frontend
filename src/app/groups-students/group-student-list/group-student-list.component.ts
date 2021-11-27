@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -27,7 +27,7 @@ import { ClassGroupSelectDialogService } from './services/class-group-select-dia
   templateUrl: './group-student-list.component.html',
   styleUrls: ['./group-student-list.component.css']
 })
-export class GroupStudentListComponent implements OnInit {
+export class GroupStudentListComponent implements OnInit, OnDestroy {
   searchStudentsOfGroupsForm!: FormGroup;
 
   isLoading: boolean = false;
@@ -175,7 +175,6 @@ export class GroupStudentListComponent implements OnInit {
         }
       });
 
-      // classGroupSubscription
       this.classGroupSelectDialogSubscription = this.classGroupSelectDialogService.classGroupSelectDialogState
       .subscribe((_classGroup: ClassGroupResponseData | null) => {
         console.log("Class Group Data: "+JSON.stringify(_classGroup));
@@ -353,10 +352,24 @@ export class GroupStudentListComponent implements OnInit {
     }
 
     ngOnDestroy(): void {
-      this.departmentsSubscription.unsubscribe();
-      this.pageDetailSubscription.unsubscribe();
-      this.snackbarSubscription.unsubscribe();
-      this.lectureTypeSubscription.unsubscribe();
+      if (this.departmentsSubscription) {
+        this.departmentsSubscription.unsubscribe();
+      }
+      if (this.pageDetailSubscription) {
+        this.pageDetailSubscription.unsubscribe();
+      }
+      if (this.snackbarSubscription) {
+        this.snackbarSubscription.unsubscribe();
+      }
+      if (this.lectureTypeSubscription) {
+        this.lectureTypeSubscription.unsubscribe();
+      }
+      if (this.classGroupSelectDialogSubscription) {
+        this.classGroupSelectDialogSubscription.unsubscribe();
+      }
+      if (this.courseScheduleSelectDialogSubscription) {
+        this.courseScheduleSelectDialogSubscription.unsubscribe();
+      }
    }
 
 }

@@ -1,5 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatPaginator } from '@angular/material/paginator';
@@ -31,7 +31,7 @@ import { ClassesGroupsDataSource } from '../common/tableDataHelper/classes-group
   templateUrl: './class-group-list.component.html',
   styleUrls: ['./class-group-list.component.css']
 })
-export class ClassGroupListComponent implements OnInit {
+export class ClassGroupListComponent implements OnInit, OnDestroy {
   searchClassesGroupsForm!: FormGroup;
 
   currentUser: AuthUser | null = null;

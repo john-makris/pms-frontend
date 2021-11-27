@@ -267,7 +267,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
     this.router.navigate(['/classes-sessions'], { relativeTo: this.route});
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
     }

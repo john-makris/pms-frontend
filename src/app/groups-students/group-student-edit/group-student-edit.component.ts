@@ -140,7 +140,7 @@ export class GroupStudentEditComponent implements OnInit, OnDestroy {
     this.router.navigate(['/students-of-groups'], { relativeTo: this.route});
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
     }

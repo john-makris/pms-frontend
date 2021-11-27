@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -12,14 +12,14 @@ import { GroupStudentService } from '../group-student.service';
   templateUrl: './group-student-detail.component.html',
   styleUrls: ['./group-student-detail.component.css']
 })
-export class GroupStudentDetailComponent implements OnInit {
+export class GroupStudentDetailComponent implements OnInit, OnDestroy {
   studentId!: number;
   classGroupId!: number;
   studentOfGroup!: UserResponseData;
-  private ensureDialogSubscription!: Subscription;
   ensureDialogStatus!: boolean;
   classGroupTable: boolean = false;
 
+  private ensureDialogSubscription!: Subscription;
   classGroupTableLoadedSubscription!: Subscription;
 
   constructor(private route: ActivatedRoute,
@@ -81,7 +81,7 @@ export class GroupStudentDetailComponent implements OnInit {
     this.router.navigate(['../../../'], { relativeTo: this.route });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if(this.ensureDialogSubscription) {
       this.ensureDialogSubscription.unsubscribe();
     }

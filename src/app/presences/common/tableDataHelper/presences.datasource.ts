@@ -7,7 +7,7 @@ import { PresenceService } from "../../presence.service";
 import { PresenceResponseData } from "../payload/response/presenceResponseData.interface";
 import { PresencesResponseData } from "../payload/response/presencesResponseData.interface";
 
-export class LecturesDataSource implements DataSource<PresenceResponseData> {
+export class PresencesDataSource implements DataSource<PresenceResponseData> {
 
     private presenceSubject = new BehaviorSubject<PresenceResponseData[]>([]);
 

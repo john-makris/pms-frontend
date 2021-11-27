@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -13,7 +13,7 @@ import { ClassSessionResponseData } from '../common/payload/response/classSessio
   templateUrl: './class-session-detail.component.html',
   styleUrls: ['./class-session-detail.component.css']
 })
-export class ClassSessionDetailComponent implements OnInit {
+export class ClassSessionDetailComponent implements OnInit, OnDestroy {
   id!: number;
   classSession!: ClassSessionResponseData;
   private ensureDialogSubscription!: Subscription;
@@ -98,7 +98,7 @@ export class ClassSessionDetailComponent implements OnInit {
     this.router.navigate(['../../'], { relativeTo: this.route });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if(this.ensureDialogSubscription) {
       this.ensureDialogSubscription.unsubscribe();
     }

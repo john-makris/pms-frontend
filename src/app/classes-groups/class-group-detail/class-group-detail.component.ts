@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -12,7 +12,7 @@ import { ClassGroupResponseData } from '../common/payload/response/classGroupRes
   templateUrl: './class-group-detail.component.html',
   styleUrls: ['./class-group-detail.component.css']
 })
-export class ClassGroupDetailComponent implements OnInit {
+export class ClassGroupDetailComponent implements OnInit, OnDestroy {
   id!: number;
   classGroup!: ClassGroupResponseData;
   private ensureDialogSubscription!: Subscription;
@@ -91,7 +91,7 @@ export class ClassGroupDetailComponent implements OnInit {
     this.router.navigate(['../../'], { relativeTo: this.route });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if(this.ensureDialogSubscription) {
       this.ensureDialogSubscription.unsubscribe();
     }
