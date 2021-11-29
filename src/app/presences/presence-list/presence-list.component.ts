@@ -420,7 +420,11 @@ export class PresenceListComponent implements OnInit, OnDestroy {
     } else {
       this.clearInput();
     }
-    this.presenceService.presenceTableLoadedSubject.next(true);
+    if (+this.selectedClassSessionId) {
+      this.presenceService.presenceTableLoadedSubject.next(true);
+    } else {
+      this.presenceService.presenceTableLoadedSubject.next(false);
+    }
   }
 
   clearInput() {

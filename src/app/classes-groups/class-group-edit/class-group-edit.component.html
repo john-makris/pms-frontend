@@ -105,13 +105,16 @@
                     <mat-error>Room is required.</mat-error>
                 </mat-form-field>
       
-                <mat-radio-group
-                    formControlName="status">
-                    <div class="radio-container">
-                        <mat-radio-button [value]=true>Opened</mat-radio-button>
-                        <mat-radio-button [value]=false>Closed</mat-radio-button>
-                    </div>
-                </mat-radio-group>
+                <div fxLayout="column" fxLayoutGap="0.5em">
+                    <mat-label class="radio-button-aligner">Subscriptions:</mat-label>
+                    <mat-radio-group
+                        formControlName="status">
+                        <div class="radio-container">
+                            <mat-radio-button [value]=true>Opened</mat-radio-button>
+                            <mat-radio-button [value]=false>Closed</mat-radio-button>
+                        </div>
+                    </mat-radio-group>
+                </div>
 
                 <div fxLayoutAlign="center">
                     <mat-spinner *ngIf="isLoading"></mat-spinner>
