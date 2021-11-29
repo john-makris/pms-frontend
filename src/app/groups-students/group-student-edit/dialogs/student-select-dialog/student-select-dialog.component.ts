@@ -21,6 +21,8 @@ export class StudentSelectDialogComponent implements OnInit, AfterViewInit, OnDe
   dialogStarted: boolean = true;
   dataSource!: UsersDataSource;
 
+  currentNameIdentifier: string = '';
+
   totalItems: number = 0;
   currentPage: number = 0;
   currentPageItems: number = 0;
@@ -32,6 +34,8 @@ export class StudentSelectDialogComponent implements OnInit, AfterViewInit, OnDe
 
   currentCourseScheduleId: number = 0;
   currentClassGroupTypeId: number = 0;
+
+  currentClassSessionId: number = 0;
 
   pageDetailSubscription!: Subscription;
 
@@ -50,21 +54,36 @@ export class StudentSelectDialogComponent implements OnInit, AfterViewInit, OnDe
   constructor(
     private userService: UserService,
     private dialogRef: MatDialogRef<StudentSelectDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data :{classGroup: ClassGroup}) {}
+    @Inject(MAT_DIALOG_DATA) public data :{object: any}) {}
 
 
   ngOnInit(): void {
 
     this.dataSource = new UsersDataSource(this.userService);
 
-    this.currentCourseScheduleId = this.data.classGroup.courseSchedule.id;
-    console.log("Course Schedule Id: " + this.currentCourseScheduleId);
+    this.currentNameIdentifier = this.data.object.nameIdentifier;
 
-    this.currentClassGroupTypeId = this.data.classGroup.groupType.id;
-    console.log("Class Group Type Id: " + this.currentClassGroupTypeId);
+    if (this.currentNameIdentifier.includes('group')) {
+      console.log("Instance of Class Group");
+      this.currentCourseScheduleId = this.data.object.courseSchedule.id;
+      console.log("Course Schedule Id: " + this.currentCourseScheduleId);
+  
+      this.currentClassGroupTypeId = this.data.object.groupType.id;
+      console.log("Class Group Type Id: " + this.currentClassGroupTypeId);
+  
+      this.dataSource.loadStudentsWithoutGroup(this.currentCourseScheduleId, 
+        this.currentClassGroupTypeId, '', 0, 3, 'asc', this.currentColumnDef);
+    }
 
-    this.dataSource.loadStudentsWithoutGroup(this.currentCourseScheduleId, 
-      this.currentClassGroupTypeId, '', 0, 3, 'asc', this.currentColumnDef);
+    if (this.currentNameIdentifier.includes('session')) {
+      console.log("Instance of Class Session");
+
+      this.currentClassSessionId = this.data.object.id;
+      console.log("Class Session Id: " + this.currentClassSessionId);
+  
+      this.dataSource.loadClassSessionStudents(this.currentClassSessionId, 
+        '', 0, 3, 'asc', this.currentColumnDef);
+    }
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -103,7 +122,8 @@ export class StudentSelectDialogComponent implements OnInit, AfterViewInit, OnDe
   }
 
   loadStudentsPage() {
-   this.dataSource.loadStudentsWithoutGroup(
+    if (this.currentNameIdentifier.includes('group')) {
+      this.dataSource.loadStudentsWithoutGroup(
         this.currentCourseScheduleId,
         this.currentClassGroupTypeId,
         this.input.nativeElement.value,
@@ -111,6 +131,16 @@ export class StudentSelectDialogComponent implements OnInit, AfterViewInit, OnDe
         this.paginator.pageSize,
         this.sort.direction,
         this.currentColumnDef);
+    }
+    if (this.currentNameIdentifier.includes('session')) {
+      this.dataSource.loadClassSessionStudents(
+        this.currentClassSessionId,
+        this.input.nativeElement.value,
+        this.paginator.pageIndex,
+        this.paginator.pageSize,
+        this.sort.direction,
+        this.currentColumnDef);
+    }
   }
   
   refreshTable() {

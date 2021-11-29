@@ -58,12 +58,13 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
   @ViewChild('input') input!: ElementRef;
   @ViewChild(MatSelect) select!: MatSelect;
 
-  tableLoadedStateSubscription!: Subscription
+  lectureSubscription!: Subscription;
+  tableLoadedStateSubscription!: Subscription;
   classGroupSelectDialogSubscription!: Subscription;
   classSessionFormDateChangesSubscription!: Subscription;
   roomSubscription!: Subscription;
   routeSubscription!: Subscription;
-  classGroupSubscription!: Subscription;
+  classSessionSubscription!: Subscription;
   createClassSessionSubscription!: Subscription;
   updateClassSessionSubscription!: Subscription;
 
@@ -105,7 +106,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
           this.id = params['id'];
           this.isAddMode = params['id'] == null;
           if(!this.isAddMode) {
-            this.classGroupSubscription = this.classSessionService.getClassSessionById(this.id)
+            this.classSessionSubscription = this.classSessionService.getClassSessionById(this.id)
               .pipe(first())
               .subscribe((currentClassSessionData: any) => {
                 if (currentClassSessionData !== null) {
@@ -130,7 +131,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
                 }
               });
           } else {
-            this.lectureService.lectureState.
+            this.lectureSubscription = this.lectureService.lectureState.
             pipe(first())
             .subscribe((_lecture: LectureResponseData | null) => {
               if (_lecture !== null) {
@@ -271,8 +272,8 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
     }
-    if (this.classGroupSubscription) {
-      this.classGroupSubscription.unsubscribe();
+    if (this.classSessionSubscription) {
+      this.classSessionSubscription.unsubscribe();
     }
     if (this.createClassSessionSubscription) {
       this.createClassSessionSubscription.unsubscribe();
@@ -282,6 +283,9 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
     }
     if (this.classSessionFormDateChangesSubscription) {
       this.classSessionFormDateChangesSubscription.unsubscribe();
+    }
+    if (this.lectureSubscription) {
+      this.lectureSubscription.unsubscribe();
     }
     if (this.classGroupSelectDialogSubscription) {
       this.classGroupSelectDialogSubscription.unsubscribe();

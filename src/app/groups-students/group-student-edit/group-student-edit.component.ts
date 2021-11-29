@@ -7,7 +7,6 @@ import { last } from 'rxjs/operators';
 import { ClassGroupService } from 'src/app/classes-groups/class-group.service';
 import { ClassGroupResponseData } from 'src/app/classes-groups/common/payload/response/classGroupResponseData.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
-import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model';
 import { UserResponseData } from 'src/app/users/common/payload/response/userResponseData.interface';
 import { GroupStudentRequestData } from '../common/payload/request/groupStudentRequestData.interface';
 import { GroupStudentService } from '../group-student.service';
@@ -22,9 +21,6 @@ export class GroupStudentEditComponent implements OnInit, OnDestroy {
   groupStudentForm!: FormGroup;
   isLoading: boolean = false;
   submitted: boolean = false;
-
-  selectedGroupNumber: string = '';
-  currentStudentsOfGroup: number = 0;
 
   tableLoaded: boolean = false;
   delimeter: string = ',' + '\xa0';

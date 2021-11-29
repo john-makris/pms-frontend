@@ -53,20 +53,20 @@
     max-width: 13%;
 }
 
-.mat-column-nameIdentifier {
-    max-width: 20%;
-}
-
-.mat-column-date {
+.mat-column-username {
     max-width: 24%;
 }
 
-.mat-column-classGroup {
-    max-width: 20%;
+.mat-column-firstname {
+    max-width: 21%;
 }
 
-.mat-column-presence_statement {
-    max-width: 22%;
+.mat-column-lastname {
+    max-width: 21%;
+}
+
+.mat-column-status {
+    max-width: 21%;
 }
 
 

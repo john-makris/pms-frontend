@@ -86,9 +86,9 @@ export class PresenceListComponent implements OnInit, OnDestroy {
 
   displayedColumns = [
     'id',
-    'classGroup',
-    'dateTime',
-    'student',
+    'username',
+    'firstname',
+    'lastname',
     'status'
   ];
 

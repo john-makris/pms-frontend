@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -19,7 +19,7 @@ import { ClassSessionResponseData } from 'src/app/classes-sessions/common/payloa
   templateUrl: './students-preview-dialog.component.html',
   styleUrls: ['./students-preview-dialog.component.css']
 })
-export class StudentsPreviewDialogComponent implements OnInit {
+export class StudentsPreviewDialogComponent implements OnInit, OnDestroy {
 
   dialogStarted: boolean = true;
   isLoading: boolean = false;

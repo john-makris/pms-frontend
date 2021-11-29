@@ -121,7 +121,7 @@
             mat-raised-button
             color="primary"
             routerLink="add"
-            [disabled]="selectedDepartmentId === '' || selectedCourseScheduleId ==='' || selectedLectureId ==='' || selectedClassSessionId ===''">Add Class Session</button>
+            [disabled]="selectedDepartmentId === '' || selectedCourseScheduleId ==='' || selectedLectureId ==='' || selectedClassSessionId ===''">Add Presence</button>
     </span>
 
     <div class="table-container">
@@ -130,7 +130,7 @@
                 <div fxLayout="row">
                     <input
                         matInput 
-                        placeholder="Search sessions" #input>
+                        placeholder="Search presences" #input>
                     <mat-icon 
                         matSuffix 
                         inline="true">search</mat-icon>
@@ -153,20 +153,20 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
                     <mat-cell *matCellDef="let presence">{{ presence.id | number }}</mat-cell>
                 </ng-container>
-        
-                <ng-container matColumnDef="classGroup">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Class Session</mat-header-cell>
-                    <mat-cell *matCellDef="let presence" class="collapse-text">{{ presence.classSession.nameIdentifier }}</mat-cell>
-                </ng-container>
 
-                <ng-container matColumnDef="dateTime">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Date & Time</mat-header-cell>
-                    <mat-cell *matCellDef="let presence" class="collapse-text">{{ presence.classSession.startDateTime }}</mat-cell>
-                </ng-container>
-
-                <ng-container matColumnDef="student">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Student</mat-header-cell>
+                <ng-container matColumnDef="username">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Username</mat-header-cell>
                     <mat-cell *matCellDef="let presence" class="collapse-text">{{ presence.student.username }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="firstname">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">First Name</mat-header-cell>
+                    <mat-cell *matCellDef="let presence" class="collapse-text">{{ presence.student.firstname }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="lastname">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Last Name</mat-header-cell>
+                    <mat-cell *matCellDef="let presence" class="collapse-text">{{ presence.student.lastname }}</mat-cell>
                 </ng-container>
                 
                 <ng-container matColumnDef="status">

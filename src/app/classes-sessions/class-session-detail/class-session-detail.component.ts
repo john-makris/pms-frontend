@@ -16,10 +16,10 @@ import { ClassSessionResponseData } from '../common/payload/response/classSessio
 export class ClassSessionDetailComponent implements OnInit, OnDestroy {
   id!: number;
   classSession!: ClassSessionResponseData;
-  private ensureDialogSubscription!: Subscription;
   ensureDialogStatus!: boolean;
   classSessionTable: boolean = false;
 
+  private ensureDialogSubscription!: Subscription;
   classGroupTableLoadedSubscription!: Subscription;
 
   constructor(private route: ActivatedRoute,
