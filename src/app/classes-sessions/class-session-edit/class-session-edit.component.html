@@ -12,7 +12,7 @@
             fxFlex.gt-sm="25em">
             <mat-card-title fxLayoutAlign="center">
                 <h1 *ngIf="isAddMode">Add class session</h1>
-                <h1 *ngIf="!isAddMode">Edit </h1>
+                <h1 *ngIf="!isAddMode">Edit {{ currentClassSession?.nameIdentifier }}</h1>
             </mat-card-title>
             <mat-card-content fxLayout="column"
             fxLayoutAlign="center">
@@ -40,7 +40,7 @@
                     <mat-error  class="course-schedule-hint-text" *ngIf="f.classGroup.errors?.required && f.classGroup.touched">Missing Class Group</mat-error>                
                 </div>
                 
-                <mat-form-field appearance="outline" fxFlex>
+                <mat-form-field appearance="outline" fxFlex *ngIf="isAddMode || currentClassSessionStatus==='pending'">
                     <mat-label>Date</mat-label>
                     <input matInput 
                         [matDatepickerFilter]="datePickerFilter"
@@ -54,7 +54,7 @@
                     <mat-error *ngIf="f.date.errors?.required">Missing date</mat-error>
                 </mat-form-field>
 
-                <div fxFlex fxLayoutGap="0.15em" fxLayout="row">
+                <div fxFlex fxLayoutGap="0.15em" fxLayout="row" *ngIf="isAddMode || currentClassSessionStatus==='pending'">
                     <mat-form-field fxFlex class="timeInputWidth"
                         appearance="outline">
                         <mat-label>Timespan</mat-label>
@@ -85,8 +85,8 @@
                     </mat-form-field>
                 </div>
       
-                <div *ngIf="!isAddMode" fxLayout="column" fxLayoutGap="0.5em">
-                    <mat-label class="radio-button-aligner">Presence Statements:</mat-label>
+                <div *ngIf="!isAddMode && currentClassSessionStatus==='active'" fxLayout="column" fxLayoutGap="0.5em">
+                    <mat-label class="radio-button-aligner">Presence Statement:</mat-label>
                     <mat-radio-group
                         formControlName="presence_statement">
                         <div class="radio-container">
@@ -105,7 +105,7 @@
                     *ngIf="!isLoading"
                     fxLayout="row"
                     fxLayoutAlign="start">
-                        <button 
+                        <button *ngIf="isAddMode || currentClassSessionStatus==='pending'"
                             type="submit" 
                             mat-raised-button color="primary" 
                             [disabled]="classSessionForm.invalid || isLoading">

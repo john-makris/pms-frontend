@@ -7,7 +7,7 @@ import { MatRadioButton } from '@angular/material/radio';
 import { MatSort } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fromEvent, merge, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, first, last, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
@@ -26,6 +26,9 @@ import { ClassSession } from '../class-session.model';
 import { ClassSessionService } from '../class-session.service';
 import { ClassesSessionsDataSource } from '../common/tableDataHelper/classes-sessions.datasource';
 import { LectureResponseData } from 'src/app/lectures/common/payload/response/lectureResponseData.interface';
+import { PresenceRequestData } from 'src/app/presences/common/payload/request/presenceRequestData.interface';
+import { PresenceService } from 'src/app/presences/presence.service';
+import { PresenceResponseData } from 'src/app/presences/common/payload/response/presenceResponseData.interface';
 
 @Component({
   selector: 'app-class-session-list',
@@ -55,13 +58,11 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   selectedLectureId: string = '';
   selectedLecture: LectureResponseData | null = null;
 
-  //selectedClassGroupId: string = '';
-  //selectedClassGroup: ClassGroupResponseData | null = null;
-
   selectedLectureTypeName: string = 'Theory';
 
+  currentPresence: PresenceResponseData | null = null;
+
   lectureTypes: LectureType[] = [];
-  identifierSuffixList: Array<string> = [];
 
   totalItems: number = 0;
   currentPage: number = 0;
@@ -72,7 +73,9 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   selectedRow: ClassSession | null = null;
   selection = new SelectionModel<ClassSession>(true, []);
 
-  //classGroupSelectDialogSubscription!: Subscription;
+  updatePresenceSubscription!: Subscription;
+  findPresenceSubscription!: Subscription;
+
   courseScheduleSelectDialogSubscription!: Subscription;
   lectureSelectDialogSubscription!: Subscription;
 
@@ -100,6 +103,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
+    private presenceService: PresenceService,
     private classSessionService: ClassSessionService,
     private lectureTypeService: LectureTypeService,
     private courseScheduleService: CourseScheduleService,
@@ -122,7 +126,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
 
         if (this.showStudentFeatures) {
           this.displayedColumns = [];
-          this.displayedColumns = ['name', 'startTime', 'capacity', 'subscription'];
+          this.displayedColumns = ['id', 'nameIdentifier', 'date', 'classGroup', 'presenceStatement'];
         }
       }
     });
@@ -188,7 +192,8 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
           this.paginator.pageIndex = this.currentPage - 1;
           this.refreshTable();
           this.currentActivityState = '';
-        } else if(this.currentActivityState.includes('updated')) {
+        } else if(this.currentActivityState.includes('updated') || this.currentActivityState.includes('opened')
+        || this.currentActivityState.includes('closed')) {
           this.paginator.pageIndex = this.currentPage;
           this.refreshTable();
         } else {
@@ -247,13 +252,6 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
     }
   }
 
-  /*
-  checkForGroupValue() {
-    if (this.searchClassesSessionsForm.value.classGroup) {
-      this.clearClassGroupValue();
-    }
-  } */
-
   onSearchClassesSessionsFormSubmit() {
     this.router.navigate(['/classes-sessions'], { relativeTo: this.route });
     this.submitted = true;
@@ -266,9 +264,6 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
 
     this.paginator.pageIndex = 0;
     this.sort.direction='asc'
-
-    //this.identifierSuffixModerator();
-    //this.classSessionService.identifierSuffixesSubject.next(this.identifierSuffixList);
 
     /* For future usage in Presence Maybe
     if (this.currentUser && this.showStudentFeatures) {
@@ -309,12 +304,6 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
     this.refreshTable();
   }
 
-  /*
-  clearClassGroupAndRefresh() {
-    this.clearClassGroupValue();
-    this.refreshTable();
-  }*/
-
   clearLectureValue() {
     this.searchClassesSessionsForm.patchValue({
       lecture: ''
@@ -324,19 +313,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
     this.selectedLectureId = '';
 
     this.lectureService.lectureSubject.next(this.selectedLecture);
-    //this.clearClassGroupValue();
   }
-
-  /*
-  clearClassGroupValue() {
-    this.searchClassesSessionsForm.patchValue({
-      classGroup: ''
-    });
-
-    this.selectedClassGroup = null;
-    this.selectedClassGroupId = '';
-    this.classGroupService.classGroupSubject.next(this.selectedClassGroup);
-  }*/
 
   onLectureTypeSelect(lectureTypeNameSelection: boolean) {
     this.searchClassesSessionsForm.patchValue({
@@ -356,10 +333,6 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   selectLecture() {
     this.lectureSelectDialogService.selectLecture(this.searchClassesSessionsForm.value.lecture);
   }
-
-  /*selectClassGroup() {
-    this.classGroupSelectDialogService.selectClassGroup(this.searchClassesSessionsForm.value.classGroup);
-  }*/
 
   ngAfterViewInit() {
     this.sort.sortChange.subscribe(() => {
@@ -420,6 +393,112 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
         this.lectureTypeService.lectureTypeSubject.next(found);
       }
     }
+  }
+
+  simpleCheck(row: any): boolean {
+    let result: boolean = false;
+    if (this.selectedRow !== null) {
+      result = this.selectedRow.id === row.id;
+    }
+    if (!result) {
+      //this.selection.deselect(row);
+      if (this.selectedRow?.classGroup.groupType.name !== row.classGroup.groupType.name) {
+        return true;
+      }
+      return false;
+    } else {
+      //this.selection.isSelected(row);
+      //this.selection.select(row);
+      //console.log(row.id);
+      return true;
+    }
+  }
+
+  check(row: any): boolean {
+    let result: boolean = false;
+    if (this.selectedRow !== null) {
+      result = this.selectedRow.id === row.id;
+    }
+    if (!result) {
+      //console.log("Deselect");
+      this.selection.deselect(row);
+      return false;
+    } else {
+      //console.log("Select");
+      //this.selection.isSelected(row);
+      this.selection.select(row);
+      console.log(row.id);
+      return true;
+    }
+  }
+
+  selectHandler(row: ClassSession) {
+    let result: boolean = false;
+    console.log("Select Handler:");
+    this.selection.toggle(row);
+    if (this.selectedRow !== null) {
+      result = this.selectedRow.id === row.id;
+    }
+    if (this.selection.isSelected(row)) {
+      if(!result) {
+        this.selectedRow = row;
+        console.log("New selection: "+row.classGroup.courseSchedule.course.name+", "+row.nameIdentifier);
+        console.log("capacity: "+JSON.stringify(row));
+        //this.check(row);
+        if (this.currentUser) {
+          //this.createPresence(this.createPresenceData(this.selectedRow, this.currentUser.id));
+        }
+        console.log("Data pushed! "+this.selectedRow.classGroup.courseSchedule.course.name+", "+this.selectedRow.nameIdentifier);
+      }
+    } else {
+        if (this.selectedRow && this.currentUser) {
+          //this.deletePresence(this.selectedRow.id, this.currentUser.id, row);
+        }
+        //this.check(row);
+        console.log("Data removed! "+this.selectedRow);
+    }
+  }
+
+  unCheck(data: any) {
+    if (this.selectedRow !== null) {
+      if (data.id === this.selectedRow.id) {
+        console.log("Still exists ..."+data.courseSchedule.course.name+", "+data.nameIdentifier);
+      }
+      console.log("DELETE");
+      if (data.id === this.selectedRow.id) {
+        this.selectedRow = null;
+      }
+    }
+  }
+
+  createPresenceData(classSessionId: number, studentId: number, status: boolean): PresenceRequestData {
+    const presenceData : PresenceRequestData = {
+      status: false,
+      classSessionId: classSessionId,
+      studentId: studentId
+    };
+    return presenceData;
+  }
+
+  private findPresenceByClassSessionIdAndStudentId(classSessionId: number, studentId: number) {
+    this.findPresenceSubscription = this.presenceService.getPresenceByClassSessionIdAndStudentId(classSessionId, studentId)
+      .pipe(last())
+      .subscribe((currentPresence: PresenceResponseData | null) => {
+        if (currentPresence) {
+          this.currentPresence = currentPresence;
+        } else {
+          this.currentPresence = null;
+        }
+      });
+  }
+
+  private updatePresence(currentPresenceId: number, presenceData: PresenceRequestData) {
+    this.updatePresenceSubscription = this.presenceService.updatePresence(currentPresenceId, presenceData)
+      .pipe(last())
+      .subscribe(() => {
+        this.snackbarService.success('Presence updated');
+        this.router.navigate(['../../'], { relativeTo: this.route});
+      }).add(() => this.isLoading = false);
   }
   
   ngOnDestroy(): void {

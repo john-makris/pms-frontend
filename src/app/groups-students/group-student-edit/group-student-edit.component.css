@@ -21,6 +21,13 @@
     padding-bottom: 0.5em;
 }
 
+.class-group-aligner {
+    margin-top: 0.6em;
+    margin-left: 0.35em;
+    margin-right: 0.35em;
+    margin-bottom: 0.5em;
+}
+
 .border-invalid {
   border: 0.15em solid #f00;
 }

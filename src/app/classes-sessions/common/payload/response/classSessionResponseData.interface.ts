@@ -7,6 +7,7 @@ export interface ClassSessionResponseData {
 	nameIdentifier: string,
 	date: string,
 	presenceStatementStatus: boolean,
+	status: boolean,
 	lecture: LectureResponseData,
 	classGroup: ClassGroupResponseData
 }

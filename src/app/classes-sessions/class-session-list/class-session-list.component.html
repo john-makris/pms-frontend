@@ -174,15 +174,9 @@
                     <mat-cell *matCellDef="let classSession" class="collapse-text">{{ classSession.presenceStatementStatus ? 'Opened' : 'Closed' }}</mat-cell>
                 </ng-container>
 
-                <!--
-                <ng-container matColumnDef="status">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Status</mat-header-cell>
-                    <mat-cell *matCellDef="let classSession" class="collapse-text">{{ classSession.status ? 'Active' : 'Inactive' }}</mat-cell>
-                </ng-container> -->
-
-                <!-- Checkbox Column 
-                <ng-container matColumnDef="subscription">
-                    <mat-header-cell *matHeaderCellDef class="collapse-text">Subscription</mat-header-cell>
+                <!-- Checkbox Column  -->
+                <ng-container matColumnDef="presenceStatement">
+                    <mat-header-cell *matHeaderCellDef class="collapse-text">P. Statement</mat-header-cell>
                     <mat-cell *matCellDef="let row">
                         <mat-checkbox matTooltip="Group is closed"
                             matTooltipPosition="after"
@@ -192,7 +186,7 @@
                             [checked]="selection.isSelected(row) || check(row)">
                         </mat-checkbox>
                     </mat-cell>
-                </ng-container> -->
+                </ng-container>
 
                 <div *ngIf="showStudentFeatures">
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

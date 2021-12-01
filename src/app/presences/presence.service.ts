@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
+import { ManagePresencesRequestData } from "./common/payload/request/managePresencesRequestData.interface";
 import { PresenceRequestData } from "./common/payload/request/presenceRequestData.interface";
 import { PresenceResponseData } from "./common/payload/response/presenceResponseData.interface";
 import { PresencesResponseData } from "./common/payload/response/presencesResponseData.interface";
@@ -35,6 +36,10 @@ export class PresenceService {
         return this.http.get<Presence[]>(API_URL + 'all');
     }
 
+    getPresenceByClassSessionIdAndStudentId(classSessionId: number, studentId: number): Observable<PresenceResponseData> {
+        return this.http.get<PresenceResponseData>(API_URL + classSessionId +'/' + studentId);
+    }
+
     getPresenceById(presenceId: number): Observable<PresenceResponseData> {
         return this.http.get<PresenceResponseData>(API_URL + presenceId);
     }
@@ -53,5 +58,13 @@ export class PresenceService {
 
     updatePresence(presenceId: number, presenceData: PresenceRequestData): Observable<any> {
         return this.http.put(API_URL + 'update/' + presenceId, presenceData);
+    }
+
+    createPresences(createPresencesRequestData: ManagePresencesRequestData): Observable<ManagePresencesRequestData> {
+        return this.http.post<ManagePresencesRequestData>(API_URL + 'create_presences/', createPresencesRequestData);
+    }
+
+    updatePresences(createPresencesRequestData: ManagePresencesRequestData): Observable<any> {
+        return this.http.put(API_URL + 'update_presences/', createPresencesRequestData);
     }
 }

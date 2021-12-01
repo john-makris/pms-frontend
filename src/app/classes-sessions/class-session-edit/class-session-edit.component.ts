@@ -11,6 +11,9 @@ import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { ClassGroupSelectDialogService } from 'src/app/groups-students/group-student-list/services/class-group-select-dialog.service';
 import { LectureResponseData } from 'src/app/lectures/common/payload/response/lectureResponseData.interface';
 import { LectureService } from 'src/app/lectures/lecture.service';
+import { ManagePresencesRequestData } from 'src/app/presences/common/payload/request/managePresencesRequestData.interface';
+import { PresenceService } from 'src/app/presences/presence.service';
+import { ClassSession } from '../class-session.model';
 import { ClassSessionService } from '../class-session.service';
 import { ClassSessionRequestData } from '../common/payload/request/classSessionRequestData.interface';
 
@@ -50,6 +53,11 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
 
   tableLoaded: boolean = false;
 
+  presenceStatementChanged: boolean = false;
+
+  currentPresenceStatementStatus: boolean = false;
+  currentClassSessionStatus: string = '';
+  currentClassSession: ClassSession | null = null;
   currentLecture: LectureResponseData | null = null;
   currentClassGroup: ClassGroupResponseData | null = null;
   selectedDate: string = '';
@@ -58,6 +66,8 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
   @ViewChild('input') input!: ElementRef;
   @ViewChild(MatSelect) select!: MatSelect;
 
+  updateClassSessionPresencesSubscription!: Subscription;
+  createClassSessionPresencesSubscription!: Subscription;
   lectureSubscription!: Subscription;
   tableLoadedStateSubscription!: Subscription;
   classGroupSelectDialogSubscription!: Subscription;
@@ -72,6 +82,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
+    private presenceService: PresenceService,
     private lectureService: LectureService,
     private classGroupSelectDialogService: ClassGroupSelectDialogService,
     private classSessionService: ClassSessionService,
@@ -86,7 +97,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
       identifierSuffix: ['', [Validators.required, Validators.min(1), Validators.max(10)]],
       date: ['', Validators.required],
       timeSpan: [''],
-      presence_statement: [false, Validators.required]
+      presence_statement: [this.currentPresenceStatementStatus, Validators.required]
     });
 
     this.tableLoadedStateSubscription = this.classSessionService.classSessionTableLoadedState
@@ -122,7 +133,15 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
                   this.createFormattedDate(new Date(currentClassSessionData.date));
                   this.currentLecture = currentClassSessionData.lecture;
                   this.currentClassGroup = currentClassSessionData.classGroup;
-
+                  this.currentClassSession = currentClassSessionData;
+                  this.currentPresenceStatementStatus = currentClassSessionData.presenceStatementStatus;
+                  if (currentClassSessionData.status) {
+                    this.currentClassSessionStatus = 'active';
+                  } else if (currentClassSessionData.status === false) {
+                    this.currentClassSessionStatus = 'inactive';
+                  } else {
+                    this.currentClassSessionStatus = 'pending';
+                  }
                   //this.setSelectedValue(this.selectedLectureType, this.select.value);
                   console.log("Selected Lecture: "+ JSON.stringify(this.currentLecture));
                   console.log("Selected Class Group: "+ JSON.stringify(this.currentClassGroup));
@@ -171,6 +190,17 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
       this.classSessionFormDateChangesSubscription = this.classSessionForm.controls.date.valueChanges.subscribe((date: Date) => {
         if (this.currentClassGroup && date) {
           this.timeSpanModerator(this.currentClassGroup, date);
+        }
+      });
+
+      this.classSessionFormDateChangesSubscription = this.classSessionForm.controls.presence_statement.valueChanges
+      .subscribe((presenceStatementStatus: boolean) => {
+        console.log("Presence statememt status: "+presenceStatementStatus);
+        if (this.currentClassSession) {
+          this.presenceStatementChanged = true;
+          console.log("Presence statement changed: "+this.presenceStatementChanged);
+          this.currentPresenceStatementStatus = presenceStatementStatus;
+          this.onSubmit();
         }
       });
 
@@ -224,7 +254,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
       const classSessionData: ClassSessionRequestData = {
         identifierSuffix: this.classSessionForm.value.identifierSuffix,
         date: this.selectedDate,
-        presenceStatementStatus: this.classSessionForm.value.presence_statement,
+        presenceStatementStatus: this.currentPresenceStatementStatus,
         lecture: this.currentLecture,
         classGroup: this.currentClassGroup
       };
@@ -238,14 +268,34 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
       //this.courseScheduleForm.reset();
       
       if (this.isAddMode) {
-        this.createClassGroup(classSessionData);
+        this.createClassSession(classSessionData);
       } else {
-        this.updateClassGroup(classSessionData);
+        this.updateClassSession(classSessionData);
       }
     }
   }
 
-  private createClassGroup(classSessionData: ClassSessionRequestData) {
+  private createClassSessionPresences(managePresencesRequestData: ManagePresencesRequestData) {
+    this.createClassSessionPresencesSubscription = this.presenceService.createPresences(managePresencesRequestData)
+    .pipe(last())
+      .subscribe(() => {
+        console.log("DATA: "+ "Mpike sto subscribe");
+          this.snackbarService.success(this.currentClassSession?.nameIdentifier+' presence statement opened');
+          this.router.navigate(['../../'], { relativeTo: this.route });
+      }).add(() => { this.isLoading = false; });
+  }
+
+  private updateClassSessionPresences(managePresencesRequestData: ManagePresencesRequestData) {
+    this.updateClassSessionPresencesSubscription = this.presenceService.updatePresences(managePresencesRequestData)
+    .pipe(last())
+      .subscribe(() => {
+        console.log("DATA: "+ "Mpike sto subscribe");
+          this.snackbarService.success(this.currentClassSession?.nameIdentifier+' presence statement closed');
+          this.router.navigate(['../../'], { relativeTo: this.route });
+      }).add(() => { this.isLoading = false; });
+  }
+
+  private createClassSession(classSessionData: ClassSessionRequestData) {
     this.createClassSessionSubscription = this.classSessionService.createClassSession(classSessionData)
     .pipe(last())
       .subscribe(() => {
@@ -255,12 +305,25 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
       }).add(() => { this.isLoading = false; });
   }
 
-  private updateClassGroup(classSessionData: ClassSessionRequestData) {
+  private updateClassSession(classSessionData: ClassSessionRequestData) {
     this.updateClassSessionSubscription = this.classSessionService.updateClassSession(this.id, classSessionData)
       .pipe(last())
       .subscribe(() => {
-        this.snackbarService.success('Class Session updated');
-        this.router.navigate(['../../'], { relativeTo: this.route});
+        if (this.currentClassSessionStatus === 'pending') {
+          this.snackbarService.success('Class Session updated');
+          this.router.navigate(['../../'], { relativeTo: this.route});
+        }
+        if (this.presenceStatementChanged) {
+          const managePresenceRequestData: ManagePresencesRequestData = {
+            classSessionId: this.id
+          };
+          if (classSessionData.presenceStatementStatus === true) {
+            this.createClassSessionPresences(managePresenceRequestData);
+          } else {
+            console.log("PRESENCE STATUS IS FALSE");
+            this.updateClassSessionPresences(managePresenceRequestData);
+          }
+        }
       }).add(() => this.isLoading = false);
   }
 
