@@ -8,6 +8,8 @@ import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operato
 import { ClassGroup } from 'src/app/classes-groups/class-group.model';
 import { ClassGroupService } from 'src/app/classes-groups/class-group.service';
 import { ClassesGroupsDataSource } from 'src/app/classes-groups/common/tableDataHelper/classes-groups.datasource';
+import { ClassSession } from 'src/app/classes-sessions/class-session.model';
+import { ClassSessionService } from 'src/app/classes-sessions/class-session.service';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model';
 import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
@@ -36,6 +38,9 @@ export class ClassGroupSelectDialogComponent implements OnInit, AfterViewInit, O
   currentLectureTypeName: string = '';
   currentCourseScheduleId: number = 0;
 
+  dataForClassSessionComponent!: boolean;
+
+  classSessionTableLoadedSubscription!: Subscription;
   lectureTypeSubscription!: Subscription;
   courseScheduleSubscription!: Subscription;
   pageDetailSubscription!: Subscription;
@@ -56,6 +61,7 @@ export class ClassGroupSelectDialogComponent implements OnInit, AfterViewInit, O
     private lectureTypeService: LectureTypeService,
     private courseScheduleService: CourseScheduleService,
     private classGroupService: ClassGroupService,
+    private classSessionService: ClassSessionService,
     private dialogRef: MatDialogRef<ClassGroupSelectDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data :ClassGroup) {}
 
@@ -63,6 +69,17 @@ export class ClassGroupSelectDialogComponent implements OnInit, AfterViewInit, O
   ngOnInit(): void {
 
     this.dataSource = new ClassesGroupsDataSource(this.classGroupService);
+
+    this.classSessionTableLoadedSubscription = this.classSessionService.classSessionTableLoadedState
+      .subscribe((status: boolean) => {
+        if (status) {
+          console.log("FROM CLASS SESSION");
+          this.dataForClassSessionComponent = true;
+        } else {
+          console.log("FROM GROUP STUDENT");
+          this.dataForClassSessionComponent = false;
+        }
+      });
 
     this.courseScheduleSubscription = this.courseScheduleService.courseScheduleState
       .subscribe((courseSchedule: CourseSchedule | null) => {
@@ -74,11 +91,19 @@ export class ClassGroupSelectDialogComponent implements OnInit, AfterViewInit, O
 
     this.lectureTypeSubscription = this.lectureTypeService.lectureTypeState
       .subscribe((lectureType: LectureType | null) => {
-        if (lectureType) {
+
+        if (lectureType && this.dataForClassSessionComponent !== undefined) {
+
           this.currentLectureTypeName = lectureType.name;
           console.log("Lecture Type name: " + this.currentLectureTypeName);
-          this.dataSource.loadClassesGroups(this.currentCourseScheduleId, 
-            this.currentLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
+
+          if (this.dataForClassSessionComponent) {
+            this.dataSource.loadClassesGroups(false, this.currentCourseScheduleId, 
+              this.currentLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
+          } else {
+            this.dataSource.loadClassesGroups(null, this.currentCourseScheduleId, 
+              this.currentLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
+          }
         }
     });
 
@@ -119,14 +144,29 @@ export class ClassGroupSelectDialogComponent implements OnInit, AfterViewInit, O
   }
 
   loadClassesGroupsPage() {
-    this.dataSource.loadClassesGroups(
-        this.currentCourseScheduleId,
-        this.currentLectureTypeName,
-        this.input.nativeElement.value,
-        this.paginator.pageIndex,
-        this.paginator.pageSize,
-        this.sort.direction,
-        this.currentColumnDef);
+    if (this.dataForClassSessionComponent !== undefined) {
+      if (this.dataForClassSessionComponent) {
+        this.dataSource.loadClassesGroups(
+          false,
+          this.currentCourseScheduleId,
+          this.currentLectureTypeName,
+          this.input.nativeElement.value,
+          this.paginator.pageIndex,
+          this.paginator.pageSize,
+          this.sort.direction,
+          this.currentColumnDef);
+      } else {
+        this.dataSource.loadClassesGroups(
+          null,
+          this.currentCourseScheduleId,
+          this.currentLectureTypeName,
+          this.input.nativeElement.value,
+          this.paginator.pageIndex,
+          this.paginator.pageSize,
+          this.sort.direction,
+          this.currentColumnDef);
+      }
+    }
   }
   
   refreshTable() {
@@ -196,6 +236,9 @@ export class ClassGroupSelectDialogComponent implements OnInit, AfterViewInit, O
     }
     if (this.lectureTypeSubscription) {
       this.lectureTypeSubscription.unsubscribe();
+    }
+    if (this.classSessionTableLoadedSubscription) {
+      this.classSessionTableLoadedSubscription.unsubscribe();
     }
   }
 

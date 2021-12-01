@@ -269,7 +269,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
     this.sort.direction='asc';
 
     // For future usage in ClassSession Maybe
-    if (this.currentUser && this.showStudentFeatures) {     // lectureId, studentId, 
+    if (this.currentUser && this.showStudentFeatures && this.selectedLectureId !== '') {     // lectureId, studentId, 
       this.classSessionSubscription = this.classSessionService.getClassSessionByLectureIdAndStudentId(
         +this.selectedLectureId, this.currentUser.id)
       .subscribe((classSession: ClassSessionResponseData | null) => {
@@ -379,7 +379,11 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
     } else {
       this.clearInput();
     }
-    this.classSessionService.classSessionTableLoadedSubject.next(true);
+    if (this.selectedLectureId) {
+      this.classSessionService.classSessionTableLoadedSubject.next(true);
+    } else {
+      this.classSessionService.classSessionTableLoadedSubject.next(false);
+    }
   }
 
   clearInput() {
@@ -458,17 +462,6 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
       }
     }
 
-    /*
-      else {
-        console.log("SPOT E -> selectedRow, currentUser: "+this.selectedRow, this.currentUser);
-        if (this.selectedRow && this.currentUser) {
-          this.updatePresenceStatus(this.createPresenceData(row.id, this.currentUser.id, false));
-        }
-        this.unCheck(row);
-        console.log("Data removed! "+this.selectedRow);
-      }
-    */
-
   }
 
   unCheck(data: any) {
@@ -508,6 +501,8 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   }
   
   ngOnDestroy(): void {
+    this.classSessionService.classSessionTableLoadedSubject.next(false);
+
     if (this.courseScheduleSelectDialogSubscription) {
       this.courseScheduleSelectDialogSubscription.unsubscribe();
     }

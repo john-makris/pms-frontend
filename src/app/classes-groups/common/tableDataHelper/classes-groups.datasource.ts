@@ -27,6 +27,7 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
     constructor(private classGroupService: ClassGroupService) { }
 
     loadClassesGroups(
+                status: boolean | null,
                 courseScheduleId: number,
                 lectureTypeName: string,
                 filter:string,
@@ -36,7 +37,7 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
                 currentColumnDef:string) {
 
         if (courseScheduleId) {
-            let params: HttpParams = this.createParams(courseScheduleId, lectureTypeName,
+            let params: HttpParams = this.createParams(status, courseScheduleId, lectureTypeName,
                 filter, pageIndex, pageSize, sortDirection, currentColumnDef);
                 console.log("PARAMS: "+params);
 
@@ -50,16 +51,29 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
     }
 
     retrieveData(params: HttpParams) {
-        this.classGroupService.getAllPageClassesGroupsByCourseScheduleIdPerType(params)
-        .pipe(
-            catchError(() => of([])),
-            finalize(() => this.loadingSubject.next(false))
-        )
-        .pipe(first())
-        .subscribe((response: any) => {
-            console.log("RESPONSE B !!!!!!! "+response);
-            this.checkData(response);
-        });
+        if(!params.has('status')) {
+            this.classGroupService.getAllPageClassesGroupsByCourseScheduleIdPerType(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE B !!!!!!! "+response);
+                this.checkData(response);
+            });
+        } else {
+            this.classGroupService.getAllPageClassesGroupsByCourseScheduleIdPerTypeAndStatus(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE B !!!!!!! "+response);
+                this.checkData(response);
+            });
+        }
     }
 
     checkData(response: ClassesGroupsResponseData | null) {
@@ -84,6 +98,7 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
     }
 
     createParams(
+        status: boolean | null,
         courseScheduleId: number,
         lectureTypeName: string,
         filter:string,
@@ -93,6 +108,11 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
         currentColumnDef:string): HttpParams {
 
             let params = new HttpParams();
+
+            if (status !== null) {
+                //console.log("Status: "+status);
+                params=params.set('status', status);
+            }
 
             if (courseScheduleId) {
                 //console.log("ID: "+courseScheduleId);

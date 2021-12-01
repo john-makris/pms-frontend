@@ -6,8 +6,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatRadioButton } from '@angular/material/radio';
 import { MatSort } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
-import { fromEvent, merge, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, first, last, switchMap, tap } from 'rxjs/operators';
+import { fromEvent, merge, Subscription, throwError } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, first, last, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
@@ -107,7 +107,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
         this.currentUser = user;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = true;
+        this.showStudentFeatures = false;
         // this.currentUser.roles.includes('STUDENT');
 
         if (this.showStudentFeatures) {
@@ -144,6 +144,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
 
     if (+this.searchClassesGroupsForm.value.departmentId && +this.selectedCourseScheduleId) {
       this.dataSource.loadClassesGroups(
+        null,
         +this.selectedCourseScheduleId,
         this.selectedLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
     }
@@ -308,6 +309,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
 
   loadClassesGroupsPage() {
     this.dataSource.loadClassesGroups(
+        null,
         +this.selectedCourseScheduleId,
         this.selectedLectureTypeName,
         this.input.nativeElement.value,
@@ -414,15 +416,13 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
         if (this.currentUser) {
           this.createGroupStudent(this.createGroupStudentData(this.selectedRow, this.currentUser.id));
         }
-        this.haha = true;
         console.log("Data pushed! "+this.selectedRow.courseSchedule.course.name+", "+this.selectedRow.nameIdentifier);
       }
     } else {
         if (this.selectedRow && this.currentUser) {
           this.deleteGroupStudent(this.selectedRow.id, this.currentUser.id, row);
         }
-        this.haha = false;
-        //this.check(row);
+
         console.log("Data removed! "+this.selectedRow);
     }
   }
@@ -450,11 +450,11 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
   private createGroupStudent(groupStudentData: GroupStudentRequestData) {
     this.createGroupStudentSubscription = this.groupStudentService.createGroupStudent(groupStudentData)
     .pipe(last())
-      .subscribe(() => {
-        console.log("DATA: "+ "Entered sto subscribe");
-          this.snackbarService.success('You just subscribed to '+this.selectedLectureTypeName.toLowerCase()+'_'+this.selectedRow?.nameIdentifier);
-          this.router.navigate(['/classes-groups'], { relativeTo: this.route});
-        }).add(() => { this.isLoading = false; });
+    .subscribe(() => {
+      console.log("DATA: "+ "Entered sto subscribe");
+        this.snackbarService.success('You just subscribed to '+this.selectedLectureTypeName.toLowerCase()+'_'+this.selectedRow?.nameIdentifier);
+        this.router.navigate(['/classes-groups'], { relativeTo: this.route});
+      }).add(() => { this.isLoading = false; });
   }
 
   deleteGroupStudent(classGroupId: number, studentId: number, row: ClassGroup) {

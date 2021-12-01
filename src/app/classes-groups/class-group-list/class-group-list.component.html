@@ -131,17 +131,17 @@
 
                 <ng-container matColumnDef="capacity">
                     <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Capacity</mat-header-cell>
-                    <mat-cell *matCellDef="let classGroup" class="collapse-text">{{ classGroup.capacity - classGroup.groupsOfStudents+'/'+classGroup.capacity }}</mat-cell>
+                    <mat-cell *matCellDef="let classGroup" class="collapse-text">{{ classGroup.groupsOfStudents+'/'+classGroup.capacity }}</mat-cell>
                 </ng-container>
 
                 <!-- Checkbox Column -->
                 <ng-container matColumnDef="subscription">
                     <mat-header-cell *matHeaderCellDef class="collapse-text">Subscription</mat-header-cell>
                     <mat-cell *matCellDef="let row">
-                        <mat-checkbox matTooltip="Group is closed"
+                        <mat-checkbox [matTooltip]="!row.status ? 'Group is closed' : 'Group is full'"
                             matTooltipPosition="after"
-                            [matTooltipDisabled]="row.status"
-                            [disabled]="selectedRow && !simpleCheck(row) || !row.status"
+                            [matTooltipDisabled]="row.status && (row.capacity !== row.groupsOfStudents)"
+                            [disabled]="selectedRow && !simpleCheck(row) || !row.status || (row.capacity === row.groupsOfStudents)"
                             (click)="$event.stopPropagation()" (change)="selectHandler(row)"
                             [checked]="selection.isSelected(row) || check(row)">
                         </mat-checkbox>

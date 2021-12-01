@@ -44,6 +44,10 @@ export class ClassGroupService {
         return this.http.get<any[]>(API_URL + 'all/by_course-scheduleId_and_type/paginated_sorted_filtered', { params });
     }
 
+    getAllPageClassesGroupsByCourseScheduleIdPerTypeAndStatus(params: HttpParams): Observable<any> {
+        return this.http.get<any[]>(API_URL + 'all/_by_course_scheduleId_and_type_and_status/paginated_sorted_filtered', { params });
+    }
+
     getAllClassesGroups(): Observable<any[]> {
         return this.http.get<any[]>(API_URL + 'all');
     }

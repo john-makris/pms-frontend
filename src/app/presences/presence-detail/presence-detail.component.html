@@ -20,7 +20,7 @@
                 </div>
                 <div>
                     <label><strong>Status:</strong></label>
-                    {{ presence?.status ? 'Present' : 'Absent' }}
+                    {{ presence?.status ? 'Present' : presence?.status === false ? 'Absent' : 'Pending' }}
                 </div>
             </mat-card-content>
             <mat-card-actions>
