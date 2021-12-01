@@ -65,8 +65,9 @@
     max-width: 20%;
 }
 
-.mat-column-presence_statement {
+.mat-column-presenceStatement {
     max-width: 22%;
+    padding-left: 1em;
 }
 
 

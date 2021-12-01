@@ -178,10 +178,10 @@
                 <ng-container matColumnDef="presenceStatement">
                     <mat-header-cell *matHeaderCellDef class="collapse-text">P. Statement</mat-header-cell>
                     <mat-cell *matCellDef="let row">
-                        <mat-checkbox matTooltip="Group is closed"
+                        <mat-checkbox matTooltip="Presence Statement is closed"
                             matTooltipPosition="after"
-                            [matTooltipDisabled]="row.status"
-                            [disabled]="selectedRow && !simpleCheck(row) || !row.status"
+                            [matTooltipDisabled]="row.presenceStatementStatus"
+                            [disabled]="selectedRow && simpleCheck(row) || !row.presenceStatementStatus"
                             (click)="$event.stopPropagation()" (change)="selectHandler(row)"
                             [checked]="selection.isSelected(row) || check(row)">
                         </mat-checkbox>

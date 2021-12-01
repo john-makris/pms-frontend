@@ -67,4 +67,8 @@ export class PresenceService {
     updatePresences(createPresencesRequestData: ManagePresencesRequestData): Observable<any> {
         return this.http.put(API_URL + 'update_presences/', createPresencesRequestData);
     }
+
+    updatePresenceStatus(presenceData: PresenceRequestData): Observable<any> {
+        return this.http.put(API_URL + 'update_presence_status/', presenceData);
+    }
 }

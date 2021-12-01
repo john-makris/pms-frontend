@@ -63,7 +63,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
   currentColumnDef: string = 'name';
   currentActivityState: string = '';
 
-  classGroupSubscription!: Subscription;
+  groupStudentSubscription!: Subscription;
   ensureDialogSubscription!: Subscription;
   createGroupStudentSubscription!: Subscription;
   courseScheduleSelectDialogSubscription!: Subscription;
@@ -239,7 +239,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
     this.classGroupService.identifierSuffixesSubject.next(this.identifierSuffixList);
 
     if (this.currentUser && this.showStudentFeatures) {
-      this.classGroupSubscription = this.groupStudentService.getClassGroupByStudentIdAndCourseScheduleIdAndGroupType(
+      this.groupStudentSubscription = this.groupStudentService.getClassGroupByStudentIdAndCourseScheduleIdAndGroupType(
         this.currentUser.id, +this.selectedCourseScheduleId, this.selectedLectureTypeName)
       .subscribe((classGroup: ClassGroup | null) => {
         if (classGroup) {
@@ -470,8 +470,8 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
   }
   
   ngOnDestroy(): void {
-    if (this.classGroupSubscription) {
-      this.classGroupSubscription.unsubscribe();
+    if (this.groupStudentSubscription) {
+      this.groupStudentSubscription.unsubscribe();
     }
     if (this.ensureDialogSubscription) {
       this.ensureDialogSubscription.unsubscribe();

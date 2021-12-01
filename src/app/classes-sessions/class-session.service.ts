@@ -53,6 +53,10 @@ export class ClassSessionService {
         return this.http.get<any>(API_URL + classSessionId);
     }
 
+    getClassSessionByLectureIdAndStudentId(lectureId: number, studentId: number): Observable<ClassSessionResponseData> {
+        return this.http.get<any>(API_URL + lectureId + '/' + studentId);
+    }
+
     deleteAllClassesSessions(): Observable<any[]> {
         return this.http.delete<any[]>(API_URL + 'delete/all');
     }
