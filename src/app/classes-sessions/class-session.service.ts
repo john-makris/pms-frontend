@@ -45,6 +45,9 @@ export class ClassSessionService {
         return this.http.get<any[]>(API_URL + 'all/by_lecture_Id/paginated_sorted_filtered', { params });
     }
 
+    getAllPageClassesSessionsByUserIdAndStatus(params: HttpParams): Observable<any> {
+        return this.http.get<any[]>(API_URL + 'all/by_user_Id_and_status/paginated_sorted_filtered', { params });
+    }
     getAllClassesSessions(): Observable<any[]> {
         return this.http.get<any[]>(API_URL + 'all');
     }
@@ -55,6 +58,10 @@ export class ClassSessionService {
 
     getClassSessionByLectureIdAndStudentId(lectureId: number, studentId: number): Observable<ClassSessionResponseData> {
         return this.http.get<any>(API_URL + lectureId + '/' + studentId);
+    }
+
+    getPresentedClassSessionByStudentIdAndStatus(studentId: number, status: boolean): Observable<ClassSessionResponseData> {
+        return this.http.get<any>(API_URL + 'by_studentId_and_status/' + studentId + '/' + status);
     }
 
     deleteAllClassesSessions(): Observable<any[]> {

@@ -107,12 +107,13 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
         this.currentUser = user;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
+        this.showStudentFeatures = true;
         // this.currentUser.roles.includes('STUDENT');
 
         if (this.showStudentFeatures) {
           this.displayedColumns = [];
           this.displayedColumns = ['name', 'startTime', 'capacity', 'subscription'];
+          this.selectedDepartmentId = '1'; //this.currentUser.department.id.toString();
         }
       }
     });
@@ -124,11 +125,13 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
       console.log(this.lectureTypes);
     });
 
-    this.departmentsSubscription = this.departmentService.getAllDepartments()
-    .pipe(first())
-    .subscribe(departments => {
-      this.departments = departments;
-    });
+    if (!this.showStudentFeatures) {
+      this.departmentsSubscription = this.departmentService.getAllDepartments()
+      .pipe(first())
+      .subscribe(departments => {
+        this.departments = departments;
+      });
+    }
 
     this.searchClassesGroupsForm = this.formBuilder.group({
       departmentId: [this.selectedDepartmentId],

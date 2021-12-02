@@ -48,8 +48,44 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
 
     }
 
+    loadUserClassesSessions(
+        status: boolean | null,
+        userId: number,
+        filter:string,
+        pageIndex:number,
+        pageSize:number,
+        sortDirection:string,
+        currentColumnDef:string) {
+
+        if (userId) {
+            let params: HttpParams = this.createUserClassesSessionsParams(status, userId,
+                filter, pageIndex, pageSize, sortDirection, currentColumnDef);
+                console.log("PARAMS: "+params);
+
+            this.loadingSubject.next(true);
+
+            this.retrieveUserClassesSessions(params);
+        } else {
+            this.checkData(null);
+        }
+
+    }
+
     retrieveData(params: HttpParams) {
         this.classSessionService.getAllPageClassesSessionsByLectureId(params)
+        .pipe(
+            catchError(() => of([])),
+            finalize(() => this.loadingSubject.next(false))
+        )
+        .pipe(first())
+        .subscribe((response: ClassesSessionsResponseData) => {
+            console.log("RESPONSE B !!!!!!! "+response);
+            this.checkData(response);
+        });
+    }
+
+    retrieveUserClassesSessions(params: HttpParams) {
+        this.classSessionService.getAllPageClassesSessionsByUserIdAndStatus(params)
         .pipe(
             catchError(() => of([])),
             finalize(() => this.loadingSubject.next(false))
@@ -80,6 +116,48 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
                 currentPageItems: 0
             });
         }
+    }
+
+    createUserClassesSessionsParams(
+        status: boolean | null,
+        userId: number,
+        filter:string,
+        pageIndex:number,
+        pageSize:number,
+        sortDirection:string,
+        currentColumnDef:string): HttpParams {
+
+            let params = new HttpParams();
+
+            if (status !== null) {
+                params=params.set('status', status);
+            }
+
+            if (userId) {
+                //console.log("User Id: "+userId);
+                params=params.set('userId', userId);
+            }
+
+            if (filter) {
+                //console.log("Filter: "+filter);
+                params=params.set('filter', filter);
+            }
+    
+            if (pageIndex) {
+                //console.log("pageIndex: "+pageIndex);
+                params=params.set('page', pageIndex);
+            }
+        
+            if (pageSize) {
+                //console.log("pageSize: "+pageSize);
+                params=params.set('size', pageSize);
+            }
+        
+            if (sortDirection && currentColumnDef) {
+                params=params.set('sort', currentColumnDef+","+sortDirection);
+                //console.log("SORT: "+currentColumnDef+","+sortDirection);
+            }
+        return params;
     }
 
     createParams(

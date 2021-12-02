@@ -119,52 +119,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.authService.user.subscribe((user: AuthUser | null) => {
-      if (user) {
-        this.currentUser = user;
-        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
-        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = true;
-        // this.currentUser.roles.includes('STUDENT');
-
-        if (this.showStudentFeatures) {
-          this.displayedColumns = [];
-          this.displayedColumns = ['id', 'nameIdentifier', 'date', 'classGroup', 'presenceStatement'];
-        }
-      }
-    });
-
-    this.lectureTypeSubscription = this.lectureTypeService.getAllLectureTypes()
-    .pipe(first())
-    .subscribe(lectureTypes => {
-      this.lectureTypes = lectureTypes;
-      console.log(this.lectureTypes);
-      this.publishLectureType();
-    });
-
-    this.departmentsSubscription = this.departmentService.getAllDepartments()
-    .pipe(first())
-    .subscribe(departments => {
-      this.departments = departments;
-    });
-
-    this.searchClassesSessionsForm = this.formBuilder.group({
-      departmentId: [this.selectedDepartmentId],
-      courseSchedule: ['', Validators.required],
-      isLectureTypeNameTheory : [true, Validators.required],
-      lecture: ['', Validators.required]
-    });
-
-    console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
-
-    this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
-
     this.dataSource = new ClassesSessionsDataSource(this.classSessionService);
-
-    if (this.searchClassesSessionsForm.valid) {
-      this.dataSource.loadClassesSessions(
-        +this.selectedLectureId, '', 0, 3, 'asc', this.currentColumnDef);
-    }
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -180,65 +135,131 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
         }
       })
     ).subscribe();
-    
-    this.snackbarSubscription = this.snackbarService.snackbarState.subscribe(
-      (state: SnackbarData) => {
-        this.currentActivityState = state.message;
-        if(this.currentActivityState.includes('added')) {
-          //console.log('Current State: '+this.currentState);
-          console.log("Selected Department Id: "+this.selectedDepartmentId);
-          this.paginator.pageIndex = 0;
-          this.refreshTable();
-        } else if(this.currentActivityState.includes('deleted') && this.currentPageItems === 1) {
-          //console.log("I am inside Deleted state");
-          //console.log("CURRENT PAGE: "+this.currentPage);
-          this.paginator.pageIndex = this.currentPage - 1;
-          this.refreshTable();
-          this.currentActivityState = '';
-        } else if(this.currentActivityState.includes('updated') || this.currentActivityState.includes('opened')
-        || this.currentActivityState.includes('closed')) {
-          this.paginator.pageIndex = this.currentPage;
-          this.refreshTable();
-        } else {
-          this.refreshTable();
+
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
+        this.showStudentFeatures = true;
+        // this.currentUser.roles.includes('STUDENT');
+
+        if (this.showStudentFeatures) {
+          this.displayedColumns = [];
+          this.displayedColumns = ['course', 'lecture', 'dateTime', 'presenceStatement'];
         }
       }
-    );
+    });
 
-    this.courseScheduleSelectDialogSubscription = this.courseScheduleSelectDialogService.courseScheduleSelectDialogState
-    .subscribe((_courseSchedule: CourseSchedule | null) => {
-      console.log("Course Schedule Data: "+JSON.stringify(_courseSchedule));
-      if (_courseSchedule !== null) {
-        console.log("CATCH COURSE SCHEDULE: "+_courseSchedule.course.name);
-        this.searchClassesSessionsForm.patchValue({
-          courseSchedule: _courseSchedule
-        });
-        this.selectedCourseSchedule = _courseSchedule;
-        this.selectedCourseScheduleId = _courseSchedule.id.toString();
-        this.searchClassesSessionsForm.patchValue({
-          isLectureTypeNameTheory: true
-        });
-        
-        this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
+    if (!this.showStudentFeatures) {
+
+      console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
+
+      this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
+      
+      this.lectureTypeSubscription = this.lectureTypeService.getAllLectureTypes()
+      .pipe(first())
+      .subscribe(lectureTypes => {
+        this.lectureTypes = lectureTypes;
+        console.log(this.lectureTypes);
         this.publishLectureType();
-      }
-    });
+      });
+  
+      this.departmentsSubscription = this.departmentService.getAllDepartments()
+      .pipe(first())
+      .subscribe(departments => {
+        this.departments = departments;
+      });
 
-    this.lectureSelectDialogSubscription = this.lectureSelectDialogService.lectureSelectDialogState
-    .subscribe((_lecture: LectureResponseData | null) => {
-      console.log("Lecture Data: "+JSON.stringify(_lecture));
-      if (_lecture !== null) {
-        console.log("CATCH LECTURE: "+_lecture.nameIdentifier);
-        this.searchClassesSessionsForm.patchValue({
-          lecture: _lecture
+      this.searchClassesSessionsForm = this.formBuilder.group({
+        departmentId: [this.selectedDepartmentId],
+        courseSchedule: ['', Validators.required],
+        isLectureTypeNameTheory : [true, Validators.required],
+        lecture: ['', Validators.required]
+      });
+
+      this.courseScheduleSelectDialogSubscription = this.courseScheduleSelectDialogService.courseScheduleSelectDialogState
+      .subscribe((_courseSchedule: CourseSchedule | null) => {
+        console.log("Course Schedule Data: "+JSON.stringify(_courseSchedule));
+        if (_courseSchedule !== null) {
+          console.log("CATCH COURSE SCHEDULE: "+_courseSchedule.course.name);
+          this.searchClassesSessionsForm.patchValue({
+            courseSchedule: _courseSchedule
+          });
+          this.selectedCourseSchedule = _courseSchedule;
+          this.selectedCourseScheduleId = _courseSchedule.id.toString();
+          this.searchClassesSessionsForm.patchValue({
+            isLectureTypeNameTheory: true
+          });
+          
+          this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
+          this.publishLectureType();
+        }
+      });
+  
+      this.lectureSelectDialogSubscription = this.lectureSelectDialogService.lectureSelectDialogState
+      .subscribe((_lecture: LectureResponseData | null) => {
+        console.log("Lecture Data: "+JSON.stringify(_lecture));
+        if (_lecture !== null) {
+          console.log("CATCH LECTURE: "+_lecture.nameIdentifier);
+          this.searchClassesSessionsForm.patchValue({
+            lecture: _lecture
+          });
+          this.selectedLecture = _lecture;
+          this.selectedLectureId = _lecture.id.toString();
+  
+          this.lectureService.lectureSubject.next(this.selectedLecture);
+          this.onSearchClassesSessionsFormSubmit();
+        }
+      });
+
+      this.snackbarSubscription = this.snackbarService.snackbarState.subscribe(
+        (state: SnackbarData) => {
+          this.currentActivityState = state.message;
+          if(this.currentActivityState.includes('added')) {
+            //console.log('Current State: '+this.currentState);
+            console.log("Selected Department Id: "+this.selectedDepartmentId);
+            this.paginator.pageIndex = 0;
+            this.refreshTable();
+          } else if(this.currentActivityState.includes('deleted') && this.currentPageItems === 1) {
+            //console.log("I am inside Deleted state");
+            //console.log("CURRENT PAGE: "+this.currentPage);
+            this.paginator.pageIndex = this.currentPage - 1;
+            this.refreshTable();
+            this.currentActivityState = '';
+          } else if(this.currentActivityState.includes('updated') || this.currentActivityState.includes('opened')
+          || this.currentActivityState.includes('closed')) {
+            this.paginator.pageIndex = this.currentPage;
+            this.refreshTable();
+          } else {
+            this.refreshTable();
+          }
+        }
+      );
+
+      if (this.searchClassesSessionsForm.valid) {
+        this.dataSource.loadClassesSessions(
+          +this.selectedLectureId, '', 0, 3, 'asc', this.currentColumnDef);
+      }
+    } else {
+          // active classes Sessions of Student
+      if (this.currentUser && this.showStudentFeatures) {
+        this.dataSource.loadUserClassesSessions(
+          true, this.currentUser.id, '', 0, 3, 'asc', this.currentColumnDef);
+      }
+
+      if (this.currentUser && this.showStudentFeatures) { 
+        this.classSessionSubscription = this.classSessionService.getPresentedClassSessionByStudentIdAndStatus(
+          this.currentUser.id, true)
+        .subscribe((classSession: ClassSessionResponseData | null) => {
+          if (classSession) {
+            this.selectedRow = classSession;
+            console.log("Class Session: "+JSON.stringify(classSession));
+          }
         });
-        this.selectedLecture = _lecture;
-        this.selectedLectureId = _lecture.id.toString();
-
-        this.lectureService.lectureSubject.next(this.selectedLecture);
-        this.onSearchClassesSessionsFormSubmit();
       }
-    });
+    }
+
   }
 
   get scsf() { return this.searchClassesSessionsForm.controls; }
@@ -269,7 +290,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
     this.sort.direction='asc';
 
     // For future usage in ClassSession Maybe
-    if (this.currentUser && this.showStudentFeatures && this.selectedLectureId !== '') {     // lectureId, studentId, 
+    if (this.currentUser && this.showStudentFeatures && this.selectedLectureId !== '') { 
       this.classSessionSubscription = this.classSessionService.getClassSessionByLectureIdAndStudentId(
         +this.selectedLectureId, this.currentUser.id)
       .subscribe((classSession: ClassSessionResponseData | null) => {
@@ -363,13 +384,27 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   }
 
   loadClassesSessionsPage() {
-    this.dataSource.loadClassesSessions(
+    if (!this.showStudentFeatures) {
+      this.dataSource.loadClassesSessions(
         +this.selectedLectureId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,
         this.sort.direction,
         this.currentColumnDef);
+    } else {
+      if (this.currentUser) {
+        this.dataSource.loadUserClassesSessions(
+          true,
+          this.currentUser?.id,
+          this.input.nativeElement.value,
+          this.paginator.pageIndex,
+          this.paginator.pageSize,
+          this.sort.direction,
+          this.currentColumnDef);
+      }
+    }
+
   }
   
   refreshTable() {

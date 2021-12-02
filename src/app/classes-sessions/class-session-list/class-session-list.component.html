@@ -7,7 +7,8 @@
     fxFlex.lt-md="40em"
     fxFlex.lt-sm="20em"
 >
-    <div class="selectorContainer" fxLayout="column">
+    <h1 *ngIf="showStudentFeatures">Current Lectures</h1>
+    <div class="selectorContainer" fxLayout="column" *ngIf="!showStudentFeatures">
         <h1>Classes Sessions</h1>
         <mat-divider></mat-divider>
         <br>
@@ -114,7 +115,7 @@
     <span [matTooltip]="'Select a Specific '+ (!selectedDepartmentId ? 'Department' :
         !selectedCourseScheduleId ? 'Course Schedule' : 'Lecture')"
         matTooltipPosition="after"
-        [matTooltipDisabled]="selectedDepartmentId !=='' && selectedCourseScheduleId !=='' && selectedLectureId !==''">
+        [matTooltipDisabled]="selectedDepartmentId !=='' && selectedCourseScheduleId !=='' && selectedLectureId !==''" *ngIf="!showStudentFeatures">
         <button
             *ngIf="departments"
             type="button"
@@ -130,7 +131,7 @@
                 <div fxLayout="row">
                     <input
                         matInput 
-                        placeholder="Search sessions" #input>
+                        [placeholder]="!showStudentFeatures ? 'Search sessions' : 'Search current lectures'" #input>
                     <mat-icon 
                         matSuffix 
                         inline="true">search</mat-icon>
@@ -168,20 +169,37 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Class Group</mat-header-cell>
                     <mat-cell *matCellDef="let classSession" class="collapse-text">{{ classSession.classGroup.nameIdentifier }}</mat-cell>
                 </ng-container>
-                
+
                 <ng-container matColumnDef="presenceStatementStatus">
                     <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">P.s Status</mat-header-cell>
                     <mat-cell *matCellDef="let classSession" class="collapse-text">{{ classSession.presenceStatementStatus ? 'Opened' : 'Closed' }}</mat-cell>
+                </ng-container>
+
+                <!-- Student Table -->
+                <ng-container matColumnDef="course">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Course</mat-header-cell>
+                    <mat-cell *matCellDef="let classSession" class="collapse-text">{{ classSession.lecture.courseSchedule.course.name }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="lecture">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Lecture</mat-header-cell>
+                    <mat-cell *matCellDef="let classSession" class="collapse-text">{{ classSession.lecture.nameIdentifier }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="dateTime">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Date & Time</mat-header-cell>
+                    <mat-cell *matCellDef="let classSession" class="collapse-text">{{ classSession.date + ' ' + classSession.classGroup.startTime + ' - '+ classSession.classGroup.endTime }}</mat-cell>
                 </ng-container>
 
                 <!-- Checkbox Column  -->
                 <ng-container matColumnDef="presenceStatement">
                     <mat-header-cell *matHeaderCellDef class="collapse-text">P. Statement</mat-header-cell>
                     <mat-cell *matCellDef="let row">
-                        <mat-checkbox matTooltip="Presence Statement is closed"
+                        <mat-checkbox [matTooltip]="(!row.presenceStatementStatus) ? 'Presence Statement is closed' :
+                         'You cannot make more than 1 presence statement for Lectures they are runnig in the same time'"
                             matTooltipPosition="after"
-                            [matTooltipDisabled]="row.presenceStatementStatus"
-                            [disabled]="selectedRow && simpleCheck(row) || !row.presenceStatementStatus"
+                            [matTooltipDisabled]="row.presenceStatementStatus && simpleCheck(row)"
+                            [disabled]="selectedRow && simpleCheck(row) || !row.presenceStatementStatus || !simpleCheck(row)"
                             (click)="$event.stopPropagation()" (change)="selectHandler(row)"
                             [checked]="selection.isSelected(row) || check(row)">
                         </mat-checkbox>

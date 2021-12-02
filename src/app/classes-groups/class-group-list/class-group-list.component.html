@@ -15,7 +15,7 @@
         <!-- Search ClassesGroups Form -->
         <form fxLayout="column"
             [formGroup]="searchClassesGroupsForm" fxLayoutGap="0.5em">
-            <mat-form-field
+            <mat-form-field *ngIf="!showStudentFeatures"
                 appearance="outline">
                 <mat-select
                     [(value)]="selectedDepartmentId"
