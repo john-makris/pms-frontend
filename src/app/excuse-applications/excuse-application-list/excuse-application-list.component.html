@@ -1,1 +1,170 @@
-<p>excuse-application-list works!</p>
+<div 
+    [ngClass]="'container'"
+    [ngClass.lt-sm]="'min-container'"
+    fxFlex="40em"
+    fxFlex.gt-md="40em"
+    fxFlex.md="40em"
+    fxFlex.lt-md="40em"
+    fxFlex.lt-sm="20em"
+>
+    <div class="selectorContainer" fxLayout="column">
+        <h1>Excuse Applications</h1>
+        <mat-divider></mat-divider>
+        <br>
+        <br>
+        <!-- Search ClassesGroups Form -->
+        <form fxLayout="column"
+            [formGroup]="searchExcuseApplicationForm" fxLayoutGap="0.5em">
+            <mat-form-field *ngIf="!showStudentFeatures"
+                appearance="outline">
+                <mat-select
+                    [(value)]="selectedDepartmentId"
+                    panelClass="mat-select-panel"
+                    formControlName="departmentId">
+                    <mat-option
+                        [value]="''"
+                        (click)="onSubmit()">-- None --</mat-option>
+                    <mat-option 
+                        *ngFor="let department of departments"
+                        [value]="department.id.toString()"
+                        (click)="onSubmit()">
+                        <p>
+                            {{ department.name }}
+                        </p>
+                    </mat-option>
+                </mat-select>
+                <mat-label><mat-icon>domain</mat-icon> <b> Department</b></mat-label>
+                <mat-hint>Choose Department</mat-hint>
+            </mat-form-field>
+            <div *ngIf="selectedDepartmentId">
+                <div fxLayout fxLayoutGap="0.5em">
+                    <button fxFlex
+                        class="collapse-button-text"
+                        type="button"
+                        mat-stroked-button
+                        (click)="selectCourseSchedule()">
+                        <div>{{'Selected: '}}{{ selectedCourseSchedule ? selectedCourseSchedule.course.name : ' -- None -- ' }}</div>
+                    </button>
+                    <div *ngIf="selectedCourseSchedule" class="aligner">
+                        <button class="mat-icon-button-search-form"
+                            type="button"
+                            mat-icon-button
+                            (click)="clearCourseScheduleValue()">
+                            <mat-icon inline="true">close</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <mat-hint class="course-schedule-hint-text">Choose Course Schedule</mat-hint>
+            </div>
+
+            <mat-form-field *ngIf="!showStudentFeatures && selectedCourseSchedule"
+                appearance="outline">
+                <mat-select
+                    [(value)]="selectedLectureTypeName"
+                    panelClass="mat-select-panel"
+                    formControlName="selectedLectureTypeName">
+                    <mat-option
+                        [value]="''"
+                        (click)="onSubmit()">-- All --</mat-option>
+                    <mat-option 
+                        *ngFor="let lectureType of lectureTypes"
+                        [value]="lectureType.name"
+                        (click)="onSubmit()">
+                        <p>
+                            {{ lectureType.name }}
+                        </p>
+                    </mat-option>
+                </mat-select>
+                <mat-label><b> Lecture Type</b></mat-label>
+                <mat-hint>Choose Lecture Type</mat-hint>
+            </mat-form-field>
+        </form>
+    </div>
+
+    <!-- [matTooltip]="!selectedDepartmentId ? 'Select a Specific Department' : 'Select a Specific Course Schedule'"
+        matTooltipPosition="after"
+        [matTooltipDisabled]="selectedDepartmentId !=='' && selectedCourseScheduleId !==''" -->
+    <span>
+        <button
+            *ngIf="departments"
+            type="button"
+            mat-raised-button
+            color="primary"
+            routerLink="add">Create Application</button>
+    </span>
+    <!-- [disabled]="selectedDepartmentId === '' || selectedCourseScheduleId ===''" -->
+
+    <div class="table-container">
+        <div fxLayoutAlign="center">
+            <mat-form-field fxFlex="60%">
+                <div fxLayout="row">
+                    <input
+                        matInput 
+                        placeholder="Search applications" #input>
+                    <mat-icon 
+                        matSuffix 
+                        inline="true">search</mat-icon>
+                    <button class="mat-icon-button-table" 
+                        mat-button 
+                        *ngIf="input.value"
+                        matSuffix 
+                        mat-icon-button (click)="clearInput()">
+                        <mat-icon inline="true">close</mat-icon>
+                    </button>
+                </div>
+            </mat-form-field>
+        </div>
+
+        <div class="mat-elevation-z8">
+            <mat-table
+                [dataSource]="dataSource" matSort matSortActive="id"
+                matSortDirection="asc" matSortDisableClear>
+
+                <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">ID</mat-header-cell>
+                    <mat-cell *matCellDef="let excuseApplication" class="collapse-text">{{ excuseApplication.id }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="student">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Student</mat-header-cell>
+                    <mat-cell *matCellDef="let excuseApplication" class="collapse-text">{{ excuseApplication.absence.student.username }}</mat-cell>
+                </ng-container>
+        
+                <ng-container matColumnDef="course">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Course</mat-header-cell>
+                    <mat-cell *matCellDef="let excuseApplication" class="collapse-text">{{ excuseApplication.absence.classSession.lecture.courseSchedule.course.name }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="lecture">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Lecture</mat-header-cell>
+                    <mat-cell *matCellDef="let excuseApplication" class="collapse-text">{{ excuseApplication.absence.classSession.lecture.nameIdentifier }}</mat-cell>
+                </ng-container>
+
+                <div *ngIf="showStudentFeatures">
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row
+                        *matRowDef="let row; columns: displayedColumns;">
+                    </mat-row>
+                </div>
+        
+                <div *ngIf="!showStudentFeatures">
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row
+                        *matRowDef="let row; columns: displayedColumns;"
+                        routerLink="detail/{{row.id}}"
+                        routerLinkActive="active"
+                        class="table-row-style"
+                        matRipple>
+                    </mat-row>
+                </div>
+            </mat-table>
+        
+            <mat-paginator
+                [length]="totalItems"
+                [pageSize]="3" 
+                [pageSizeOptions]="[3, 5]"
+                showFirstLastButtons>
+            </mat-paginator>
+        </div>
+    </div>
+</div>

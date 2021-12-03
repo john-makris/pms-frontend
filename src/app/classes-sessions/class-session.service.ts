@@ -48,6 +48,7 @@ export class ClassSessionService {
     getAllPageClassesSessionsByUserIdAndStatus(params: HttpParams): Observable<any> {
         return this.http.get<any[]>(API_URL + 'all/by_user_Id_and_status/paginated_sorted_filtered', { params });
     }
+    
     getAllClassesSessions(): Observable<any[]> {
         return this.http.get<any[]>(API_URL + 'all');
     }
