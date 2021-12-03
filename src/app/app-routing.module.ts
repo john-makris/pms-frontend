@@ -55,6 +55,11 @@ const routes: Routes = [
   loadChildren: () => import('./presences/presences.module')
     .then(m => m.PresencesModule),
     canLoad: [AuthGuard]
+  },
+  { path: 'excuse-applications',
+  loadChildren: () => import('./excuse-applications/excuse-applications.module')
+    .then(m => m.ExcuseApplicationsModule),
+    canLoad: [AuthGuard]
   }
 ];
 
