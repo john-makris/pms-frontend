@@ -15,6 +15,7 @@
         <!-- Search ClassesGroups Form -->
         <form fxLayout="column"
             [formGroup]="searchExcuseApplicationForm" fxLayoutGap="0.5em">
+
             <mat-form-field *ngIf="!showStudentFeatures"
                 appearance="outline">
                 <mat-select
@@ -36,6 +37,53 @@
                 <mat-label><mat-icon>domain</mat-icon> <b> Department</b></mat-label>
                 <mat-hint>Choose Department</mat-hint>
             </mat-form-field>
+
+            <div fxLayout fxLayoutGap="0.5em">
+                <mat-form-field fxFlex *ngIf="!showStudentFeatures && selectedDepartmentId"
+                    appearance="outline">
+                    <mat-select
+                        [(value)]="selectedLectureTypeName"
+                        panelClass="mat-select-panel"
+                        formControlName="lectureTypeName">
+                        <mat-option
+                            [value]="''"
+                            (click)="onSubmit()">-- All --</mat-option>
+                        <mat-option 
+                            *ngFor="let lectureType of lectureTypes"
+                            [value]="lectureType.name"
+                            (click)="onSubmit()">
+                            <p>
+                                {{ lectureType.name }}
+                            </p>
+                        </mat-option>
+                    </mat-select>
+                    <mat-label><b> Lecture Type</b></mat-label>
+                    <mat-hint>Choose Lecture Type</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field fxFlex *ngIf="!showStudentFeatures && selectedDepartmentId"
+                    appearance="outline">
+                    <mat-select
+                        [(value)]="selectedStatus"
+                        panelClass="mat-select-panel"
+                        formControlName="status">
+                        <mat-option
+                            [value]="''"
+                            (click)="onSubmit()">-- All --</mat-option>
+                        <mat-option 
+                            *ngFor="let status of statusTypes"
+                            [value]="status"
+                            (click)="onSubmit()">
+                            <p>
+                                {{ status }}
+                            </p>
+                        </mat-option>
+                    </mat-select>
+                    <mat-label><b> Status </b></mat-label>
+                    <mat-hint>Choose Status</mat-hint>
+                </mat-form-field>
+            </div>
+
             <div *ngIf="selectedDepartmentId">
                 <div fxLayout fxLayoutGap="0.5em">
                     <button fxFlex
@@ -57,27 +105,6 @@
                 <mat-hint class="course-schedule-hint-text">Choose Course Schedule</mat-hint>
             </div>
 
-            <mat-form-field *ngIf="!showStudentFeatures && selectedCourseSchedule"
-                appearance="outline">
-                <mat-select
-                    [(value)]="selectedLectureTypeName"
-                    panelClass="mat-select-panel"
-                    formControlName="selectedLectureTypeName">
-                    <mat-option
-                        [value]="''"
-                        (click)="onSubmit()">-- All --</mat-option>
-                    <mat-option 
-                        *ngFor="let lectureType of lectureTypes"
-                        [value]="lectureType.name"
-                        (click)="onSubmit()">
-                        <p>
-                            {{ lectureType.name }}
-                        </p>
-                    </mat-option>
-                </mat-select>
-                <mat-label><b> Lecture Type</b></mat-label>
-                <mat-hint>Choose Lecture Type</mat-hint>
-            </mat-form-field>
         </form>
     </div>
 
@@ -120,10 +147,11 @@
                 [dataSource]="dataSource" matSort matSortActive="id"
                 matSortDirection="asc" matSortDisableClear>
 
+                <!-- 
                 <ng-container matColumnDef="id">
                     <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">ID</mat-header-cell>
                     <mat-cell *matCellDef="let excuseApplication" class="collapse-text">{{ excuseApplication.id }}</mat-cell>
-                </ng-container>
+                </ng-container> -->
 
                 <ng-container matColumnDef="student">
                     <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Student</mat-header-cell>
@@ -138,6 +166,11 @@
                 <ng-container matColumnDef="lecture">
                     <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Lecture</mat-header-cell>
                     <mat-cell *matCellDef="let excuseApplication" class="collapse-text">{{ excuseApplication.absence.classSession.lecture.nameIdentifier }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Status</mat-header-cell>
+                    <mat-cell *matCellDef="let excuseApplication" class="collapse-text">{{ excuseApplication.status ? 'Approved' : (!excuseApplication.status ? 'Rejected' : 'Pending')  }}</mat-cell>
                 </ng-container>
 
                 <div *ngIf="showStudentFeatures">

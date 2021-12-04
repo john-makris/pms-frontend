@@ -49,22 +49,28 @@
     margin-top: 1em;
 }
 
+/*
 .mat-column-id {
     max-width: 13%;
-}
+} */
 
 .mat-column-student {
-    max-width: 28%;
-    margin-left: 1em;
+    max-width: 50%;
+    min-width: 20%;
 }
 
 .mat-column-course {
-    max-width: 40%;
+    max-width: 30%;
+    min-width: 30%;
 }
 
 .mat-column-lecture {
+    max-width: 50%;
+    min-width: 25%;
+}
+
+.mat-column-status {
     max-width: 20%;
-    margin-left: 2em;
 }
 
 .selectorContainer {

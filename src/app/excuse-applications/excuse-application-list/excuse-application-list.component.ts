@@ -40,11 +40,15 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
   
   dataSource!: ExcuseApplicationsDataSource;
   departments!: Department[];
+  lectureTypes: LectureType[] = [];
+
   selectedDepartmentId: string = '';
   selectedCourseScheduleId: string = '';
   selectedCourseSchedule: CourseSchedule | null = null;
   selectedLectureTypeName: string = '';
-  lectureTypes: LectureType[] = [];
+
+  selectedStatus: string  = 'Pending';
+  statusTypes = ['Pending', 'Approved', 'Rejected'];
 
   totalItems: number = 0;
   currentPage: number = 0;
@@ -52,6 +56,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
   currentColumnDef: string = 'id';
   currentActivityState: string = '';
 
+  statusFormControlChangedSubscription!: Subscription;
   courseScheduleFormControlChangedSubscription!: Subscription;
   departmentFormControlChangedSubscription!: Subscription;
   ensureDialogSubscription!: Subscription;
@@ -62,7 +67,6 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
   departmentsSubscription!: Subscription;
 
   displayedColumns = [
-    'id',
     'student',
     'course',
     'lecture'
@@ -90,7 +94,8 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
     this.searchExcuseApplicationForm = this.formBuilder.group({
       departmentId: [this.selectedDepartmentId],
       courseSchedule: [null],
-      selectedLectureTypeName : [this.selectedLectureTypeName]
+      lectureTypeName : [this.selectedLectureTypeName],
+      status: [this.selectedStatus]
     });
 
     this.authService.user.subscribe((user: AuthUser | null) => {
@@ -132,7 +137,8 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
 
     if (+this.searchExcuseApplicationForm.value.departmentId) {
       this.dataSource.loadDepartmentExcuseApplications(
-        +this.selectedDepartmentId, +this.selectedCourseScheduleId, this.selectedLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
+        +this.selectedDepartmentId, +this.selectedCourseScheduleId, this.selectedLectureTypeName,
+        this.selectedStatus, '', 0, 3, 'asc', this.currentColumnDef);
     }
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
@@ -183,9 +189,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
         });
         this.selectedCourseSchedule = _courseSchedule;
         this.selectedCourseScheduleId = _courseSchedule.id.toString();
-        this.searchExcuseApplicationForm.patchValue({
-          isLectureTypeNameTheory: true
-        });
+
         this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
         this.onSubmit();
       }
@@ -200,14 +204,30 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
     .subscribe((courseSchedule: CourseSchedule) => {
       console.log("Changed CourseSchedule's value !");
       if (courseSchedule) {
-        this.displayedColumns = ['id', 'student', 'lecture'];
+        this.removeTableElement('course');
       } else {
-        this.displayedColumns = ['id', 'student', 'course', 'lecture'];
+        this.displayedColumns.push('course');
+      }
+    });
+
+    this.statusFormControlChangedSubscription = this.searchExcuseApplicationForm.controls.status.valueChanges
+    .subscribe((status: string) => {
+      console.log("Changed CourseSchedule's value !");
+      if (status === '') {
+        this.displayedColumns.push('status');
+      } else {
+        this.removeTableElement('status');
       }
     });
   }
 
   get df() { return this.searchExcuseApplicationForm.controls; }
+
+  removeTableElement(tableElement: String) {
+    this.displayedColumns.forEach((element,index)=>{
+        if(element===tableElement) this.displayedColumns.splice(index,1);
+    });
+  }
 
   onSubmit() {
     this.router.navigate(['/excuse-applications'], { relativeTo: this.route });
@@ -233,6 +253,10 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
     this.refreshTable();
   }
 
+  selectedStatusModerator(): boolean | null {
+    return this.selectedStatus === 'Pending' ? null : (this.selectedStatus === 'Approved' ? true : false);
+  }
+
   selectCourseSchedule() {
     this.courseScheduleSelectDialogService.selectCourseSchedule(this.searchExcuseApplicationForm.value.courseSchedule);
   }
@@ -246,11 +270,15 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
   clearCourseScheduleValue() {
     this.searchExcuseApplicationForm.patchValue({
       courseSchedule: '',
-      selectedLectureTypeName: ''
+      lectureTypeName: '',
+      status: 'Pending'
     });
     this.selectedCourseSchedule = null;
     this.selectedCourseScheduleId = '';
     this.selectedLectureTypeName = '';
+    this.selectedStatus = 'Pending';
+
+    // is usefull to next the courseSchedule
     this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
     this.router.navigate(['/excuse-applications'], { relativeTo: this.route});
     this.refreshTable();
@@ -287,6 +315,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
         +this.selectedDepartmentId,
         +this.selectedCourseScheduleId,
         this.selectedLectureTypeName,
+        this.selectedStatus,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,

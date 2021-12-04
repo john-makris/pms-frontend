@@ -37,6 +37,26 @@ export class ExcuseApplicationService {
         return this.http.get<ExcuseApplicationsResponseData>(API_URL + 'all/by_department_Id_courseSchedule_id_and_type/paginated_sorted_filtered', { params });
     }
 
+    getAllPageExcuseApplicationsByDepartmentIdAndType(params: HttpParams): Observable<ExcuseApplicationsResponseData> {
+        return this.http.get<ExcuseApplicationsResponseData>(API_URL + 'all/by_department_Id_and_type/paginated_sorted_filtered', { params });
+    }
+
+    getAllPageExcuseApplicationsByDepartmentIdAndStatus(params: HttpParams): Observable<ExcuseApplicationsResponseData> {
+        return this.http.get<ExcuseApplicationsResponseData>(API_URL + 'all/by_department_Id_and_status/paginated_sorted_filtered', { params });
+    }
+
+    getAllPageExcuseApplicationsByDepartmentIdTypeAndStatus(params: HttpParams): Observable<ExcuseApplicationsResponseData> {
+        return this.http.get<ExcuseApplicationsResponseData>(API_URL + 'all/by_department_Id_type_and_status/paginated_sorted_filtered', { params });
+    }
+
+    getAllPageExcuseApplicationsByDepartmentIdCourseScheduleIdAndStatus(params: HttpParams): Observable<ExcuseApplicationsResponseData> {
+        return this.http.get<ExcuseApplicationsResponseData>(API_URL + 'all/by_department_Id_courseSchedule_id_and_status/paginated_sorted_filtered', { params });
+    }
+
+    getAllPageExcuseApplicationsByAllParameters(params: HttpParams): Observable<ExcuseApplicationsResponseData> {
+        return this.http.get<ExcuseApplicationsResponseData>(API_URL + 'all/by_all_parameters/paginated_sorted_filtered', { params });
+    }
+
     getAllPageExcuseApplicationsByUserIdAndStatus(params: HttpParams): Observable<ExcuseApplicationsResponseData> {
         return this.http.get<ExcuseApplicationsResponseData>(API_URL + 'all/by_user_Id_and_status/paginated_sorted_filtered', { params });
     }
