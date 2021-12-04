@@ -170,7 +170,7 @@
 
                 <ng-container matColumnDef="status">
                     <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Status</mat-header-cell>
-                    <mat-cell *matCellDef="let excuseApplication" class="collapse-text">{{ excuseApplication.status ? 'Approved' : (!excuseApplication.status ? 'Rejected' : 'Pending')  }}</mat-cell>
+                    <mat-cell *matCellDef="let excuseApplication" class="collapse-text">{{ excuseApplication.status === true ? 'Approved' : (excuseApplication.status === false ? 'Rejected' : 'Pending')  }}</mat-cell>
                 </ng-container>
 
                 <div *ngIf="showStudentFeatures">
