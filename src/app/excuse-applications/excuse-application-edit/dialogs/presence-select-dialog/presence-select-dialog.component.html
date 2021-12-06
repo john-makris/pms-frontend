@@ -1,0 +1,82 @@
+<section
+    [ngClass]="'container'"
+    fxLayout="column"
+    fxLayoutAlign="center">
+
+    <h2 mat-dialog-title fxLayoutAlign="center">
+        Click an Absence to Select !
+    </h2>
+
+    <mat-dialog-content fxLayoutAlign="center">
+        <div class="table-container">
+            <div fxLayoutAlign="center">
+                <mat-form-field fxFlex="60%">
+                    <div fxLayout="row">
+                        <input
+                            matInput 
+                            placeholder="Search absences" #input>
+                        <mat-icon 
+                            matSuffix 
+                            inline="true">search</mat-icon>
+                        <button 
+                            mat-button 
+                            *ngIf="input.value"
+                            matSuffix 
+                            mat-icon-button (click)="clearInput()">
+                            <mat-icon inline="true">close</mat-icon>
+                        </button>
+                    </div>
+                </mat-form-field>
+            </div>
+            <div class="mat-elevation-z8">
+                <mat-table
+                    [dataSource]="dataSource" matSort matSortActive="id"
+                    matSortDirection="asc" matSortDisableClear>
+            
+                    <ng-container matColumnDef="course">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Course</mat-header-cell>
+                        <mat-cell *matCellDef="let presence" class="collapse-text">{{ presence.classSession.lecture.courseSchedule.course.name }}</mat-cell>
+                    </ng-container>
+    
+                    <ng-container matColumnDef="lecture">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Lecture</mat-header-cell>
+                        <mat-cell *matCellDef="let presence" class="collapse-text">{{ presence.classSession.lecture.nameIdentifier }}</mat-cell>
+                    </ng-container>
+            
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row
+                        *matRowDef="let row; columns: displayedColumns;"
+                        (click)="selectRow(row)"
+                        [ngClass]="{hovered: row.hovered, highlighted: selectedRowId === row.id}"
+                        (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"
+                        matRipple>
+                    </mat-row>
+                </mat-table>
+            
+                <mat-paginator
+                    [length]="totalItems"
+                    [pageSize]="3"
+                    [pageSizeOptions]="[3, 5]"
+                    showFirstLastButtons>
+                </mat-paginator>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions fxLayoutGap="0.5em">
+        <button
+            *ngIf="dialogStarted"
+            mat-raised-button
+            [disabled]="!isRowSelected"
+            color="primary" 
+            (click)="ok()">
+            OK
+        </button>
+        <button 
+            mat-button
+            color="warn"
+            (click)="close()">
+            Close
+        </button>
+    </mat-dialog-actions>
+</section>

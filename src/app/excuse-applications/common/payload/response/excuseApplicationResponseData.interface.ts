@@ -3,5 +3,6 @@ import { PresenceResponseData } from "src/app/presences/common/payload/response/
 export interface ExcuseApplicationResponseData {
     id: number,
     absence: PresenceResponseData,
-    status: boolean
+    status: boolean,
+    dateTime: string
 }

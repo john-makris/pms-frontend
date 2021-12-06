@@ -198,6 +198,8 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
     this.departmentFormControlChangedSubscription = this.searchExcuseApplicationForm.controls.departmentId.valueChanges.subscribe(() => {
       console.log("Changed Department's value !");
       this.checkForCourseScheduleValue();
+      this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
+      console.log("New published department value: "+(+this.selectedDepartmentId));
     });
 
     this.courseScheduleFormControlChangedSubscription = this.searchExcuseApplicationForm.controls.courseSchedule.valueChanges
@@ -212,7 +214,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
 
     this.statusFormControlChangedSubscription = this.searchExcuseApplicationForm.controls.status.valueChanges
     .subscribe((status: string) => {
-      console.log("Changed CourseSchedule's value !");
+      console.log("Changed Status value !");
       if (status === '') {
         this.displayedColumns.push('status');
       } else {
@@ -221,7 +223,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
     });
   }
 
-  get df() { return this.searchExcuseApplicationForm.controls; }
+  get f() { return this.searchExcuseApplicationForm.controls; }
 
   removeTableElement(tableElement: String) {
     this.displayedColumns.forEach((element,index)=>{
@@ -278,7 +280,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
     this.selectedLectureTypeName = '';
     this.selectedStatus = 'Pending';
 
-    // is usefull to next the courseSchedule
+    // is usefull to next the courseSchedule --> For Admin Features Yes !!!
     this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
     this.router.navigate(['/excuse-applications'], { relativeTo: this.route});
     this.refreshTable();

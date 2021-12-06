@@ -1,1 +1,74 @@
-<p>excuse-application-detail works!</p>
+<section *ngIf="excuseApplicationTable"
+    [ngClass]="'container'"
+    [ngClass.lt-md]="'min-container'"
+    fxLayout>
+    <div *ngIf="excuseApplication">
+        <mat-card
+            class="mat-elevation-z8"
+            fxFlex.xs="19em"
+            fxFlex="22em">
+            <mat-card-title fxLayoutAlign="center">
+                Application Details
+            </mat-card-title>
+            <br>
+            <mat-card-content fxLayout="column" 
+            fxLayoutAlign="center"
+            fxLayoutGap="1em">
+                <div>
+                    <mat-label><strong>Student:</strong></mat-label>
+                    {{ excuseApplication?.absence?.student?.username }}
+                </div>
+                <div>
+                    <mat-label><strong>Student's group:</strong></mat-label>
+                    {{ excuseApplication?.absence?.classSession?.classGroup?.nameIdentifier }}
+                </div>
+                <div>
+                    <mat-label><strong>Course:</strong></mat-label>
+                    {{ excuseApplication?.absence?.classSession?.lecture?.courseSchedule?.course?.name }}
+                </div>
+                <div>
+                    <mat-label><strong>Lecture:</strong></mat-label>
+                    {{ excuseApplication?.absence?.classSession?.lecture?.nameIdentifier }}
+                </div>
+                <div>
+                    <mat-label><strong>Lecture's session date & time:</strong></mat-label>
+                    <div>{{ excuseApplication?.absence?.classSession?.date + ' ' + 
+                        excuseApplication?.absence?.classSession?.classGroup?.startTime + ' - ' + 
+                        excuseApplication?.absence?.classSession?.classGroup?.endTime }}</div>
+                </div>
+                <div>
+                    <mat-label><strong>Status:</strong></mat-label>
+                    {{ excuseApplication?.status === true ? 'Approved' : (excuseApplication?.status === false ? 'Rejected' : 'Pending')  }}
+                </div>
+                <div>
+                    <mat-label><strong>Date & time of application:</strong></mat-label>
+                    <div>{{ excuseApplication?.dateTime }}</div>
+                </div>
+
+            </mat-card-content>
+            <mat-card-actions>
+                <div>
+                    <button
+                        mat-raised-button color="primary"
+                        (click)="editExcuseApplication()">
+                        Edit
+                    </button>
+              
+                    <button 
+                        mat-raised-button color="warn"
+                        (click)="deleteExcuseApplication(excuseApplication.id)">
+                        Delete
+                    </button>
+                </div>
+                <hr>
+                <div fxLayoutAlign="end">
+                    <button 
+                        mat-button color="primary"
+                        (click)="onCancel()">
+                        Cancel
+                    </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</section>

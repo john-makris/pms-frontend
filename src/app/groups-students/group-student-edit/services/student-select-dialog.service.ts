@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { ClassGroup } from 'src/app/classes-groups/class-group.model';
-import { ClassSession } from 'src/app/classes-sessions/class-session.model';
 import { UserResponseData } from 'src/app/users/common/payload/response/userResponseData.interface';
 import { StudentSelectDialogComponent } from '../dialogs/student-select-dialog/student-select-dialog.component';
 

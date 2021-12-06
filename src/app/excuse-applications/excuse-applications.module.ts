@@ -5,6 +5,7 @@ import { ExcuseApplicationEditComponent } from "./excuse-application-edit/excuse
 import { ExcuseApplicationListComponent } from "./excuse-application-list/excuse-application-list.component";
 import { ExcuseApplicationsRoutingModule } from "./excuse-applications-routing.module";
 import { ExcuseApplicationsComponent } from "./excuse-applications.component";
+import { PresenceSelectDialogComponent } from './excuse-application-edit/dialogs/presence-select-dialog/presence-select-dialog.component';
 
 @NgModule({
     declarations: [
@@ -12,6 +13,7 @@ import { ExcuseApplicationsComponent } from "./excuse-applications.component";
         ExcuseApplicationListComponent,
         ExcuseApplicationEditComponent,
         ExcuseApplicationDetailComponent,
+        PresenceSelectDialogComponent
     ],
     imports: [
         SharedModule,

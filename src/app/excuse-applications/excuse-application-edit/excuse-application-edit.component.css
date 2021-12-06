@@ -1,0 +1,145 @@
+.container {
+    /*border: 2px solid black;*/
+    padding-top: 5em;
+    padding-bottom: 2em;
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+.min-container {
+    /*border: 2px solid black;*/
+    padding-top: 2em;
+    padding-bottom: 2em;
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+}
+
+.non-form-field-course-schedule {
+    margin-top: 0.6em;
+    margin-left: 0.4em;
+    margin-right: 0.4em;
+    padding-bottom: 0.5em;
+}
+
+.border-invalid {
+  border: 0.15em solid #f00;
+}
+
+.color-invalid {
+    color: #f00;
+}
+
+.course-schedule-button {
+    line-height: 3.55em;
+}
+
+.validation-text {
+    font-size: 75%;
+    margin-top: 0.2em;
+    margin-left: 4%;
+}
+
+.selection-text {
+    margin-left: 4%;
+}
+
+.aligner {
+    padding-top: 0.45em;
+}
+
+.radio-button-aligner {
+    margin-left: 0.42em;
+    margin-right: 0.42em;
+}
+
+.lecture-type-position {
+    background-color: #f00;
+}
+
+.course-schedule-hint-text {
+    font-size: 75%;
+    margin-top: 0.2em;
+    margin-left: 1em;
+}
+
+.aligner {
+    padding-top: 0.45em;
+}
+
+.class-group-aligner {
+    margin-top: 0.6em;
+    margin-left: 0.35em;
+    margin-right: 0.35em;
+    margin-bottom: 0.5em;
+}
+
+.non-form-field-course {
+    margin-top: 0.6em;
+    margin-left: 0.4em;
+    margin-right: 0.4em;
+}
+
+.course-schedule-hint-text {
+    font-size: 75%;
+    margin-top: 0.2em;
+    margin-left: 1em;
+}
+
+.mat-icon-button-search-form {
+    font-size: 1.2em;
+    height: 1em;
+    width: 1em;
+    line-height: 1em;
+}
+
+.border-invalid {
+    border: 0.15em solid #f00;
+}
+
+.color-invalid {
+    color: #f00;
+}
+
+.aligner {
+    margin-left: 0.6em;
+}
+
+.collapse-button-text {
+    text-align: left;
+    font-weight: normal;
+    word-break: break-word;
+    white-space: pre-wrap !important;
+    padding-left: 0.6em;
+}
+
+mat-form-field {
+    padding: 0.35em;
+}
+
+mat-card-actions {
+    margin-left: 0.4em;
+}
+
+.radio-container {
+    padding-left: 0.5em;
+}
+
+.mat-radio-button ~ .mat-radio-button {
+    margin-left: 1em;
+}
+
+.radio-container {
+    padding-left: 0.5em;
+}
+
+.small-width {
+    width: 5em;
+}
+
+.datePickerWidth {
+    width: 10em;
+}
+
+.timeInputWidth {
+    width: 8em;
+}

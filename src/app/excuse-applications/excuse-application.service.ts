@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
+import { ExcuseApplicationRequestData } from "./common/payload/request/excuseApplicationRequestData.interface";
 import { ExcuseApplicationResponseData } from "./common/payload/response/excuseApplicationResponseData.interface";
 import { ExcuseApplicationsResponseData } from "./common/payload/response/excuseApplicationsResponseData.interface";
 
@@ -11,7 +12,7 @@ const API_URL = 'http://localhost:8080/pms/excuse-applications/';
 })
 export class ExcuseApplicationService {
 
-    excuseApplicationSubject = new BehaviorSubject<any | null>(null);
+    excuseApplicationSubject = new BehaviorSubject<ExcuseApplicationResponseData | null>(null);
 
     excuseApplicationState = this.excuseApplicationSubject.asObservable();
 
@@ -24,6 +25,22 @@ export class ExcuseApplicationService {
     identifierSuffixesState = this.identifierSuffixesSubject.asObservable();
 
     constructor(private http: HttpClient) { }
+
+    createExcuseApplication(excuseApplicationRequestData: ExcuseApplicationRequestData): Observable<ExcuseApplicationRequestData> {
+        return this.http.post<ExcuseApplicationRequestData>(API_URL + 'create/', excuseApplicationRequestData);
+    }
+
+    updateExcuseApplication(excuseApplicationId: number, excuseApplicationRequestData: ExcuseApplicationRequestData): Observable<any> {
+        return this.http.put(API_URL + 'update/' + excuseApplicationId, excuseApplicationRequestData);
+    }
+
+    deleteExcuseApplicationById(excuseApplicationId: number): Observable<any> {
+        return this.http.delete<any>(API_URL + 'delete/' + excuseApplicationId);
+    }
+
+    getExcuseApplicationById(excuseApplicationId: number): Observable<ExcuseApplicationResponseData> {
+        return this.http.get<ExcuseApplicationResponseData>(API_URL + excuseApplicationId);
+    }
 
     getAllPageExcuseApplicationsByDepartmentId(params: HttpParams): Observable<ExcuseApplicationsResponseData> {
         return this.http.get<ExcuseApplicationsResponseData>(API_URL + 'all/by_department_Id/paginated_sorted_filtered', { params });

@@ -1,1 +1,103 @@
-<p>excuse-application-edit works!</p>
+<section *ngIf="tableLoaded"
+    [ngClass]="'container'"
+    [ngClass.lt-md]="'min-container'"
+    fxLayout>
+    <form 
+        fxLayout
+        [formGroup]="excuseApplicationForm"
+        (ngSubmit)="onSubmit()">
+        <mat-card
+            class="mat-elevation-z8"
+            fxFlex.xs="19em"
+            fxFlex.sm="25em" 
+            fxFlex.gt-sm="25em">
+            <mat-card-title fxLayoutAlign="center">
+                <h1>{{ isAddMode ? 'Create Application' : 'Edit Application'}}</h1>
+            </mat-card-title>
+            <mat-card-content fxLayout="column" fxLayoutGap="0.5em"
+            fxLayoutAlign="center">
+
+                <div fxLayout="column" class="class-group-aligner">
+                    <div fxLayout fxLayoutGap="0.5em">
+                        <!-- Student -->
+                        <button fxFlex
+                        [class.border-invalid]="f.studentId.invalid && f.studentId.touched"
+                            class="collapse-button-text"
+                            type="button"
+                            mat-stroked-button
+                            (click)="selectStudent()">
+                            <div>{{'Selected: '}}{{ currentStudent ? currentStudent.username : ' -- None -- ' }}</div>
+                        </button>
+                        <div *ngIf="currentStudent" class="aligner">
+                            <button class="mat-icon-button-search-form"
+                                type="button"
+                                mat-icon-button
+                                (click)="clearStudentValues()">
+                                <mat-icon inline="true">close</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <mat-hint *ngIf="!(f.studentId.errors?.required && f.studentId.touched)" class="course-schedule-hint-text">Choose Student</mat-hint>
+                    <mat-error  class="course-schedule-hint-text" *ngIf="f.studentId.errors?.required && f.studentId.touched">Missing Student</mat-error>
+                </div>
+
+                <div fxLayout="column" class="class-group-aligner" *ngIf="currentStudent">
+                    <div fxLayout fxLayoutGap="0.5em">
+                        <!-- Absence -->
+                        <button fxFlex
+                        [class.border-invalid]="f.absenceId.invalid && f.absenceId.touched"
+                            class="collapse-button-text"
+                            type="button"
+                            mat-stroked-button
+                            (click)="selectAbsence()">
+                            <div>{{'Selected: '}}{{ currentAbsence ? currentAbsence.classSession.lecture.courseSchedule.course.name + ', ' + currentAbsence.classSession.lecture.nameIdentifier : ' -- None -- ' }}</div>
+                        </button>
+                        <div *ngIf="currentAbsence" class="aligner">
+                            <button class="mat-icon-button-search-form"
+                                type="button"
+                                mat-icon-button
+                                (click)="clearAbsenceValues()">
+                                <mat-icon inline="true">close</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <mat-hint *ngIf="!(f.absenceId.errors?.required && f.absenceId.touched)" class="course-schedule-hint-text">Choose Absence</mat-hint>
+                    <mat-error  class="course-schedule-hint-text" *ngIf="f.absenceId.errors?.required && f.absenceId.touched">Missing Absence</mat-error>
+                </div>
+
+                <div *ngIf="!isAddMode" fxLayout="column" fxLayoutGap="0.5em">
+                    <mat-radio-group
+                        formControlName="status">
+                        <div class="radio-container">
+                            <mat-radio-button [value]=true>Approve</mat-radio-button>
+                            <mat-radio-button [value]=false>Reject</mat-radio-button>
+                        </div>
+                    </mat-radio-group>
+                </div>
+
+                <div fxLayoutAlign="center">
+                    <mat-spinner *ngIf="isLoading"></mat-spinner>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <div
+                    *ngIf="!isLoading"
+                    fxLayout="row"
+                    fxLayoutAlign="start">
+                        <button 
+                            type="submit" 
+                            mat-raised-button color="primary" 
+                            [disabled]="excuseApplicationForm.invalid || isLoading">
+                            {{ isAddMode ? 'Save' : 'Update'}}
+                        </button>
+                        <button 
+                            type="button" 
+                            mat-button color="primary" 
+                            (click)="onCancel()">
+                            Cancel
+                        </button>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+    </form>
+</section>

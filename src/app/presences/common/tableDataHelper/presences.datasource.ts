@@ -47,6 +47,41 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
 
     }
 
+    loadPresencesByUserIdAndStatus(classSessionId: number,
+        status: string,
+        filter:string,
+        pageIndex:number,
+        pageSize:number,
+        sortDirection:string,
+        currentColumnDef:string) {
+
+        if (classSessionId) {
+            let params: HttpParams = this.createPresenceByUserParams(classSessionId,
+                status, filter, pageIndex, pageSize, sortDirection, currentColumnDef);
+                console.log("PARAMS: "+params);
+
+            this.loadingSubject.next(true);
+
+            this.retrievePresenceDataByUser(params);
+        } else {
+            this.checkData(null);
+        }
+
+    }
+
+    retrievePresenceDataByUser(params: HttpParams) {
+        this.presenceService.getAllPagePresencesByUserIdAndStatus(params)
+        .pipe(
+            catchError(() => of([])),
+            finalize(() => this.loadingSubject.next(false))
+        )
+        .pipe(first())
+        .subscribe((response: any) => {
+            console.log("RESPONSE !!!!!!! "+JSON.stringify(response)+" You call me !");
+            this.checkData(response);
+        });
+    }
+
     retrieveData(params: HttpParams) {
         this.presenceService.getAllPagePresencesByClassSessionId(params)
         .pipe(
@@ -79,6 +114,49 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
                 currentPageItems: 0
             });
         }
+    }
+
+    createPresenceByUserParams(
+        userId: number,
+        status: string,
+        filter:string,
+        pageIndex:number,
+        pageSize:number,
+        sortDirection:string,
+        currentColumnDef:string): HttpParams {
+
+            let params = new HttpParams();
+
+            if (userId) {
+                //console.log("ID: "+userId);
+                params=params.set('userId', userId);
+            }
+
+            if (status) {
+                //console.log("Status: "+status);
+                params=params.set('typeOfStatus', status);
+            }
+
+            if (filter) {
+                //console.log("Filter: "+filter);
+                params=params.set('filter', filter);
+            }
+    
+            if (pageIndex) {
+                //console.log("pageIndex: "+pageIndex);
+                params=params.set('page', pageIndex);
+            }
+        
+            if (pageSize) {
+                //console.log("pageSize: "+pageSize);
+                params=params.set('size', pageSize);
+            }
+        
+            if (sortDirection && currentColumnDef) {
+                params=params.set('sort', currentColumnDef+","+sortDirection);
+                //console.log("SORT: "+currentColumnDef+","+sortDirection);
+            }
+        return params;
     }
 
     createParams(

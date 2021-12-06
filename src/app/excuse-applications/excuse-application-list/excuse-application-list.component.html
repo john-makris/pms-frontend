@@ -12,7 +12,7 @@
         <mat-divider></mat-divider>
         <br>
         <br>
-        <!-- Search ClassesGroups Form -->
+        <!-- Search Excuse Applications Form -->
         <form fxLayout="column"
             [formGroup]="searchExcuseApplicationForm" fxLayoutGap="0.5em">
 
@@ -38,7 +38,7 @@
                 <mat-hint>Choose Department</mat-hint>
             </mat-form-field>
 
-            <div fxLayout fxLayoutGap="0.5em">
+            <div fxLayout fxLayoutGap="0.5em" fxLayout.lt-sm="column">
                 <mat-form-field fxFlex *ngIf="!showStudentFeatures && selectedDepartmentId"
                     appearance="outline">
                     <mat-select
@@ -108,18 +108,18 @@
         </form>
     </div>
 
-    <!-- [matTooltip]="!selectedDepartmentId ? 'Select a Specific Department' : 'Select a Specific Course Schedule'"
+    <span 
+        [matTooltip]="'Select a Specific Department'"
         matTooltipPosition="after"
-        [matTooltipDisabled]="selectedDepartmentId !=='' && selectedCourseScheduleId !==''" -->
-    <span>
+        [matTooltipDisabled]="selectedDepartmentId !==''">
         <button
+            [disabled]="selectedDepartmentId === ''"
             *ngIf="departments"
             type="button"
             mat-raised-button
             color="primary"
             routerLink="add">Create Application</button>
     </span>
-    <!-- [disabled]="selectedDepartmentId === '' || selectedCourseScheduleId ===''" -->
 
     <div class="table-container">
         <div fxLayoutAlign="center">

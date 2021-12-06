@@ -5,7 +5,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
-import { ClassGroup } from 'src/app/classes-groups/class-group.model';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { UserResponseData } from 'src/app/users/common/payload/response/userResponseData.interface';
 import { UsersDataSource } from 'src/app/users/common/tableDataHelper/users.datasource';
@@ -32,7 +31,7 @@ export class StudentSelectDialogComponent implements OnInit, AfterViewInit, OnDe
   isRowSelected: boolean = false;
   selectedStudent!: UserResponseData | null;
 
-  currentCourseScheduleId: number = 0;
+  departmentId: number = 0;
   currentClassGroupTypeId: number = 0;
 
   currentClassSessionId: number = 0;
@@ -65,23 +64,28 @@ export class StudentSelectDialogComponent implements OnInit, AfterViewInit, OnDe
 
     if (this.currentNameIdentifier.includes('group')) {
       console.log("Instance of Class Group");
-      this.currentCourseScheduleId = this.data.object.courseSchedule.id;
-      console.log("Course Schedule Id: " + this.currentCourseScheduleId);
+      this.departmentId = this.data.object.courseSchedule.id;
+      console.log("Course Schedule Id: " + this.departmentId);
   
       this.currentClassGroupTypeId = this.data.object.groupType.id;
       console.log("Class Group Type Id: " + this.currentClassGroupTypeId);
   
-      this.dataSource.loadStudentsWithoutGroup(this.currentCourseScheduleId, 
+      this.dataSource.loadStudentsWithoutGroup(this.departmentId, 
         this.currentClassGroupTypeId, '', 0, 3, 'asc', this.currentColumnDef);
-    }
-
-    if (this.currentNameIdentifier.includes('session')) {
+    }else if (this.currentNameIdentifier.includes('session')) {
       console.log("Instance of Class Session");
 
       this.currentClassSessionId = this.data.object.id;
       console.log("Class Session Id: " + this.currentClassSessionId);
   
       this.dataSource.loadClassSessionStudents(this.currentClassSessionId, 
+        '', 0, 3, 'asc', this.currentColumnDef);
+    } else {
+      console.log("Instance of Excuse Application");
+      this.departmentId = this.data.object.departmentId;
+      console.log("Department Id: " + this.departmentId);
+
+      this.dataSource.loadUsers(this.departmentId, 'ROLE_STUDENT',
         '', 0, 3, 'asc', this.currentColumnDef);
     }
 
@@ -124,17 +128,25 @@ export class StudentSelectDialogComponent implements OnInit, AfterViewInit, OnDe
   loadStudentsPage() {
     if (this.currentNameIdentifier.includes('group')) {
       this.dataSource.loadStudentsWithoutGroup(
-        this.currentCourseScheduleId,
+        this.departmentId,
         this.currentClassGroupTypeId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,
         this.sort.direction,
         this.currentColumnDef);
-    }
-    if (this.currentNameIdentifier.includes('session')) {
+    } else if (this.currentNameIdentifier.includes('session')) {
       this.dataSource.loadClassSessionStudents(
         this.currentClassSessionId,
+        this.input.nativeElement.value,
+        this.paginator.pageIndex,
+        this.paginator.pageSize,
+        this.sort.direction,
+        this.currentColumnDef);
+    } else {
+      this.dataSource.loadUsers(
+        this.departmentId,
+        'ROLE_STUDENT',
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,
