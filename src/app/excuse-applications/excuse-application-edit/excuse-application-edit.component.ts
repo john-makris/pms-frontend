@@ -168,14 +168,16 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
 
   selectAbsence() {
     if (this.currentStudent) {
-      this.presenceSelectDialogService.selectPresence(this.createPresenceSelectDialogData(this.currentStudent, false));
+      this.presenceSelectDialogService.selectPresence(this.createPresenceSelectDialogData(this.currentStudent, false, false));
     }
   }
 
-  createPresenceSelectDialogData(currentStudent: UserResponseData, presenceStatus: boolean | null): PresenceSelectDialogData {
+  createPresenceSelectDialogData(currentStudent: UserResponseData, 
+    presenceStatus: boolean | null, excuseStatus: boolean | null): PresenceSelectDialogData {
     const presenceSelectDialogData = {
       user: currentStudent,
-      presenceStatus: presenceStatus
+      presenceStatus: presenceStatus,
+      excuseStatus: excuseStatus
     }
     return presenceSelectDialogData;
   }
@@ -256,7 +258,7 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
     this.updateExcuseApplicationSubscription = this.excuseApplicationService.updateExcuseApplication(this.id, excuseApplicationData)
       .pipe(last())
       .subscribe(() => {
-        this.snackbarService.success('Excuse application updated');
+        this.snackbarService.success(excuseApplicationData.status ? (excuseApplicationData.status === true ? "Excuse application Approved" : "Excuse application Rejected") : "Excuse application Rejected" );
         this.router.navigate(['../../'], { relativeTo: this.route});
       }).add(() => this.isLoading = false);
   }

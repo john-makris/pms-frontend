@@ -2,10 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { ClassSessionService } from 'src/app/classes-sessions/class-session.service';
 import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.service';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
-import { StudentsPreviewDialogService } from 'src/app/courses-schedules/course-schedule-detail/services/students-preview-dialog.service';
 import { PresenceResponseData } from '../common/payload/response/presenceResponseData.interface';
 import { PresenceService } from '../presence.service';
 

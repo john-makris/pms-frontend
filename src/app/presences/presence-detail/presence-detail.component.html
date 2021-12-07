@@ -22,6 +22,14 @@
                     <label><strong>Status:</strong></label>
                     {{ presence?.status ? 'Present' : presence?.status === false ? 'Absent' : 'Pending' }}
                 </div>
+                <div *ngIf="presence?.status === false">
+                    <mat-label><strong>Excuse Status:</strong></mat-label>
+                    {{ presence?.excuseStatus ? 'Excused' : 'Inexcusable' }}
+                </div>
+                <div>
+                    <label><strong>Date & time:</strong></label>
+                    {{ presence?.dateTime }}
+                </div>
             </mat-card-content>
             <mat-card-actions>
                 <div>

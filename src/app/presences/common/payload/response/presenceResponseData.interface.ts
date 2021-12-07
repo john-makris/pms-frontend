@@ -4,6 +4,8 @@ import { UserResponseData } from "src/app/users/common/payload/response/userResp
 export interface PresenceResponseData {
     id: number,
     status: boolean,
+    excuseStatus: boolean,
     classSession: ClassSessionResponseData,
-    student: UserResponseData
+    student: UserResponseData,
+    dateTime: string
 }

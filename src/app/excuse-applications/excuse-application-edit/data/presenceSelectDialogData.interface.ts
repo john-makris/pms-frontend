@@ -2,5 +2,6 @@ import { UserResponseData } from "src/app/users/common/payload/response/userResp
 
 export interface PresenceSelectDialogData {
     user: UserResponseData,
-    presenceStatus: boolean | null
+    presenceStatus: boolean | null,
+    excuseStatus: boolean | null
 }

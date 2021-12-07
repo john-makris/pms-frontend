@@ -34,6 +34,7 @@ export class PresenceSelectDialogComponent implements OnInit, AfterViewInit, OnD
 
   currentUserId: number = 0;
   currentPresenceStatus: string = '';
+  currentExcuseStatus: string = '';
 
   pageDetailSubscription!: Subscription;
 
@@ -60,9 +61,10 @@ export class PresenceSelectDialogComponent implements OnInit, AfterViewInit, OnD
 
     this.currentUserId = this.data.object.user.id;
     this.currentPresenceStatus = this.data.object.presenceStatus === null ? '' : this.data.object.presenceStatus.toString() ;
-  
-    this.dataSource.loadPresencesByUserIdAndStatus(this.currentUserId,
-      this.currentPresenceStatus, '', 0, 3, 'asc', this.currentColumnDef);
+    this.currentExcuseStatus = this.data.object.excuseStatus === null ? '' : this.data.object.excuseStatus.toString() ;
+
+    this.dataSource.loadUserPresences(this.currentUserId,
+      this.currentPresenceStatus, this.currentExcuseStatus, '', 0, 3, 'asc', this.currentColumnDef);
 
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
@@ -102,9 +104,10 @@ export class PresenceSelectDialogComponent implements OnInit, AfterViewInit, OnD
   }
 
   loadPresencesPage() {
-      this.dataSource.loadPresencesByUserIdAndStatus(
+      this.dataSource.loadUserPresences(
         this.currentUserId,
         this.currentPresenceStatus,
+        this.currentExcuseStatus,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,

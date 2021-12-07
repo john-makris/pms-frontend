@@ -32,8 +32,8 @@ export class PresenceService {
         return this.http.get<PresencesResponseData[]>(API_URL + 'all/by_class_session_id/paginated_sorted_filtered', { params });
     }
 
-    getAllPagePresencesByUserIdAndStatus(params: HttpParams): Observable<any> {
-        return this.http.get<PresencesResponseData[]>(API_URL + 'all/by_user_id_and_status/paginated_sorted_filtered', { params });
+    getAllPagePresencesByUserIdPresenceStatusAndExcuseStatus(params: HttpParams): Observable<any> {
+        return this.http.get<PresencesResponseData[]>(API_URL + 'all/by_user_id_status_and_excuse_status/paginated_sorted_filtered', { params });
     }
 
     getAllPresences(): Observable<Presence[]> {
