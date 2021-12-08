@@ -44,7 +44,7 @@ export class CourseDetailComponent implements OnInit, OnDestroy {
 
   deleteCourse(id: number) {
     if (!this.course) return;
-    this.ensureDialogService.openDialog('will be Deleted', this.course.name);
+    this.ensureDialogService.openDialog('will be Deleted', this.course.name, 'delete');
     this.ensureDialogSubscription = this.ensureDialogService
       .ensureDialogState
       .pipe(first())

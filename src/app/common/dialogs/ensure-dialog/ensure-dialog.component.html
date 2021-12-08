@@ -5,7 +5,8 @@
     >Warning !</h1>
   <div mat-dialog-content fxLayoutAlign="center" fxLayout="column">
     <p>{{ data.content }}, {{ data.title }} !</p>
-    <p>Are you sure to Delete ?</p>
+    <p *ngIf="reason === 'delete'">Are you sure to Delete ?</p>
+    <p *ngIf="reason === 'add'">Are you sure to apply ?</p>
   </div>
   <div mat-dialog-actions>
     <button mat-button (click)="onNoClick()">No</button>

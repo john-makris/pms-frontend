@@ -12,12 +12,12 @@
             fxFlex.sm="25em" 
             fxFlex.gt-sm="25em">
             <mat-card-title fxLayoutAlign="center">
-                <h1>{{ isAddMode ? 'Create Application' : 'Edit Application'}}</h1>
+                <h1>{{ isAddMode ? 'Create Application' : 'Edit Application Status'}}</h1>
             </mat-card-title>
             <mat-card-content fxLayout="column" fxLayoutGap="0.5em"
             fxLayoutAlign="center">
 
-                <div fxLayout="column" class="class-group-aligner">
+                <div fxLayout="column" class="class-group-aligner" *ngIf="isAddMode">
                     <div fxLayout fxLayoutGap="0.5em">
                         <!-- Student -->
                         <button fxFlex
@@ -41,7 +41,7 @@
                     <mat-error  class="course-schedule-hint-text" *ngIf="f.studentId.errors?.required && f.studentId.touched">Missing Student</mat-error>
                 </div>
 
-                <div fxLayout="column" class="class-group-aligner" *ngIf="currentStudent">
+                <div fxLayout="column" class="class-group-aligner" *ngIf="currentStudent && isAddMode">
                     <div fxLayout fxLayoutGap="0.5em">
                         <!-- Absence -->
                         <button fxFlex
@@ -65,7 +65,29 @@
                     <mat-error  class="course-schedule-hint-text" *ngIf="f.absenceId.errors?.required && f.absenceId.touched">Missing Absence</mat-error>
                 </div>
 
-                <div *ngIf="!isAddMode" fxLayout="column" fxLayoutGap="0.5em">
+                <mat-form-field appearance="outline" *ngIf="isAddMode && currentStudent">
+                    <mat-label>Reason</mat-label>
+                    <textarea 
+                        type="text"
+                        matInput
+                        maxlength="200"
+                        minlength="30"
+                        cdkTextareaAutosize
+                        cdkAutosizeMinRows="2"
+                        cdkAutosizeMaxRows="8"
+                        placeholder="Reason"
+                        formControlName="reason">
+                    </textarea>
+                    <div matSuffix>
+                        <mat-icon>text_snippet</mat-icon>
+                    </div>
+                    <mat-hint>Please enter a reason (up to 200 charachers).</mat-hint>
+                    <mat-error *ngIf="f.reason.errors?.required">Missing reason.</mat-error>
+                    <mat-error *ngIf="f.reason.errors?.maxlength">Reason cannot be greater than 200 characters.</mat-error>
+                    <mat-error *ngIf="f.reason.errors?.minlength">Reason cannot be less than 30 characters.</mat-error>
+                </mat-form-field>
+
+                <div *ngIf="!isAddMode && currentStudent" fxLayout="column" fxLayoutGap="0.5em">
                     <mat-radio-group
                         formControlName="status">
                         <div class="radio-container">
@@ -88,7 +110,7 @@
                             type="submit" 
                             mat-raised-button color="primary" 
                             [disabled]="excuseApplicationForm.invalid || isLoading">
-                            {{ isAddMode ? 'Save' : 'Update'}}
+                            {{ isAddMode ? 'Apply' : 'Confirm'}}
                         </button>
                         <button 
                             type="button" 

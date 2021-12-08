@@ -18,6 +18,7 @@ export class ExcuseApplicationDetailComponent implements OnInit, OnDestroy {
   excuseApplication!: ExcuseApplicationResponseData;
   ensureDialogStatus!: boolean;
   excuseApplicationTable: boolean = false;
+  panelOpenState: boolean = false;
 
   private ensureDialogSubscription!: Subscription;
   excuseApplicationTableLoadedSubscription!: Subscription;
@@ -60,7 +61,7 @@ export class ExcuseApplicationDetailComponent implements OnInit, OnDestroy {
   deleteExcuseApplication(id: number) {
 
     if (!this.excuseApplication) return;
-    this.ensureDialogService.openDialog('will be Deleted', 'Excuse Application');
+    this.ensureDialogService.openDialog('will be Deleted', 'Excuse Application', 'delete');
 
     this.ensureDialogSubscription = this.ensureDialogService
       .ensureDialogState

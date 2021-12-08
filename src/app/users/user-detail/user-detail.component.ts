@@ -65,7 +65,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
   deleteUser(id: number) {
     if (!this.user) return;
-    this.ensureDialogService.openDialog('will be Deleted', this.user.username);
+    this.ensureDialogService.openDialog('will be Deleted', this.user.username, 'delete');
     this.ensureDialogSubscription = this.ensureDialogService
       .ensureDialogState
       .pipe(first())

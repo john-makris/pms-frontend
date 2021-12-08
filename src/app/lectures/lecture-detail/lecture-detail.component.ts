@@ -57,7 +57,7 @@ export class LectureDetailComponent implements OnInit {
   
   deleteLecture(id: number) {
     if (!this.lecture) return;
-    this.ensureDialogService.openDialog('will be Deleted', 'Lecture '+this.lecture.courseSchedule.course.name+' '+this.lecture.nameIdentifier);
+    this.ensureDialogService.openDialog('will be Deleted', 'Lecture '+this.lecture.courseSchedule.course.name+' '+this.lecture.nameIdentifier, 'delete');
     this.ensureDialogSubscription = this.ensureDialogService
       .ensureDialogState
       .pipe(first())

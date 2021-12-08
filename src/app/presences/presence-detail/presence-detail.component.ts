@@ -59,7 +59,7 @@ export class PresenceDetailComponent implements OnInit, OnDestroy {
   deletePresence(id: number) {
 
     if (!this.presence) return;
-    this.ensureDialogService.openDialog('will be Deleted', 'Presence for student '+this.presence.student.username);
+    this.ensureDialogService.openDialog('will be Deleted', 'Presence for student '+this.presence.student.username, 'delete');
 
     this.ensureDialogSubscription = this.ensureDialogService
       .ensureDialogState

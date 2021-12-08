@@ -64,8 +64,8 @@ export class ClassGroupDetailComponent implements OnInit, OnDestroy {
     }
 
     if (!this.classGroup) return;
-    this.ensureDialogService.openDialog('will be Deleted', this.classGroup.nameIdentifier+' for '+this.classGroup.courseSchedule.course.name+' '
-    +groupType);
+    this.ensureDialogService.openDialog('will be Deleted', this.classGroup.nameIdentifier+' for '
+    +this.classGroup.courseSchedule.course.name+' '+groupType,'delete');
     this.ensureDialogSubscription = this.ensureDialogService
       .ensureDialogState
       .pipe(first())

@@ -9,12 +9,15 @@ import { EnsureDialogData } from '../ensure-dialog-data.interface';
 })
 export class EnsureDialogComponent implements OnInit {
 
+  reason: string = '';
+
   constructor(
     public dialogRef: MatDialogRef<EnsureDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: EnsureDialogData
   ) { }
 
   ngOnInit(): void {
+    this.reason = this.data.reason;
   }
 
   onNoClick(): void {

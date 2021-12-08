@@ -10,10 +10,10 @@ export class EnsureDialogService {
 
     constructor(private dialog: MatDialog) { }
 
-    openDialog(_title: string, _content: string): void {
+    openDialog(_title: string, _content: string, _reason: string): void {
         const dialogRef = this.dialog.open(EnsureDialogComponent, {
             width: 'calc(22em)',
-            data: {title: _title, content: _content},
+            data: {title: _title, content: _content, reason: _reason},
             panelClass: ['ensure-dialog']
         });
 

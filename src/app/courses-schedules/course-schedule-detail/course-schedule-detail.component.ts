@@ -58,7 +58,7 @@ export class CourseScheduleDetailComponent implements OnInit, OnDestroy {
 
   deleteCourseSchedule(id: number) {
     if (!this.courseSchedule) return;
-    this.ensureDialogService.openDialog('will be Deleted', 'Course Schedule '+this.courseSchedule.course.name);
+    this.ensureDialogService.openDialog('will be Deleted', 'Course Schedule '+this.courseSchedule.course.name, 'delete');
     this.ensureDialogSubscription = this.ensureDialogService
       .ensureDialogState
       .pipe(first())

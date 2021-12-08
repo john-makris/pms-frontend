@@ -4,6 +4,7 @@ import { MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { first, last } from 'rxjs/operators';
+import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.service';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { DepartmentService } from 'src/app/departments/department.service';
 import { StudentSelectDialogService } from 'src/app/groups-students/group-student-edit/services/student-select-dialog.service';
@@ -25,6 +26,8 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
   isAddMode!: boolean;
   isLoading: boolean = false;
   submitted: boolean = false;
+  private ensureDialogSubscription!: Subscription;
+  ensureDialogStatus!: boolean;
 
   delimeter: string = ',' + '\xa0';
   panelOpenState = false;
@@ -55,6 +58,7 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
     private departmentService: DepartmentService,
     private studentSelectDialogService: StudentSelectDialogService,
     private presenceSelectDialogService: PresenceSelectDialogService,
+    private ensureDialogService: EnsureDialogService,
     private snackbarService: SnackbarService
   ) { }
 
@@ -73,6 +77,7 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
     this.excuseApplicationForm = this.formBuilder.group({
       studentId: ['', Validators.required],
       absenceId: ['', Validators.required],
+      reason: ['', Validators.required],
       status: [false, Validators.required]
     });
     
@@ -90,6 +95,7 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
                   this.excuseApplicationForm.patchValue({
                     studentId: currentExcuseApplicationData.absence.student.id,
                     absenceId: currentExcuseApplicationData.absence.id,
+                    reason: currentExcuseApplicationData.reason,
                     status: currentExcuseApplicationData.status ? true : false
                   });
                   this.currentDepartmentId = currentExcuseApplicationData.absence.classSession.lecture.courseSchedule.course.department.id;
@@ -147,13 +153,6 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
           }
         }
       );
-
-      /*
-      this.classSessionFormDateChangesSubscription = this.presenceForm.controls.date.valueChanges.subscribe((date: Date) => {
-        if (this.currentClassSession && date) {
-          this.timeSpanModerator(this.currentClassSession, date);
-        }
-      });*/
 
   }
 
@@ -225,17 +224,20 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
       if (this.isAddMode) {
         const excuseApplicationData: ExcuseApplicationRequestData = {
           absenceId: this.excuseApplicationForm.value.absenceId,
+          reason: this.excuseApplicationForm.value.reason,
           status: null
         };
   
         console.log("Excuse Application Request Data: ");
-        console.log("Student Id: "+JSON.stringify(this.excuseApplicationForm.value.studentId));
         console.log("Absence Id: "+JSON.stringify(this.excuseApplicationForm.value.absenceId));
-  
+        console.log("Reason: "+JSON.stringify(this.excuseApplicationForm.value.reason));
+        console.log("Status: "+JSON.stringify(this.excuseApplicationForm.value.status));
+
         this.createExcuseApplication(excuseApplicationData);
       } else {
         const excuseApplicationData: ExcuseApplicationRequestData = {
           absenceId: this.excuseApplicationForm.value.absenceId,
+          reason: this.excuseApplicationForm.value.reason,
           status: this.excuseApplicationForm.value.status
         };
         this.updateExcuseApplication(excuseApplicationData);
@@ -244,14 +246,30 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
 
   }
 
+
+
   private createExcuseApplication(excuseApplicationData: ExcuseApplicationRequestData) {
-    this.createExcuseApplicationSubscription = this.excuseApplicationService.createExcuseApplication(excuseApplicationData)
-    .pipe(last())
-      .subscribe(() => {
-        console.log("DATA: "+ "Mpike sto subscribe");
-          this.snackbarService.success('Excuse application added');
-          this.router.navigate(['../'], { relativeTo: this.route });
-      }).add(() => { this.isLoading = false; });
+    this.ensureDialogService.openDialog('will be submitted definitely', 'Excuse Application', 'add');
+    this.isLoading = false;
+    this.ensureDialogSubscription = this.ensureDialogService
+      .ensureDialogState
+      .pipe(first())
+      .subscribe(
+        (state: boolean) => {
+          this.ensureDialogStatus = state;
+          if (this.ensureDialogStatus) {
+            //this.classGroup.isDeleting = true;
+            console.log("Hallo "+this.ensureDialogStatus);
+            this.createExcuseApplicationSubscription = this.excuseApplicationService.createExcuseApplication(excuseApplicationData)
+              .pipe(last())
+                .subscribe(() => {
+                  console.log("DATA: "+ "Mpike sto subscribe");
+                    this.snackbarService.success('Excuse application added');
+                    this.router.navigate(['../'], { relativeTo: this.route });
+                }).add(() => { this.isLoading = false; });
+          }
+        }
+      );
   }
 
   private updateExcuseApplication(excuseApplicationData: ExcuseApplicationRequestData) {
@@ -285,6 +303,9 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
     }
     if (this.excuseApplicationTableLoadedSubscription) {
       this.excuseApplicationTableLoadedSubscription.unsubscribe();
+    }
+    if(this.ensureDialogSubscription) {
+      this.ensureDialogSubscription.unsubscribe();
     }
   }
 

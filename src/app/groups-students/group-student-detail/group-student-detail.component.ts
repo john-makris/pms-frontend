@@ -55,7 +55,7 @@ export class GroupStudentDetailComponent implements OnInit, OnDestroy {
   
   deleteGroupStudent(studentId: number, classGroupId: number) {
     if (!this.studentOfGroup) return;
-    this.ensureDialogService.openDialog('will be deleted from group', 'Student '+this.studentOfGroup.username);
+    this.ensureDialogService.openDialog('will be deleted from group', 'Student '+this.studentOfGroup.username, 'delete');
     this.ensureDialogSubscription = this.ensureDialogService
       .ensureDialogState
       .pipe(first())
