@@ -75,8 +75,8 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
     }
 
     retrievePresenceDataByUser(params: HttpParams) {
-        if (!params.has('typeOfStatus') && !params.has('excuseStatus') && !params.has('courseSchedule') && !params.has('lectureType')) {
-            console.log("Simple Search");
+        if (!params.has('courseSchedule') && !params.has('lectureType')) {
+            console.log("Simple Search !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             this.presenceService.getAllPagePresencesByUserIdPresenceStatusAndExcuseStatus(params)
             .pipe(
                 catchError(() => of([])),
