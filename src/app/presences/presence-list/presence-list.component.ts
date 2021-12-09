@@ -61,6 +61,12 @@ export class PresenceListComponent implements OnInit, OnDestroy {
 
   selectedLectureTypeName: string = 'Theory';
 
+  selectedStatus: string  = '';
+  statusTypes = ['Pending', 'Absent', 'Present'];
+
+  selectedExcuseStatus: string  = '';
+  excuseStatusTypes = ['Excused', 'Inexcusable'];
+
   lectureTypes: LectureType[] = [];
   identifierSuffixList: Array<string> = [];
 
@@ -73,6 +79,8 @@ export class PresenceListComponent implements OnInit, OnDestroy {
   //selectedRow: ClassSession | null = null;
   //selection = new SelectionModel<ClassSession>(true, []);
 
+  excuseStatusFormControlChangedSubscription!: Subscription;
+  searchPresencesFormStatusSubscription!: Subscription;
   classSessionDialogSubscription!: Subscription;
   classSessionSelectDialogSubscription!: Subscription;
   courseScheduleSelectDialogSubscription!: Subscription;
@@ -116,6 +124,16 @@ export class PresenceListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
+    this.searchPresencesForm = this.formBuilder.group({
+      departmentId: [this.selectedDepartmentId],
+      courseSchedule: ['', Validators.required],
+      isLectureTypeNameTheory : [true, Validators.required],
+      lecture: ['', Validators.required],
+      classSession: ['', Validators.required],
+      status: [this.selectedStatus],
+      excuseStatus: [this.selectedExcuseStatus]
+    });
+
     this.authService.user.subscribe((user: AuthUser | null) => {
       if (user) {
         this.currentUser = user;
@@ -144,14 +162,6 @@ export class PresenceListComponent implements OnInit, OnDestroy {
       this.departments = departments;
     });
 
-    this.searchPresencesForm = this.formBuilder.group({
-      departmentId: [this.selectedDepartmentId],
-      courseSchedule: ['', Validators.required],
-      isLectureTypeNameTheory : [true, Validators.required],
-      lecture: ['', Validators.required],
-      classSession: ['', Validators.required]
-    });
-
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
 
     this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
@@ -159,8 +169,8 @@ export class PresenceListComponent implements OnInit, OnDestroy {
     this.dataSource = new PresencesDataSource(this.presenceService);
 
     if (this.searchPresencesForm.valid) {
-      this.dataSource.loadPresences(
-        +this.selectedClassSessionId, '', 0, 3, 'asc', this.currentColumnDef);
+      this.dataSource.loadPresences(+this.selectedClassSessionId, 
+        this.selectedStatus, this.selectedExcuseStatus, '', 0, 3, 'asc', this.currentColumnDef);
     }
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
@@ -215,6 +225,8 @@ export class PresenceListComponent implements OnInit, OnDestroy {
           isLectureTypeNameTheory: true
         });
         
+        this.checkForLectureValue();
+
         this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
         this.publishLectureType();
       }
@@ -230,6 +242,8 @@ export class PresenceListComponent implements OnInit, OnDestroy {
         });
         this.selectedLecture = _lecture;
         this.selectedLectureId = _lecture.id.toString();
+
+        this.checkForClassSessionValue();
 
         this.lectureService.lectureSubject.next(this.selectedLecture);
       }
@@ -251,10 +265,43 @@ export class PresenceListComponent implements OnInit, OnDestroy {
         this.classSessionService.classSessionSubject.next(this.selectedClassSession);
         this.onSearchPresencesFormSubmit();
       }
-    })
+    });
+
+    this.searchPresencesFormStatusSubscription = this.searchPresencesForm.controls.status.valueChanges
+    .subscribe((status: string) => {
+      console.log("Changed Status value !");
+      if (status !== '') {
+        this.removeTableElement('status');
+      } else {
+        this.displayedColumns.push('status');
+      }
+
+      if (status === 'Absent') {
+        this.displayedColumns.push('excuseStatus');
+      } else {
+        this.removeTableElement('excuseStatus');
+      }
+    });
+
+    this.excuseStatusFormControlChangedSubscription = this.searchPresencesForm.controls.excuseStatus.valueChanges
+    .subscribe((excuseStatus: string) => {
+      console.log("Changed Excuse Status value !");
+      if (excuseStatus !== '') {
+        this.removeTableElement('excuseStatus');
+      } else {
+        this.displayedColumns.push('excuseStatus');
+      }
+    });
+
   }
 
   get spf() { return this.searchPresencesForm.controls; }
+
+  removeTableElement(tableElement: String) {
+    this.displayedColumns.forEach((element,index)=>{
+        if(element===tableElement) this.displayedColumns.splice(index,1);
+    });
+  }
 
   checkForCourseScheduleValue() {
     if (this.searchPresencesForm.value.courseSchedule) {
@@ -264,14 +311,14 @@ export class PresenceListComponent implements OnInit, OnDestroy {
 
   checkForLectureValue() {
     if (this.searchPresencesForm.value.lecture) {
-      this.clearLectureValue();
+      this.clearLectureAndResfresh();
     }
   }
 
   
   checkForClassSessionValue() {
     if (this.searchPresencesForm.value.classSession) {
-      this.clearClassSessionValue();
+      this.clearClassSessionAndRefresh();
     }
   }
 
@@ -299,6 +346,18 @@ export class PresenceListComponent implements OnInit, OnDestroy {
         }
       });
     } */
+
+    this.searchPresencesFormStatusSubscription = this.searchPresencesForm.controls.status.valueChanges
+    .subscribe((status: string) => {
+      console.log("The status changed");
+      if (status !== 'Absent' && this.searchPresencesForm.controls.excuseStatus.value !== '') {
+        this.searchPresencesForm.patchValue({
+          excuseStatus: ''
+        });
+        this.selectedExcuseStatus = '';
+        this.removeTableElement('excuseStatus');
+      }
+    });
 
     this.refreshTable();
   }
@@ -406,6 +465,8 @@ export class PresenceListComponent implements OnInit, OnDestroy {
   loadPresencesPage() {
     this.dataSource.loadPresences(
         +this.selectedClassSessionId,
+        this.selectedStatus,
+        this.selectedExcuseStatus,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,

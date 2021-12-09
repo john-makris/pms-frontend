@@ -66,7 +66,7 @@
             </mat-radio-group>
 
             <div fxLayout="row" fxLayoutGap="1em">
-                <div *ngIf="selectedCourseScheduleId && selectedLectureTypeName">
+                <div fxFlex *ngIf="selectedCourseScheduleId && selectedLectureTypeName">
                     <div fxLayout fxLayoutGap="0.5em">
                         <button fxFlex
                             class="collapse-button-text"
@@ -86,7 +86,7 @@
                     </div>
                     <mat-hint class="course-schedule-hint-text">Choose Lecture</mat-hint>
                 </div>
-                <div *ngIf="selectedLectureId">
+                <div fxFlex *ngIf="selectedLectureId">
                     <div fxLayout fxLayoutGap="0.5em">
                         <button fxFlex
                             class="collapse-button-text"
@@ -107,6 +107,53 @@
                     <mat-hint class="course-schedule-hint-text">Choose Class Session</mat-hint>
                 </div>
             </div>
+
+            <div  fxLayout fxLayoutGap="0.5em" fxLayout.lt-sm="column">
+                <mat-form-field fxFlex *ngIf="!showStudentFeatures && selectedClassSessionId"
+                    appearance="outline">
+                    <mat-select
+                        [(value)]="selectedStatus"
+                        panelClass="mat-select-panel"
+                        formControlName="status">
+                        <mat-option
+                            [value]="''"
+                            (click)="onSearchPresencesFormSubmit()">-- All --</mat-option>
+                        <mat-option 
+                            *ngFor="let status of statusTypes"
+                            [value]="status"
+                            (click)="onSearchPresencesFormSubmit()">
+                            <p>
+                                {{ status }}
+                            </p>
+                        </mat-option>
+                    </mat-select>
+                    <mat-label><b> Status </b></mat-label>
+                    <mat-hint>Choose Status</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field fxFlex *ngIf="!showStudentFeatures && selectedClassSessionId && selectedStatus==='Absent'"
+                    appearance="outline">
+                    <mat-select
+                        [(value)]="selectedExcuseStatus"
+                        panelClass="mat-select-panel"
+                        formControlName="excuseStatus">
+                        <mat-option
+                            [value]="''"
+                            (click)="onSearchPresencesFormSubmit()">-- All --</mat-option>
+                        <mat-option 
+                            *ngFor="let excuseStatus of excuseStatusTypes"
+                            [value]="excuseStatus"
+                            (click)="onSearchPresencesFormSubmit()">
+                            <p>
+                                {{ excuseStatus }}
+                            </p>
+                        </mat-option>
+                    </mat-select>
+                    <mat-label><b> Excuse Status </b></mat-label>
+                    <mat-hint>Choose Excuse Status</mat-hint>
+                </mat-form-field>
+            </div>
+
         </form>
     </div>
 
@@ -172,6 +219,11 @@
                 <ng-container matColumnDef="status">
                     <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Status</mat-header-cell>
                     <mat-cell *matCellDef="let presence" class="collapse-text">{{ presence.status ? 'Present' : presence.status === false ? 'Absent' : 'Pending' }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="excuseStatus">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Excuse Status</mat-header-cell>
+                    <mat-cell *matCellDef="let presence" class="collapse-text">{{ presence.excuseStatus ? 'Excused' : 'Inexcusable' }}</mat-cell>
                 </ng-container>
 
                 <!--

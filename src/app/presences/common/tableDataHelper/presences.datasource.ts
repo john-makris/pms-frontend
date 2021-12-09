@@ -27,6 +27,8 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
     constructor(private presenceService: PresenceService) { }
 
     loadPresences(classSessionId: number,
+                status: string,
+                excuseStatus: string,
                 filter:string,
                 pageIndex:number,
                 pageSize:number,
@@ -34,7 +36,7 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
                 currentColumnDef:string) {
 
         if (classSessionId) {
-            let params: HttpParams = this.createParams(classSessionId,
+            let params: HttpParams = this.createParams(classSessionId, status, excuseStatus,
                 filter, pageIndex, pageSize, sortDirection, currentColumnDef);
                 console.log("PARAMS: "+params);
 
@@ -84,16 +86,41 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
     }
 
     retrieveData(params: HttpParams) {
-        this.presenceService.getAllPagePresencesByClassSessionId(params)
-        .pipe(
-            catchError(() => of([])),
-            finalize(() => this.loadingSubject.next(false))
-        )
-        .pipe(first())
-        .subscribe((response: any) => {
-            console.log("RESPONSE !!!!!!! "+JSON.stringify(response)+" You call me !");
-            this.checkData(response);
-        });
+        if(!params.has('status') && !params.has('excuseStatus')) {
+            this.presenceService.getAllPagePresencesByClassSessionId(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE !!!!!!! "+JSON.stringify(response)+" You call me !");
+                this.checkData(response);
+            });
+        } else if (!params.has('excuseStatus')) {
+            this.presenceService.getAllPagePresencesByClassSessionIdAndStatus(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE !!!!!!! "+JSON.stringify(response)+" You call me !");
+                this.checkData(response);
+            });
+        } else {
+            this.presenceService.getAllPagePresencesByClassSessionIdStatusAndExcuseStatus(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE !!!!!!! "+JSON.stringify(response)+" You call me !");
+                this.checkData(response);
+            });
+        }
+
     }
 
     checkData(response: PresencesResponseData | null) {
@@ -168,6 +195,8 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
 
     createParams(
         classSessionId: number,
+        status: string,
+        excuseStatus: string,
         filter:string,
         pageIndex:number,
         pageSize:number,
@@ -177,8 +206,18 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
             let params = new HttpParams();
 
             if (classSessionId) {
-                //console.log("ID: "+classSessionId);
+                //console.log("classSessionId: "+classSessionId);
                 params=params.set('classSessionId', classSessionId);
+            }
+
+            if (status) {
+                //console.log("status: "+status);
+                params=params.set('status', status);
+            }
+
+            if (excuseStatus) {
+                //console.log("excuseStatus: "+excuseStatus);
+                params=params.set('excuseStatus', excuseStatus);
             }
 
             if (filter) {

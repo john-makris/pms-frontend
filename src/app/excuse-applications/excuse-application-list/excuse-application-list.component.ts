@@ -221,6 +221,16 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
         this.removeTableElement('status');
       }
     });
+
+    this.statusFormControlChangedSubscription = this.searchExcuseApplicationForm.controls.status.valueChanges
+    .subscribe((status: string) => {
+      console.log("Changed Status value !");
+      if (status === '') {
+        this.displayedColumns.push('status');
+      } else {
+        this.removeTableElement('status');
+      }
+    });
   }
 
   get f() { return this.searchExcuseApplicationForm.controls; }
