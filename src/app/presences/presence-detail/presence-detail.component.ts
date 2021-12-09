@@ -2,8 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.service';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 import { PresenceResponseData } from '../common/payload/response/presenceResponseData.interface';
 import { PresenceService } from '../presence.service';
 
@@ -18,16 +20,32 @@ export class PresenceDetailComponent implements OnInit, OnDestroy {
   ensureDialogStatus!: boolean;
   presenceTable: boolean = false;
 
+  currentUser: AuthUser | null = null;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
+
   private ensureDialogSubscription!: Subscription;
   presenceTableLoadedSubscription!: Subscription;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
+    private authService: AuthService,
     private presenceService: PresenceService,
     private snackbarService: SnackbarService,
     private ensureDialogService: EnsureDialogService) { }
 
   ngOnInit(): void {
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
+        this.showStudentFeatures = true;
+        // this.currentUser.roles.includes('STUDENT');
+      }
+    });
+
     this.presenceTableLoadedSubscription = this.presenceService.presenceTableLoadedState
     .subscribe((tableStatus: boolean) => {
       if (tableStatus) {

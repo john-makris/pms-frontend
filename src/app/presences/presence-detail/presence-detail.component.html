@@ -14,9 +14,21 @@
             <mat-card-content fxLayout="column" 
             fxLayoutAlign="center"
             fxLayoutGap="1em">
-                <div>
+                <div *ngIf="!showStudentFeatures">
                     <mat-label><strong>Student:</strong></mat-label>
                     {{ presence?.student?.username }}
+                </div>
+                <div>
+                    <mat-label><strong>Course:</strong></mat-label>
+                    {{ presence?.classSession?.lecture?.courseSchedule?.course?.name }}
+                </div>
+                <div>
+                    <mat-label><strong>Lecture:</strong></mat-label>
+                    {{ presence?.classSession?.lecture?.nameIdentifier }}
+                </div>
+                <div fxLayout="column">
+                    <mat-label><strong>Session's Date & Time:</strong></mat-label>
+                    <span>{{ presence?.classSession?.date + ' ' + presence?.classSession?.classGroup?.startTime + ' - ' + presence?.classSession?.classGroup?.endTime }}</span>
                 </div>
                 <div>
                     <label><strong>Status:</strong></label>
@@ -26,13 +38,13 @@
                     <mat-label><strong>Excuse Status:</strong></mat-label>
                     {{ presence?.excuseStatus ? 'Excused' : 'Inexcusable' }}
                 </div>
-                <div>
-                    <label><strong>Date & time:</strong></label>
-                    {{ presence?.dateTime }}
+                <div fxLayout="column" *ngIf="presence?.status !== null">
+                    <label><strong>{{ presence?.status === false ? 'Absence' : 'Presence' }} Date & time:</strong></label>
+                    <span>{{ presence?.dateTime }}</span>
                 </div>
             </mat-card-content>
             <mat-card-actions>
-                <div>
+                <div *ngIf="!showStudentFeatures">
                     <button
                         mat-raised-button color="primary"
                         (click)="editPresence()">

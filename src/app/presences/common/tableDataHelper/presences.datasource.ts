@@ -49,7 +49,9 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
 
     }
 
-    loadUserPresences(classSessionId: number,
+    loadUserPresences(userId: number,
+        courseScheduleId: number,
+        lectureType: string,
         status: string,
         excuseStatus: string,
         filter:string,
@@ -58,9 +60,9 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
         sortDirection:string,
         currentColumnDef:string) {
 
-        if (classSessionId) {
-            let params: HttpParams = this.createPresenceByUserParams(classSessionId,
-                status, excuseStatus, filter, pageIndex, pageSize, sortDirection, currentColumnDef);
+        if (userId) {
+            let params: HttpParams = this.createPresenceByUserParams(userId,
+                courseScheduleId, lectureType, status, excuseStatus, filter, pageIndex, pageSize, sortDirection, currentColumnDef);
                 console.log("PARAMS: "+params);
 
             this.loadingSubject.next(true);
@@ -73,16 +75,54 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
     }
 
     retrievePresenceDataByUser(params: HttpParams) {
-        this.presenceService.getAllPagePresencesByUserIdPresenceStatusAndExcuseStatus(params)
-        .pipe(
-            catchError(() => of([])),
-            finalize(() => this.loadingSubject.next(false))
-        )
-        .pipe(first())
-        .subscribe((response: any) => {
-            console.log("RESPONSE !!!!!!! "+JSON.stringify(response)+" You call me !");
-            this.checkData(response);
-        });
+        if (!params.has('typeOfStatus') && !params.has('excuseStatus') && !params.has('courseSchedule') && !params.has('lectureType')) {
+            console.log("Simple Search");
+            this.presenceService.getAllPagePresencesByUserIdPresenceStatusAndExcuseStatus(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE !!!!!!! "+JSON.stringify(response)+" You call me !");
+                this.checkData(response);
+            });
+        } else if(!params.has('typeOfStatus') && !params.has('excuseStatus')) {
+            console.log("Simple Search Course Schedule Id and Type");
+            this.presenceService.getAllPagePresencesByUserIdCourseScheduleIdAndType(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE !!!!!!! "+JSON.stringify(response)+" You call me !");
+                this.checkData(response);
+            });
+        } else if (!params.has('excuseStatus')) {
+            console.log("Simple Search Course Schedule Id and Type and Status");
+            this.presenceService.getAllPagePresencesByUserIdCourseScheduleIdTypeAndStatus(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE !!!!!!! "+JSON.stringify(response)+" You call me !");
+                this.checkData(response);
+            });
+        } else {
+            this.presenceService.getAllPagePresencesByAllParameters(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE !!!!!!! "+JSON.stringify(response)+" You call me !");
+                this.checkData(response);
+            });
+        }
     }
 
     retrieveData(params: HttpParams) {
@@ -146,6 +186,8 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
 
     createPresenceByUserParams(
         userId: number,
+        courseScheduleId: number,
+        lectureType: string,
         status: string,
         excuseStatus: string,
         filter:string,
@@ -159,6 +201,16 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
             if (userId) {
                 //console.log("ID: "+userId);
                 params=params.set('userId', userId);
+            }
+
+            if (courseScheduleId) {
+                //console.log("Course Schedule Id: "+courseScheduleId);
+                params=params.set('courseScheduleId', courseScheduleId);
+            }
+
+            if (lectureType) {
+                //console.log("Lecture Type: "+lectureType);
+                params=params.set('lectureType', lectureType);
             }
 
             if (status) {

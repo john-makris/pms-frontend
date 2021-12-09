@@ -128,8 +128,8 @@ export class PresenceListComponent implements OnInit, OnDestroy {
       departmentId: [this.selectedDepartmentId],
       courseSchedule: ['', Validators.required],
       isLectureTypeNameTheory : [true, Validators.required],
-      lecture: ['', Validators.required],
-      classSession: ['', Validators.required],
+      lecture: [''],
+      classSession: [''],
       status: [this.selectedStatus],
       excuseStatus: [this.selectedExcuseStatus]
     });
@@ -139,11 +139,13 @@ export class PresenceListComponent implements OnInit, OnDestroy {
         this.currentUser = user;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = this.currentUser.roles.includes('STUDENT');
+        this.showStudentFeatures = true;
+        // this.currentUser.roles.includes('STUDENT');
 
         if (this.showStudentFeatures) {
+          this.selectedDepartmentId = '1';
           this.displayedColumns = [];
-          this.displayedColumns = ['name', 'startTime', 'capacity', 'subscription'];
+          this.displayedColumns = ['lecture', 'session_date', 'status'];
         }
       }
     });
@@ -156,11 +158,49 @@ export class PresenceListComponent implements OnInit, OnDestroy {
       this.publishLectureType();
     });
 
-    this.departmentsSubscription = this.departmentService.getAllDepartments()
-    .pipe(first())
-    .subscribe(departments => {
-      this.departments = departments;
-    });
+    if (!this.showStudentFeatures) {
+      this.departmentsSubscription = this.departmentService.getAllDepartments()
+      .pipe(first())
+      .subscribe(departments => {
+        this.departments = departments;
+      });
+
+      this.lectureSelectDialogSubscription = this.lectureSelectDialogService.lectureSelectDialogState
+      .subscribe((_lecture: LectureResponseData | null) => {
+        console.log("Lecture Data: "+JSON.stringify(_lecture));
+        if (_lecture !== null) {
+          console.log("CATCH LECTURE: "+_lecture.nameIdentifier);
+          this.searchPresencesForm.patchValue({
+            lecture: _lecture
+          });
+          this.selectedLecture = _lecture;
+          this.selectedLectureId = _lecture.id.toString();
+  
+          this.checkForClassSessionValue();
+  
+          this.lectureService.lectureSubject.next(this.selectedLecture);
+        }
+      });
+  
+      this.classSessionDialogSubscription = this.classSessionSelectDialogService.classSessionSelectDialogState
+      .subscribe((_classSession: ClassSessionResponseData | null) => {
+        console.log("Class Session Data: "+JSON.stringify(_classSession));
+        if (_classSession !== null) {
+          console.log("CATCH CLASS SESSION: "+_classSession.nameIdentifier);
+          this.searchPresencesForm.patchValue({
+            classSession: _classSession
+          });
+          this.selectedClassSession = _classSession;
+          this.selectedClassSessionId = _classSession.id.toString();
+  
+          console.log("Class session ID: "+this.selectedClassSessionId);
+  
+          this.classSessionService.classSessionSubject.next(this.selectedClassSession);
+          this.clearStatusValue();
+          this.onSearchPresencesFormSubmit();
+        }
+      });
+    }
 
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
 
@@ -225,46 +265,15 @@ export class PresenceListComponent implements OnInit, OnDestroy {
           isLectureTypeNameTheory: true
         });
         
-        this.checkForLectureValue();
+        if (!this.showStudentFeatures) {
+          this.checkForLectureValue();
+        }
 
         this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
         this.publishLectureType();
-      }
-    });
-
-    this.lectureSelectDialogSubscription = this.lectureSelectDialogService.lectureSelectDialogState
-    .subscribe((_lecture: LectureResponseData | null) => {
-      console.log("Lecture Data: "+JSON.stringify(_lecture));
-      if (_lecture !== null) {
-        console.log("CATCH LECTURE: "+_lecture.nameIdentifier);
-        this.searchPresencesForm.patchValue({
-          lecture: _lecture
-        });
-        this.selectedLecture = _lecture;
-        this.selectedLectureId = _lecture.id.toString();
-
-        this.checkForClassSessionValue();
-
-        this.lectureService.lectureSubject.next(this.selectedLecture);
-      }
-    });
-
-    this.classSessionDialogSubscription = this.classSessionSelectDialogService.classSessionSelectDialogState
-    .subscribe((_classSession: ClassSessionResponseData | null) => {
-      console.log("Class Session Data: "+JSON.stringify(_classSession));
-      if (_classSession !== null) {
-        console.log("CATCH CLASS SESSION: "+_classSession.nameIdentifier);
-        this.searchPresencesForm.patchValue({
-          classSession: _classSession
-        });
-        this.selectedClassSession = _classSession;
-        this.selectedClassSessionId = _classSession.id.toString();
-
-        console.log("Class session ID: "+this.selectedClassSessionId);
-
-        this.classSessionService.classSessionSubject.next(this.selectedClassSession);
-        this.clearStatusValue();
-        this.onSearchPresencesFormSubmit();
+        if (this.showStudentFeatures) {
+          this.onSearchPresencesFormSubmit();
+        }
       }
     });
 
@@ -334,6 +343,8 @@ export class PresenceListComponent implements OnInit, OnDestroy {
     this.router.navigate(['/presences'], { relativeTo: this.route });
     this.submitted = true;
 
+    console.log("HALLO FROM SUBMIT, before Check");
+
     if(this.searchPresencesForm.invalid) {
       return;
     }
@@ -341,31 +352,22 @@ export class PresenceListComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     this.paginator.pageIndex = 0;
-    this.sort.direction='asc'
+    this.sort.direction='asc';
 
-    /* For future usage in Presence Maybe
-    if (this.currentUser && this.showStudentFeatures) {
-      this.classGroupSubscription = this.groupStudentService.getClassGroupByStudentIdAndCourseScheduleIdAndGroupType(
-        this.currentUser.id, +this.selectedCourseScheduleId, this.selectedLectureTypeName)
-      .subscribe((classGroup: ClassSession | null) => {
-        if (classGroup) {
-          this.selectedRow = classGroup;
-          console.log("Class Group: "+JSON.stringify(classGroup));
+    if (!this.showStudentFeatures) {
+      this.searchPresencesFormStatusSubscription = this.searchPresencesForm.controls.status.valueChanges
+      .subscribe((status: string) => {
+        console.log("The status changed");
+        if (status !== 'Absent' && this.searchPresencesForm.controls.excuseStatus.value !== '') {
+          this.searchPresencesForm.patchValue({
+            excuseStatus: ''
+          });
+          this.selectedExcuseStatus = '';
+          this.removeTableElement('excuseStatus');
         }
       });
-    } */
-
-    this.searchPresencesFormStatusSubscription = this.searchPresencesForm.controls.status.valueChanges
-    .subscribe((status: string) => {
-      console.log("The status changed");
-      if (status !== 'Absent' && this.searchPresencesForm.controls.excuseStatus.value !== '') {
-        this.searchPresencesForm.patchValue({
-          excuseStatus: ''
-        });
-        this.selectedExcuseStatus = '';
-        this.removeTableElement('excuseStatus');
-      }
-    });
+    }
+    console.log("HALLO FROM SUBMIT, after Check");
 
     this.refreshTable();
   }
@@ -446,9 +448,16 @@ export class PresenceListComponent implements OnInit, OnDestroy {
     });
     this.selectedLectureTypeModerator();
     this.publishLectureType();
-    this.checkForLectureValue();
-    this.checkForClassSessionValue();
-    this.refreshTable();
+    if (!this.showStudentFeatures) {
+      this.checkForLectureValue();
+      this.checkForClassSessionValue();
+    }
+    if (this.showStudentFeatures) {
+      this.onSearchPresencesFormSubmit();
+    }
+    if (!this.showStudentFeatures) {
+      this.refreshTable();
+    }
   }
 
   selectCourseSchedule() {
@@ -490,7 +499,8 @@ export class PresenceListComponent implements OnInit, OnDestroy {
   }
 
   loadPresencesPage() {
-    this.dataSource.loadPresences(
+    if (!this.showStudentFeatures) {
+      this.dataSource.loadPresences(
         +this.selectedClassSessionId,
         this.selectedStatus,
         this.selectedExcuseStatus,
@@ -499,6 +509,20 @@ export class PresenceListComponent implements OnInit, OnDestroy {
         this.paginator.pageSize,
         this.sort.direction,
         this.currentColumnDef);
+    }
+    if (this.showStudentFeatures && this.currentUser) {
+      this.dataSource.loadUserPresences(
+        4,
+        +this.selectedCourseScheduleId,
+        this.selectedLectureTypeName,
+        this.selectedStatus,
+        this.selectedExcuseStatus,
+        this.input.nativeElement.value,
+        this.paginator.pageIndex,
+        this.paginator.pageSize,
+        this.sort.direction,
+        this.currentColumnDef);
+    }
   }
   
   refreshTable() {
@@ -508,11 +532,22 @@ export class PresenceListComponent implements OnInit, OnDestroy {
     } else {
       this.clearInput();
     }
-    if (+this.selectedClassSessionId) {
-      this.presenceService.presenceTableLoadedSubject.next(true);
-    } else {
-      this.presenceService.presenceTableLoadedSubject.next(false);
+    if (!this.showStudentFeatures) {
+      if (+this.selectedClassSessionId) {
+        this.presenceService.presenceTableLoadedSubject.next(true);
+      } else {
+        this.presenceService.presenceTableLoadedSubject.next(false);
+      }
     }
+
+    if (this.showStudentFeatures) {
+      if (this.currentUser) {
+        this.presenceService.presenceTableLoadedSubject.next(true);
+      } else {
+        this.presenceService.presenceTableLoadedSubject.next(false);
+      }
+    }
+
   }
 
   clearInput() {

@@ -40,9 +40,28 @@ export class PresenceService {
         return this.http.get<PresencesResponseData[]>(API_URL + 'all/by_class_session_id_status_and_excuse_status/paginated_sorted_filtered', { params });
     }
 
+    ///// Student
+
     getAllPagePresencesByUserIdPresenceStatusAndExcuseStatus(params: HttpParams): Observable<any> {
         return this.http.get<PresencesResponseData[]>(API_URL + 'all/by_user_id_status_and_excuse_status/paginated_sorted_filtered', { params });
     }
+    
+    getAllPagePresencesByUserIdCourseScheduleIdAndType(params: HttpParams): Observable<any> {
+        return this.http.get<PresencesResponseData[]>(API_URL
+            + 'all/by_user_id_courseSchedule_id_and_type/paginated_sorted_filtered', { params });
+    }
+
+    getAllPagePresencesByUserIdCourseScheduleIdTypeAndStatus(params: HttpParams): Observable<any> {
+        return this.http.get<PresencesResponseData[]>(API_URL
+            + 'all/by_user_id_courseSchedule_id_type_and_status/paginated_sorted_filtered', { params });
+    }
+
+    getAllPagePresencesByAllParameters(params: HttpParams): Observable<any> {
+        return this.http.get<PresencesResponseData[]>(API_URL
+            + 'all/by_user_id_courseSchedule_id_type_status_and_excuse_status/paginated_sorted_filtered', { params });
+    }
+
+    ///////////////////////////////////////////
 
     getAllPresences(): Observable<Presence[]> {
         return this.http.get<Presence[]>(API_URL + 'all');

@@ -66,6 +66,16 @@
     margin-right: 1em;
 }
 
+.mat-column-lecture {
+    min-width: 20%;
+    max-width: 50%;
+}
+
+.mat-column-session_date {
+    max-width: 50%;
+    min-width: 50%;
+}
+
 .mat-column-status {
     max-width: 15%;
 }
