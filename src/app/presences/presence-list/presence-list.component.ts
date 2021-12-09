@@ -263,6 +263,7 @@ export class PresenceListComponent implements OnInit, OnDestroy {
         console.log("Class session ID: "+this.selectedClassSessionId);
 
         this.classSessionService.classSessionSubject.next(this.selectedClassSession);
+        this.clearStatusValue();
         this.onSearchPresencesFormSubmit();
       }
     });
@@ -273,11 +274,11 @@ export class PresenceListComponent implements OnInit, OnDestroy {
       if (status !== '') {
         this.removeTableElement('status');
       } else {
-        this.displayedColumns.push('status');
+        this.addTableElement('status')
       }
 
       if (status === 'Absent') {
-        this.displayedColumns.push('excuseStatus');
+        this.addTableElement('excuseStatus')
       } else {
         this.removeTableElement('excuseStatus');
       }
@@ -289,7 +290,7 @@ export class PresenceListComponent implements OnInit, OnDestroy {
       if (excuseStatus !== '') {
         this.removeTableElement('excuseStatus');
       } else {
-        this.displayedColumns.push('excuseStatus');
+        this.addTableElement('excuseStatus');
       }
     });
 
@@ -301,6 +302,13 @@ export class PresenceListComponent implements OnInit, OnDestroy {
     this.displayedColumns.forEach((element,index)=>{
         if(element===tableElement) this.displayedColumns.splice(index,1);
     });
+  }
+
+  addTableElement(tableElement: string) {
+    const result = this.displayedColumns.find(element => element.match(tableElement));
+    if (result === undefined) {
+      this.displayedColumns.push(tableElement);
+    }
   }
 
   checkForCourseScheduleValue() {
@@ -411,6 +419,25 @@ export class PresenceListComponent implements OnInit, OnDestroy {
     this.selectedClassSession = null;
     this.selectedClassSessionId = '';
     this.classSessionService.classSessionSubject.next(this.selectedClassSession);
+    this.clearStatusValue();
+  }
+
+  clearStatusValue() {
+    this.searchPresencesForm.patchValue({
+      status: ''
+    });
+
+    this.selectedStatus = '';
+    this.clearExcuseStatusValue();
+  }
+
+  clearExcuseStatusValue() {
+    this.searchPresencesForm.patchValue({
+      excuseStatus: ''
+    });
+
+    this.selectedExcuseStatus = '';
+    this.removeTableElement('excuseStatus');
   }
 
   onLectureTypeSelect(lectureTypeNameSelection: boolean) {
@@ -524,6 +551,12 @@ export class PresenceListComponent implements OnInit, OnDestroy {
     }
     if (this.departmentsSubscription) {
       this.departmentsSubscription.unsubscribe();
+    }
+    if (this.excuseStatusFormControlChangedSubscription) {
+      this.excuseStatusFormControlChangedSubscription.unsubscribe();
+    }
+    if (this.searchPresencesFormStatusSubscription) {
+      this.searchPresencesFormStatusSubscription.unsubscribe();
     }
   }
 }

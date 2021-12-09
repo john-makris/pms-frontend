@@ -208,7 +208,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
       if (courseSchedule) {
         this.removeTableElement('course');
       } else {
-        this.displayedColumns.push('course');
+        this.addTableElement('course');
       }
     });
 
@@ -216,7 +216,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
     .subscribe((status: string) => {
       console.log("Changed Status value !");
       if (status === '') {
-        this.displayedColumns.push('status');
+        this.addTableElement('status');
       } else {
         this.removeTableElement('status');
       }
@@ -226,7 +226,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
     .subscribe((status: string) => {
       console.log("Changed Status value !");
       if (status === '') {
-        this.displayedColumns.push('status');
+        this.addTableElement('status');
       } else {
         this.removeTableElement('status');
       }
@@ -235,10 +235,17 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
 
   get f() { return this.searchExcuseApplicationForm.controls; }
 
-  removeTableElement(tableElement: String) {
+  removeTableElement(tableElement: string) {
     this.displayedColumns.forEach((element,index)=>{
         if(element===tableElement) this.displayedColumns.splice(index,1);
     });
+  }
+
+  addTableElement(tableElement: string) {
+    const result = this.displayedColumns.find(element => element.match(tableElement));
+    if (result === undefined) {
+      this.displayedColumns.push(tableElement);
+    }
   }
 
   onSubmit() {
