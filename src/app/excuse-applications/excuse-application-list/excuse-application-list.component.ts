@@ -103,13 +103,13 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
         this.currentUser = user;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
+        this.showStudentFeatures = true;
         // this.currentUser.roles.includes('STUDENT');
 
         if (this.showStudentFeatures) {
-          this.displayedColumns = [];
-          this.displayedColumns = ['name', 'startTime', 'capacity', 'subscription'];
-          //this.selectedDepartmentId = '1'; //this.currentUser.department.id.toString();
+          //this.displayedColumns = [];
+          //this.displayedColumns = ['name', 'startTime', 'capacity', 'subscription'];
+          this.selectedDepartmentId = '1'; //this.currentUser.department.id.toString();
         }
       }
     });
@@ -135,9 +135,15 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
 
     this.dataSource = new ExcuseApplicationsDataSource(this.excuseApplicationService);
 
-    if (+this.searchExcuseApplicationForm.value.departmentId) {
+    if (+this.searchExcuseApplicationForm.value.departmentId && !this.showStudentFeatures) {
       this.dataSource.loadDepartmentExcuseApplications(
         +this.selectedDepartmentId, +this.selectedCourseScheduleId, this.selectedLectureTypeName,
+        this.selectedStatus, '', 0, 3, 'asc', this.currentColumnDef);
+    }
+
+    if (this.currentUser && this.showStudentFeatures) {
+      this.dataSource.loadUserExcuseApplications(
+        3, +this.selectedCourseScheduleId, this.selectedLectureTypeName,
         this.selectedStatus, '', 0, 3, 'asc', this.currentColumnDef);
     }
 
@@ -330,7 +336,8 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
   }
 
   loadExcuseApplicationsPage() {
-    this.dataSource.loadDepartmentExcuseApplications(
+    if (!this.showStudentFeatures) {
+      this.dataSource.loadDepartmentExcuseApplications(
         +this.selectedDepartmentId,
         +this.selectedCourseScheduleId,
         this.selectedLectureTypeName,
@@ -340,6 +347,20 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
         this.paginator.pageSize,
         this.sort.direction,
         this.currentColumnDef);
+    }
+    if (this.showStudentFeatures && this.currentUser) {
+      this.dataSource.loadUserExcuseApplications(
+        3,
+        +this.selectedCourseScheduleId,
+        this.selectedLectureTypeName,
+        this.selectedStatus,
+        this.input.nativeElement.value,
+        this.paginator.pageIndex,
+        this.paginator.pageSize,
+        this.sort.direction,
+        this.currentColumnDef);
+    }
+
   }
   
   refreshTable() {

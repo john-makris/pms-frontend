@@ -39,7 +39,7 @@
             </mat-form-field>
 
             <div fxLayout fxLayoutGap="0.5em" fxLayout.lt-sm="column">
-                <mat-form-field fxFlex *ngIf="!showStudentFeatures && selectedDepartmentId"
+                <mat-form-field fxFlex *ngIf="selectedDepartmentId"
                     appearance="outline">
                     <mat-select
                         [(value)]="selectedLectureTypeName"
@@ -61,7 +61,7 @@
                     <mat-hint>Choose Lecture Type</mat-hint>
                 </mat-form-field>
 
-                <mat-form-field fxFlex *ngIf="!showStudentFeatures && selectedDepartmentId"
+                <mat-form-field fxFlex *ngIf="selectedDepartmentId"
                     appearance="outline">
                     <mat-select
                         [(value)]="selectedStatus"
@@ -114,7 +114,7 @@
         [matTooltipDisabled]="selectedDepartmentId !==''">
         <button
             [disabled]="selectedDepartmentId === ''"
-            *ngIf="departments"
+            *ngIf="departments || showStudentFeatures"
             type="button"
             mat-raised-button
             color="primary"
@@ -173,14 +173,16 @@
                     <mat-cell *matCellDef="let excuseApplication" class="collapse-text">{{ excuseApplication.status === true ? 'Approved' : (excuseApplication.status === false ? 'Rejected' : 'Pending')  }}</mat-cell>
                 </ng-container>
 
-                <div *ngIf="showStudentFeatures">
-                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                    <mat-row
-                        *matRowDef="let row; columns: displayedColumns;">
-                    </mat-row>
-                </div>
+                <!--
+                    <div *ngIf="showStudentFeatures">
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row
+                            *matRowDef="let row; columns: displayedColumns;">
+                        </mat-row>
+                    </div>
+                 -->
         
-                <div *ngIf="!showStudentFeatures">
+                <div>
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                     <mat-row
                         *matRowDef="let row; columns: displayedColumns;"

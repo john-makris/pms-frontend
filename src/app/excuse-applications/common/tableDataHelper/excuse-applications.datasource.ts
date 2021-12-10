@@ -52,8 +52,10 @@ export class ExcuseApplicationsDataSource implements DataSource<ExcuseApplicatio
     }
 
     loadUserExcuseApplications(
-        status: boolean | null,
         userId: number,
+        courseScheduleId: number,
+        lectureType: string,
+        status: string,
         filter:string,
         pageIndex:number,
         pageSize:number,
@@ -61,8 +63,8 @@ export class ExcuseApplicationsDataSource implements DataSource<ExcuseApplicatio
         currentColumnDef:string) {
 
         if (userId) {
-            let params: HttpParams = this.createUserExcuseApplicationParams(status, userId,
-                filter, pageIndex, pageSize, sortDirection, currentColumnDef);
+            let params: HttpParams = this.createUserExcuseApplicationParams(userId, courseScheduleId, lectureType,
+                status, filter, pageIndex, pageSize, sortDirection, currentColumnDef);
                 console.log("PARAMS: "+params);
 
             this.loadingSubject.next(true);
@@ -183,16 +185,111 @@ export class ExcuseApplicationsDataSource implements DataSource<ExcuseApplicatio
     }
 
     retrieveUserExcuseApplications(params: HttpParams) {
-        this.excuseApplicationService.getAllPageExcuseApplicationsByUserIdAndStatus(params)
-        .pipe(
-            catchError(() => of([])),
-            finalize(() => this.loadingSubject.next(false))
-        )
-        .pipe(first())
-        .subscribe((response: any) => {
-            console.log("RESPONSE B !!!!!!! "+response);
-            this.checkData(response);
-        });
+        if(!params.has('courseScheduleId') && !params.has('name') && !params.has('typeOfStatus')) {
+            console.log("A");
+
+            this.excuseApplicationService.getAllPageExcuseApplicationsByUserId(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE B !!!!!!! "+response);
+                this.checkData(response);
+            });
+        } else if (!params.has('name') && !params.has('typeOfStatus')) {
+            console.log("B");
+
+            this.excuseApplicationService.getAllPageExcuseApplicationsByUserIdAndCourseScheduleId(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE B !!!!!!! "+response);
+                this.checkData(response);
+            });
+        } else if (!params.has('courseScheduleId') && !params.has('typeOfStatus')) {
+            console.log("C");
+
+            this.excuseApplicationService.getAllPageExcuseApplicationsByUserIdAndType(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE B !!!!!!! "+response);
+                this.checkData(response);
+            });
+        } else if (!params.has('courseScheduleId') && !params.has('name')) {
+            console.log("D");
+
+            this.excuseApplicationService.getAllPageExcuseApplicationsByUserIdAndStatus(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE B !!!!!!! "+response);
+                this.checkData(response);
+            });
+        } else if (!params.has('name')) {
+            console.log("E");
+
+            this.excuseApplicationService.getAllPageExcuseApplicationsByUserIdCourseScheduleIdAndStatus(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE B !!!!!!! "+response);
+                this.checkData(response);
+            });
+        } else if (!params.has('typeOfStatus')) {
+            console.log("F");
+
+            this.excuseApplicationService.getAllPageExcuseApplicationsByUserIdCourseScheduleIdAndType(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE B !!!!!!! "+response);
+                this.checkData(response);
+            });
+        } else if (!params.has('courseScheduleId')) {
+            console.log("G");
+
+            this.excuseApplicationService.getAllPageExcuseApplicationsByUserIdTypeAndStatus(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE B !!!!!!! "+response);
+                this.checkData(response);
+            });
+        } else {
+            console.log("H");
+
+            this.excuseApplicationService.getAllPageExcuseApplicationsForUserByAllParameters(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: any) => {
+                console.log("RESPONSE B !!!!!!! "+response);
+                this.checkData(response);
+            });
+        }
     }
 
     checkData(response: ExcuseApplicationsResponseData | null) {
@@ -217,8 +314,10 @@ export class ExcuseApplicationsDataSource implements DataSource<ExcuseApplicatio
     }
 
     createUserExcuseApplicationParams(
-        status: boolean | null,
         userId: number,
+        courseScheduleId: number,
+        lectureType: string,
+        status: string,
         filter:string,
         pageIndex:number,
         pageSize:number,
@@ -227,13 +326,24 @@ export class ExcuseApplicationsDataSource implements DataSource<ExcuseApplicatio
 
             let params = new HttpParams();
 
-            if (status !== null) {
-                params=params.set('status', status);
-            }
-
             if (userId) {
                 //console.log("User Id: "+userId);
                 params=params.set('userId', userId);
+            }
+
+            if (courseScheduleId) {
+                //console.log("CourseSchedule Id: "+courseScheduleId);
+                params=params.set('courseScheduleId', courseScheduleId);
+            }
+
+            if (lectureType) {
+                //console.log("Lecture Type Id: "+lectureType);
+                params=params.set('name', lectureType);
+            }
+
+            if (status) {
+                //console.log("Status: "+status);
+                params=params.set('typeOfStatus', status);
             }
 
             if (filter) {
