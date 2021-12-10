@@ -2,8 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.service';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 import { ClassGroupService } from '../class-group.service';
 import { ClassGroupResponseData } from '../common/payload/response/classGroupResponseData.interface';
 
@@ -19,15 +21,32 @@ export class ClassGroupDetailComponent implements OnInit, OnDestroy {
   ensureDialogStatus!: boolean;
   classGroupTable: boolean = false;
 
+  currentUser: AuthUser | null = null;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
+
   classGroupTableLoadedSubscription!: Subscription;
 
   constructor(private route: ActivatedRoute,
     private router: Router,
     private classGroupService: ClassGroupService,
     private snackbarService: SnackbarService,
-    private ensureDialogService: EnsureDialogService) { }
+    private ensureDialogService: EnsureDialogService,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
+
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
+        this.showStudentFeatures = true;
+        // this.currentUser.roles.includes('STUDENT');
+      }
+    });
+
     this.classGroupTableLoadedSubscription = this.classGroupService.classGroupTableLoadedState
     .subscribe((tableStatus: boolean) => {
       if (tableStatus) {
@@ -40,6 +59,9 @@ export class ClassGroupDetailComponent implements OnInit, OnDestroy {
     this.route.params
       .subscribe(
         (params: Params) => {
+          if (this.showStudentFeatures) {
+            this.router.navigate(['/classes-groups'], { relativeTo: this.route});
+          }
           this.id = params['id'];
           this.classGroupService.getClassGroupById(this.id)
           .pipe(first())

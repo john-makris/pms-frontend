@@ -102,7 +102,7 @@
             </mat-card-content>
             <mat-card-actions>
                 <div
-                    *ngIf="!isLoading"
+                    *ngIf="!isLoading && !showStudentFeatures"
                     fxLayout="row"
                     fxLayoutAlign="start">
                         <button *ngIf="isAddMode || currentClassSessionStatus==='pending'"

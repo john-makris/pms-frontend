@@ -7,7 +7,7 @@ import { MatRadioButton } from '@angular/material/radio';
 import { MatSort } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fromEvent, merge, Subscription, throwError } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, first, last, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, first, last, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
@@ -107,7 +107,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
         this.currentUser = user;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
+        this.showStudentFeatures = true;
         // this.currentUser.roles.includes('STUDENT');
 
         if (this.showStudentFeatures) {

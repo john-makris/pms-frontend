@@ -139,7 +139,7 @@ export class PresenceListComponent implements OnInit, OnDestroy {
         this.currentUser = user;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
+        this.showStudentFeatures = true;
         // this.currentUser.roles.includes('STUDENT');
 
         if (this.showStudentFeatures) {

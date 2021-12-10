@@ -5,6 +5,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 import { first, last } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ClassGroup } from 'src/app/classes-groups/class-group.model';
 import { ClassGroupResponseData } from 'src/app/classes-groups/common/payload/response/classGroupResponseData.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
@@ -13,6 +14,7 @@ import { LectureResponseData } from 'src/app/lectures/common/payload/response/le
 import { LectureService } from 'src/app/lectures/lecture.service';
 import { ManagePresencesRequestData } from 'src/app/presences/common/payload/request/managePresencesRequestData.interface';
 import { PresenceService } from 'src/app/presences/presence.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 import { ClassSession } from '../class-session.model';
 import { ClassSessionService } from '../class-session.service';
 import { ClassSessionRequestData } from '../common/payload/request/classSessionRequestData.interface';
@@ -39,6 +41,11 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
   isAddMode!: boolean;
   isLoading: boolean = false;
   submitted: boolean = false;
+
+  currentUser: AuthUser | null = null;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
 
   isClassSessionActive: boolean = false;
 
@@ -86,10 +93,21 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
     private lectureService: LectureService,
     private classGroupSelectDialogService: ClassGroupSelectDialogService,
     private classSessionService: ClassSessionService,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
+        this.showStudentFeatures = true;
+        // this.currentUser.roles.includes('STUDENT');
+      }
+    });
 
     console.log("BEFORE FORM INITIALIZATION: ");
     this.classSessionForm = this.formBuilder.group({
@@ -117,6 +135,9 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
           this.id = params['id'];
           this.isAddMode = params['id'] == null;
           if(!this.isAddMode) {
+            if (this.showStudentFeatures) {
+              this.router.navigate(['../../'], { relativeTo: this.route });
+            }
             this.classSessionSubscription = this.classSessionService.getClassSessionById(this.id)
               .pipe(first())
               .subscribe((currentClassSessionData: any) => {

@@ -5,6 +5,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 import { first, last } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { SelectionHelper } from 'src/app/common/helpers/selectionHelper';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model';
@@ -12,6 +13,7 @@ import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule
 import { DepartmentService } from 'src/app/departments/department.service';
 import { LectureType } from 'src/app/lectures/lecture-types/lecture-type.model';
 import { LectureTypeService } from 'src/app/lectures/lecture-types/lecture-type.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 import { ClassGroupService } from '../class-group.service';
 import { ClassGroupRequestData } from '../common/payload/request/classGroupRequestData.interface';
 import { ClassGroupResponseData } from '../common/payload/response/classGroupResponseData.interface';
@@ -29,6 +31,11 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
   isAddMode!: boolean;
   isLoading: boolean = false;
   submitted: boolean = false;
+
+  currentUser: AuthUser | null = null;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
 
   selectedGroupNumber: string = '';
   currentStudentsOfGroup: number = 0;
@@ -74,10 +81,20 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
     private classGroupService: ClassGroupService,
     private lectureTypeService: LectureTypeService,
     private roomService: RoomService,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
+        this.showStudentFeatures = true;
+        // this.currentUser.roles.includes('STUDENT');
+      }
+    });
 
     this.loadRooms();
 
@@ -106,6 +123,9 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
     this.routeSubscription = this.route.params
       .subscribe(
         (params: Params) => {
+          if (this.showStudentFeatures) {
+            this.router.navigate(['/classes-groups'], { relativeTo: this.route});
+          }
           this.id = params['id'];
           this.isAddMode = params['id'] == null;
           if(!this.isAddMode) {

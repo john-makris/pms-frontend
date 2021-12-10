@@ -22,7 +22,6 @@ import { LectureType } from 'src/app/lectures/lecture-types/lecture-type.model';
 import { LectureTypeService } from 'src/app/lectures/lecture-types/lecture-type.service';
 import { LectureService } from 'src/app/lectures/lecture.service';
 import { AuthUser } from 'src/app/users/auth-user.model';
-import { ClassSession } from '../class-session.model';
 import { ClassSessionService } from '../class-session.service';
 import { ClassesSessionsDataSource } from '../common/tableDataHelper/classes-sessions.datasource';
 import { LectureResponseData } from 'src/app/lectures/common/payload/response/lectureResponseData.interface';
@@ -30,7 +29,6 @@ import { PresenceRequestData } from 'src/app/presences/common/payload/request/pr
 import { PresenceService } from 'src/app/presences/presence.service';
 import { PresenceResponseData } from 'src/app/presences/common/payload/response/presenceResponseData.interface';
 import { ClassSessionResponseData } from '../common/payload/response/classSessionResponseData.interface';
-import { ClassesSessionsResponseData } from '../common/payload/response/classesSessionsResponseData.interface';
 
 @Component({
   selector: 'app-class-session-list',
@@ -119,6 +117,21 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
+        this.showStudentFeatures = true;
+        // this.currentUser.roles.includes('STUDENT');
+
+        if (this.showStudentFeatures) {
+          this.displayedColumns = [];
+          this.displayedColumns = ['course', 'lecture', 'dateTime', 'presenceStatement'];
+        }
+      }
+    });
+
     this.dataSource = new ClassesSessionsDataSource(this.classSessionService);
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
@@ -135,21 +148,6 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
         }
       })
     ).subscribe();
-
-    this.authService.user.subscribe((user: AuthUser | null) => {
-      if (user) {
-        this.currentUser = user;
-        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
-        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
-        // this.currentUser.roles.includes('STUDENT');
-
-        if (this.showStudentFeatures) {
-          this.displayedColumns = [];
-          this.displayedColumns = ['course', 'lecture', 'dateTime', 'presenceStatement'];
-        }
-      }
-    });
 
     if (!this.showStudentFeatures) {
 

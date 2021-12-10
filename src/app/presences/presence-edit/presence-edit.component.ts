@@ -4,10 +4,12 @@ import { MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { first, last } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ClassSessionService } from 'src/app/classes-sessions/class-session.service';
 import { ClassSessionResponseData } from 'src/app/classes-sessions/common/payload/response/classSessionResponseData.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { StudentSelectDialogService } from 'src/app/groups-students/group-student-edit/services/student-select-dialog.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 import { UserResponseData } from 'src/app/users/common/payload/response/userResponseData.interface';
 import { PresenceRequestData } from '../common/payload/request/presenceRequestData.interface';
 import { PresenceService } from '../presence.service';
@@ -23,6 +25,11 @@ export class PresenceEditComponent implements  OnInit, OnDestroy {
   isAddMode!: boolean;
   isLoading: boolean = false;
   submitted: boolean = false;
+
+  currentUser: AuthUser | null = null;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
 
   delimeter: string = ',' + '\xa0';
   panelOpenState = false;
@@ -53,10 +60,21 @@ export class PresenceEditComponent implements  OnInit, OnDestroy {
     private classSessionService: ClassSessionService,
     private presenceService: PresenceService,
     private studentSelectDialogService: StudentSelectDialogService,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
+        this.showStudentFeatures = true;
+        // this.currentUser.roles.includes('STUDENT');
+      }
+    });
 
     console.log("BEFORE FORM INITIALIZATION: ");
     this.presenceForm = this.formBuilder.group({
@@ -78,6 +96,9 @@ export class PresenceEditComponent implements  OnInit, OnDestroy {
     this.routeSubscription = this.route.params
       .subscribe(
         (params: Params) => {
+          if (this.showStudentFeatures) {
+            this.router.navigate(['../../'], { relativeTo: this.route });
+          }
           this.id = params['id'];
           this.isAddMode = params['id'] == null;
           if(!this.isAddMode) {
