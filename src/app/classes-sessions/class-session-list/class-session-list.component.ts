@@ -126,7 +126,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
         this.currentUser = user;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
+        this.showStudentFeatures = true;
         // this.currentUser.roles.includes('STUDENT');
 
         if (this.showStudentFeatures) {
@@ -246,7 +246,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
           +this.selectedLectureId, this.selectedStatus, '', 0, 3, 'asc', this.currentColumnDef);
       }
     } else {
-          // active classes Sessions of Student
+      // active classes Sessions of Student
       if (this.currentUser && this.showStudentFeatures) {
         this.dataSource.loadUserClassesSessions(
           true, this.currentUser.id, '', 0, 3, 'asc', this.currentColumnDef);
@@ -256,6 +256,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
         this.classSessionSubscription = this.classSessionService.getPresentedClassSessionByStudentIdAndStatus(
           this.currentUser.id, true)
         .subscribe((classSession: ClassSessionResponseData | null) => {
+          console.log("HEYYYYYYYYYY: "+JSON.stringify(classSession));
           if (classSession) {
             this.selectedRow = classSession;
             console.log("Class Session: "+JSON.stringify(classSession));
@@ -446,7 +447,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
       if (this.currentUser) {
         this.dataSource.loadUserClassesSessions(
           true,
-          this.currentUser?.id,
+          this.currentUser.id,
           this.input.nativeElement.value,
           this.paginator.pageIndex,
           this.paginator.pageSize,

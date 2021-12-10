@@ -201,7 +201,7 @@
                     <mat-header-cell *matHeaderCellDef class="collapse-text">P. Statement</mat-header-cell>
                     <mat-cell *matCellDef="let row">
                         <mat-checkbox [matTooltip]="(!row.presenceStatementStatus) ? 'Presence Statement is closed' :
-                         'You cannot make more than 1 presence statement for Lectures they are runnig in the same time'"
+                         'You cannot make more than 1 presence statements for Lectures they are runnig in the same time'"
                             matTooltipPosition="after"
                             [matTooltipDisabled]="row.presenceStatementStatus && simpleCheck(row)"
                             [disabled]="selectedRow && simpleCheck(row) || !row.presenceStatementStatus || !simpleCheck(row)"
