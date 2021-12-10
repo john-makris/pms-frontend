@@ -73,6 +73,10 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   selectedRow: ClassSessionResponseData | null = null;
   selection = new SelectionModel<ClassSessionResponseData>(true, []);
 
+  selectedStatus: string  = 'Current';
+  statusTypes = ['Pending', 'Current', 'Past'];
+
+  statusFormControlChangedSubscription!: Subscription;
   updatePresenceSubscription!: Subscription;
   classSessionSubscription!: Subscription;
 
@@ -132,6 +136,14 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.searchClassesSessionsForm = this.formBuilder.group({
+      departmentId: [this.selectedDepartmentId],
+      courseSchedule: ['', Validators.required],
+      isLectureTypeNameTheory : [true, Validators.required],
+      lecture: ['', Validators.required],
+      status: [this.selectedStatus]
+    });
+
     this.dataSource = new ClassesSessionsDataSource(this.classSessionService);
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
@@ -169,13 +181,6 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
         this.departments = departments;
       });
 
-      this.searchClassesSessionsForm = this.formBuilder.group({
-        departmentId: [this.selectedDepartmentId],
-        courseSchedule: ['', Validators.required],
-        isLectureTypeNameTheory : [true, Validators.required],
-        lecture: ['', Validators.required]
-      });
-
       this.courseScheduleSelectDialogSubscription = this.courseScheduleSelectDialogService.courseScheduleSelectDialogState
       .subscribe((_courseSchedule: CourseSchedule | null) => {
         console.log("Course Schedule Data: "+JSON.stringify(_courseSchedule));
@@ -205,7 +210,8 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
           });
           this.selectedLecture = _lecture;
           this.selectedLectureId = _lecture.id.toString();
-  
+          
+          this.checkForStatusValue();
           this.lectureService.lectureSubject.next(this.selectedLecture);
           this.onSearchClassesSessionsFormSubmit();
         }
@@ -237,7 +243,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
 
       if (this.searchClassesSessionsForm.valid) {
         this.dataSource.loadClassesSessions(
-          +this.selectedLectureId, '', 0, 3, 'asc', this.currentColumnDef);
+          +this.selectedLectureId, this.selectedStatus, '', 0, 3, 'asc', this.currentColumnDef);
       }
     } else {
           // active classes Sessions of Student
@@ -258,9 +264,37 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
       }
     }
 
+    this.statusFormControlChangedSubscription = this.searchClassesSessionsForm.controls.status.valueChanges
+    .subscribe((status: string) => {
+      console.log("Changed Status value !");
+      if (status === '') {
+        this.addTableElement('status');
+      } else {
+        this.removeTableElement('status');
+      }
+      if (status !== 'Current') {
+        this.removeTableElement('presenceStatementStatus');
+      } else {
+        this.addTableElement('presenceStatementStatus');
+      }
+    });
+
   }
 
   get scsf() { return this.searchClassesSessionsForm.controls; }
+
+  removeTableElement(tableElement: string) {
+    this.displayedColumns.forEach((element,index)=>{
+        if(element===tableElement) this.displayedColumns.splice(index,1);
+    });
+  }
+
+  addTableElement(tableElement: string) {
+    const result = this.displayedColumns.find(element => element.match(tableElement));
+    if (result === undefined) {
+      this.displayedColumns.push(tableElement);
+    }
+  }
 
   checkForCourseScheduleValue() {
     if (this.searchClassesSessionsForm.value.courseSchedule) {
@@ -271,6 +305,12 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   checkForLectureValue() {
     if (this.searchClassesSessionsForm.value.lecture) {
       this.clearLectureValue();
+    }
+  }
+
+  checkForStatusValue() {
+    if (this.searchClassesSessionsForm.value.status) {
+      this.clearStatusValue();
     }
   }
 
@@ -335,6 +375,17 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
     this.selectedLectureId = '';
 
     this.lectureService.lectureSubject.next(this.selectedLecture);
+    this.clearStatusValue();
+  }
+
+  clearStatusValue() {
+    this.searchClassesSessionsForm.patchValue({
+      status: 'Current'
+    });
+
+    this.selectedStatus = 'Current';
+    this.removeTableElement('status');
+    this.addTableElement('presenceStatementStatus');
   }
 
   onLectureTypeSelect(lectureTypeNameSelection: boolean) {
@@ -385,6 +436,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
     if (!this.showStudentFeatures) {
       this.dataSource.loadClassesSessions(
         +this.selectedLectureId,
+        this.selectedStatus,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,
@@ -556,6 +608,9 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
     }
     if (this.classSessionSubscription) {
       this.classSessionSubscription.unsubscribe();
+    }
+    if (this.statusFormControlChangedSubscription) {
+      this.statusFormControlChangedSubscription.unsubscribe();
     }
   }
   

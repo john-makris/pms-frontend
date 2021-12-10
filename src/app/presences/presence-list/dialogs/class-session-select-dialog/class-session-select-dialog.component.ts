@@ -67,7 +67,7 @@ export class ClassSessionSelectDialogComponent implements OnInit, AfterViewInit,
         if (lecture) {
           this.currentLectureId = lecture.id;
           console.log("Current Lecture Id: " + this.currentLectureId);
-          this.dataSource.loadClassesSessions(this.currentLectureId, 
+          this.dataSource.loadClassesSessions(this.currentLectureId, '',
             '', 0, 3, 'asc', this.currentColumnDef);
         }
       });
@@ -111,6 +111,7 @@ export class ClassSessionSelectDialogComponent implements OnInit, AfterViewInit,
   loadClassesSessionsPage() {
     this.dataSource.loadClassesSessions(
         this.currentLectureId,
+        '',
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,

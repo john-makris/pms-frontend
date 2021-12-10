@@ -45,6 +45,10 @@ export class ClassSessionService {
         return this.http.get<any[]>(API_URL + 'all/by_lecture_Id/paginated_sorted_filtered', { params });
     }
 
+    getAllPageClassesSessionsByLectureIdAndStatus(params: HttpParams): Observable<any> {
+        return this.http.get<any[]>(API_URL + 'all/by_lecture_Id_and_status/paginated_sorted_filtered', { params });
+    }
+
     getAllPageClassesSessionsByUserIdAndStatus(params: HttpParams): Observable<any> {
         return this.http.get<any[]>(API_URL + 'all/by_user_Id_and_status/paginated_sorted_filtered', { params });
     }

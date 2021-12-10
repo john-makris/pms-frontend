@@ -27,6 +27,10 @@
     white-space: pre-wrap !important;
 }
 
+.lecture-aligner {
+    margin-top: 1.4em;
+}
+
 .collapse-button-text {
     text-align: left;
     font-weight: normal;
@@ -54,15 +58,23 @@
 }
 
 .mat-column-nameIdentifier {
-    max-width: 20%;
+    width: 20%;
 }
 
 .mat-column-date {
-    max-width: 24%;
+    width: 24%;
 }
 
 .mat-column-classGroup {
-    max-width: 20%;
+    width: 20%;
+}
+
+.mat-column-presenceStatementStatus {
+    width: 23%;
+}
+
+.mat-column-status {
+    width: 23%;
 }
 
 /* Student table */

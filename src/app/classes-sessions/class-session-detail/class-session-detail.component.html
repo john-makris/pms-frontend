@@ -42,7 +42,7 @@
                 </div>
             </mat-card-content>
             <mat-card-actions>
-                <div>
+                <div *ngIf="classSession?.status !== false">
                     <button
                         mat-raised-button color="primary"
                         (click)="editClassSession()">

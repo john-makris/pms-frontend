@@ -28,6 +28,7 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
 
     loadClassesSessions(
                 lectureId: number,
+                status: string,
                 filter:string,
                 pageIndex:number,
                 pageSize:number,
@@ -35,7 +36,7 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
                 currentColumnDef:string) {
 
         if (lectureId) {
-            let params: HttpParams = this.createParams(lectureId,
+            let params: HttpParams = this.createParams(lectureId, status,
                 filter, pageIndex, pageSize, sortDirection, currentColumnDef);
                 console.log("PARAMS: "+params);
 
@@ -72,16 +73,29 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
     }
 
     retrieveData(params: HttpParams) {
-        this.classSessionService.getAllPageClassesSessionsByLectureId(params)
-        .pipe(
-            catchError(() => of([])),
-            finalize(() => this.loadingSubject.next(false))
-        )
-        .pipe(first())
-        .subscribe((response: ClassesSessionsResponseData) => {
-            console.log("RESPONSE B !!!!!!! "+response);
-            this.checkData(response);
-        });
+        if(!params.has('status')) {
+            this.classSessionService.getAllPageClassesSessionsByLectureId(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: ClassesSessionsResponseData) => {
+                console.log("RESPONSE B !!!!!!! "+response);
+                this.checkData(response);
+            });
+        } else {
+            this.classSessionService.getAllPageClassesSessionsByLectureIdAndStatus(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: ClassesSessionsResponseData) => {
+                console.log("RESPONSE B !!!!!!! "+response);
+                this.checkData(response);
+            });
+        }
     }
 
     retrieveUserClassesSessions(params: HttpParams) {
@@ -162,6 +176,7 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
 
     createParams(
         lectureId: number,
+        status: string,
         filter:string,
         pageIndex:number,
         pageSize:number,
@@ -175,6 +190,11 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
                 params=params.set('lectureId', lectureId);
             }
 
+            if (status) {
+                //console.log("Status: "+status);
+                params=params.set('status', status);
+            }
+            
             if (filter) {
                 //console.log("Filter: "+filter);
                 params=params.set('filter', filter);
