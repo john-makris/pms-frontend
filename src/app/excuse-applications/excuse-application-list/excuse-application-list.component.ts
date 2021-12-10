@@ -110,6 +110,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
           //this.displayedColumns = [];
           //this.displayedColumns = ['name', 'startTime', 'capacity', 'subscription'];
           this.selectedDepartmentId = '1'; //this.currentUser.department.id.toString();
+          this.excuseApplicationService.excuseApplicationTableLoadedSubject.next(true);
         }
       }
     });
@@ -143,7 +144,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
 
     if (this.currentUser && this.showStudentFeatures) {
       this.dataSource.loadUserExcuseApplications(
-        3, +this.selectedCourseScheduleId, this.selectedLectureTypeName,
+        4, +this.selectedCourseScheduleId, this.selectedLectureTypeName,
         this.selectedStatus, '', 0, 3, 'asc', this.currentColumnDef);
     }
 
@@ -350,7 +351,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
     }
     if (this.showStudentFeatures && this.currentUser) {
       this.dataSource.loadUserExcuseApplications(
-        3,
+        4,
         +this.selectedCourseScheduleId,
         this.selectedLectureTypeName,
         this.selectedStatus,
@@ -370,6 +371,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
     } else {
       this.clearInput();
     }
+    console.log("Excuse Application Table Subject");
     this.excuseApplicationService.excuseApplicationTableLoadedSubject.next(true);
   }
 

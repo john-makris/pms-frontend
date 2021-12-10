@@ -4,12 +4,15 @@ import { MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { first, last } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.service';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { DepartmentService } from 'src/app/departments/department.service';
 import { StudentSelectDialogService } from 'src/app/groups-students/group-student-edit/services/student-select-dialog.service';
 import { PresenceResponseData } from 'src/app/presences/common/payload/response/presenceResponseData.interface';
+import { AuthUser } from 'src/app/users/auth-user.model';
 import { UserResponseData } from 'src/app/users/common/payload/response/userResponseData.interface';
+import { UserService } from 'src/app/users/user.service';
 import { ExcuseApplicationRequestData } from '../common/payload/request/excuseApplicationRequestData.interface';
 import { ExcuseApplicationService } from '../excuse-application.service';
 import { PresenceSelectDialogData } from './data/presenceSelectDialogData.interface';
@@ -29,6 +32,11 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
   private ensureDialogSubscription!: Subscription;
   ensureDialogStatus!: boolean;
 
+  currentUser: AuthUser | null = null;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
+
   delimeter: string = ',' + '\xa0';
   panelOpenState = false;
 
@@ -41,7 +49,6 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
   @ViewChild('input') input!: ElementRef;
   @ViewChild(MatSelect) select!: MatSelect;
 
-  excuseApplicationTableLoadedSubscription!: Subscription;
   departmentIdSubscription!: Subscription;
   studentSelectDialogSubscription!: Subscription;
   absenceSelectDialogSubscription!: Subscription;
@@ -59,19 +66,34 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
     private studentSelectDialogService: StudentSelectDialogService,
     private presenceSelectDialogService: PresenceSelectDialogService,
     private ensureDialogService: EnsureDialogService,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private authService: AuthService,
+    private userService: UserService
   ) { }
 
   ngOnInit(): void {
 
-    this.excuseApplicationTableLoadedSubscription = this.excuseApplicationService.excuseApplicationTableLoadedState
-      .subscribe((_status: boolean) => {
-        if (_status) {
-          this.tableLoaded = true;
-        } else {
-          this.tableLoaded = false;
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
+        this.showStudentFeatures = true;
+        // this.currentUser.roles.includes('STUDENT');
+
+        if (this.showStudentFeatures) {
+          this.userService.getUserById(4)
+          .pipe(first())
+          .subscribe((userResponseData: UserResponseData) => {
+            this.currentStudent = userResponseData;
+            this.setStudentInfo(this.currentStudent);
+            this.currentDepartmentId = 1; //this.currentUser.department.id.toString();
+          });
+          //this.displayedColumns = [];
+          //this.displayedColumns = ['name', 'startTime', 'capacity', 'subscription'];
         }
-      });
+      }
+    });
 
     console.log("BEFORE FORM INITIALIZATION: ");
     this.excuseApplicationForm = this.formBuilder.group({
@@ -107,31 +129,29 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
                 }
               });
           } else {
-            this.departmentIdSubscription = this.departmentService.departmentIdState
-            .subscribe((_departmentId: number) => {
-              if (_departmentId) {
-                console.log("Department ID: "+ _departmentId);
-                this.currentDepartmentId = _departmentId;
-              }
-            });
-
-            this.studentSelectDialogSubscription = this.studentSelectDialogService.studentSelectDialogState
-            .subscribe((student: UserResponseData | null)=> {
-              this.excuseApplicationForm.controls.studentId.markAsTouched();
-              if (student) {
-                this.excuseApplicationForm.patchValue({
-                  studentId: student.id
-                });
-                this.checkForAbsenceIdValue();
-                this.currentStudent = student;
-              } else {
-                if (!this.currentStudent) {
-                  this.f.studentId.setErrors({
-                    'required': true
-                  });
+            if (!this.showStudentFeatures) {
+              this.departmentIdSubscription = this.departmentService.departmentIdState
+              .subscribe((_departmentId: number) => {
+                if (_departmentId) {
+                  console.log("Department ID: "+ _departmentId);
+                  this.currentDepartmentId = _departmentId;
                 }
-              }
-            });
+              });
+
+              this.studentSelectDialogSubscription = this.studentSelectDialogService.studentSelectDialogState
+              .subscribe((student: UserResponseData | null)=> {
+                this.excuseApplicationForm.controls.studentId.markAsTouched();
+                if (student) {
+                  this.setStudentInfo(student);
+                } else {
+                  if (!this.currentStudent) {
+                    this.f.studentId.setErrors({
+                      'required': true
+                    });
+                  }
+                }
+              });
+            }
 
             this.absenceSelectDialogSubscription = this.presenceSelectDialogService.presenceSelectDialogState
             .subscribe((absence: PresenceResponseData | null)=> {
@@ -157,6 +177,14 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
   }
 
   get f() { return this.excuseApplicationForm.controls; }
+
+  setStudentInfo(student: UserResponseData) {
+    this.excuseApplicationForm.patchValue({
+      studentId: student.id
+    });
+    this.checkForAbsenceIdValue();
+    this.currentStudent = student;
+  }
 
   selectStudent() {
     this.studentSelectDialogService.selectStudent({
@@ -300,9 +328,6 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
     }
     if (this.absenceSelectDialogSubscription) {
       this.absenceSelectDialogSubscription.unsubscribe();
-    }
-    if (this.excuseApplicationTableLoadedSubscription) {
-      this.excuseApplicationTableLoadedSubscription.unsubscribe();
     }
     if(this.ensureDialogSubscription) {
       this.ensureDialogSubscription.unsubscribe();

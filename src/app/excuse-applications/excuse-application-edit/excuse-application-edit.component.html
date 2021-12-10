@@ -1,4 +1,4 @@
-<section *ngIf="tableLoaded"
+<section *ngIf="currentDepartmentId"
     [ngClass]="'container'"
     [ngClass.lt-md]="'min-container'"
     fxLayout>
@@ -17,7 +17,7 @@
             <mat-card-content fxLayout="column" fxLayoutGap="0.5em"
             fxLayoutAlign="center">
 
-                <div fxLayout="column" class="class-group-aligner" *ngIf="isAddMode">
+                <div fxLayout="column" class="class-group-aligner" *ngIf="isAddMode && !showStudentFeatures">
                     <div fxLayout fxLayoutGap="0.5em">
                         <!-- Student -->
                         <button fxFlex

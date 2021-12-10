@@ -60,7 +60,7 @@
 
             </mat-card-content>
             <mat-card-actions>
-                <div>
+                <div *ngIf="!showStudentFeatures">
                     <button
                         mat-raised-button color="primary"
                         (click)="editExcuseApplication()">
