@@ -71,7 +71,7 @@ export class PresenceEditComponent implements  OnInit, OnDestroy {
         this.currentUser = user;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = true;
+        this.showStudentFeatures = false;
         // this.currentUser.roles.includes('STUDENT');
       }
     });
