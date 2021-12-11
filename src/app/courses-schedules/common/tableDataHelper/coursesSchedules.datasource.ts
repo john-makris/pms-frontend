@@ -27,6 +27,7 @@ export class CoursesSchedulesDataSource implements DataSource<CourseScheduleResp
     constructor(private courseScheduleService: CourseScheduleService) { }
 
     loadCoursesSchedules(departmentId: number,
+                status: string,
                 filter:string,
                 pageIndex:number,
                 pageSize:number,
@@ -42,7 +43,7 @@ export class CoursesSchedulesDataSource implements DataSource<CourseScheduleResp
         console.log("Current Column Def: "+currentColumnDef);*/
 
 
-        let params: HttpParams = this.createParams(departmentId,
+        let params: HttpParams = this.createParams(departmentId, status,
             filter, pageIndex, pageSize, sortDirection, currentColumnDef);
             console.log("PARAMS: "+params);
 
@@ -52,7 +53,7 @@ export class CoursesSchedulesDataSource implements DataSource<CourseScheduleResp
     }
 
     retrieveData(params: HttpParams) {
-        if(!params.has('id')) {
+        if(!params.has('id') && !params.has('status')) {
             //console.log("EXIST ID ?"+ params.has('id'));
             this.courseScheduleService.getAllPageCoursesSchedules(params)
             .pipe(
@@ -64,9 +65,20 @@ export class CoursesSchedulesDataSource implements DataSource<CourseScheduleResp
                 //console.log("RESPONSE !!!!!!! "+response);
                 this.checkData(response);
             });
-        } else {
+        } else if (!params.has('status')) {
             //console.log("EXIST ID ?"+ params.has('id'));
             this.courseScheduleService.getAllPageCoursesSchedulesByCourseDepartmentId(params)
+            .pipe(
+                catchError(() => of([])),
+                finalize(() => this.loadingSubject.next(false))
+            )
+            .pipe(first())
+            .subscribe((response: CoursesSchedulesResponseData) => {
+                //console.log("RESPONSE !!!!!!! "+response);
+                this.checkData(response);
+            });
+        } else {
+            this.courseScheduleService.getAllPageCoursesSchedulesByDepartmentIdAndStatus(params)
             .pipe(
                 catchError(() => of([])),
                 finalize(() => this.loadingSubject.next(false))
@@ -102,6 +114,7 @@ export class CoursesSchedulesDataSource implements DataSource<CourseScheduleResp
 
     createParams(
         departmentId: number,
+        status: string,
         filter:string,
         pageIndex:number,
         pageSize:number,
@@ -113,6 +126,11 @@ export class CoursesSchedulesDataSource implements DataSource<CourseScheduleResp
             if (departmentId) {
                 //console.log("ID: "+courseId);
                 params=params.set('id', departmentId);
+            }
+
+            if (status) {
+                //console.log("Status: "+status);
+                params=params.set('status', status);
             }
 
             if (filter) {

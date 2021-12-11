@@ -126,7 +126,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
         this.currentUser = user;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = true;
+        this.showStudentFeatures = false;
         // this.currentUser.roles.includes('STUDENT');
 
         if (this.showStudentFeatures) {
@@ -310,7 +310,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   }
 
   checkForStatusValue() {
-    if (this.searchClassesSessionsForm.value.status) {
+    if (this.searchClassesSessionsForm.value.status !== null) {
       this.clearStatusValue();
     }
   }

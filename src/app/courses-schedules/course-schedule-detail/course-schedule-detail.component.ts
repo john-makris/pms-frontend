@@ -16,9 +16,12 @@ import { StudentsPreviewDialogService } from './services/students-preview-dialog
 export class CourseScheduleDetailComponent implements OnInit, OnDestroy {
   id!: number;
   courseSchedule!: CourseScheduleResponseData | any;
+  tableLoadedStateSubscription!: Subscription;
   private ensureDialogSubscription!: Subscription;
   ensureDialogStatus!: boolean;
   
+  tableLoaded: boolean = false;
+
   theoryHours: number = 0;
   theoryMinutes: number = 0;
 
@@ -36,6 +39,17 @@ export class CourseScheduleDetailComponent implements OnInit, OnDestroy {
     private studentsPreviewDialogService: StudentsPreviewDialogService) { }
 
   ngOnInit(): void {
+
+    this.tableLoadedStateSubscription = this.courseScheduleService.courseScheduleTableLoadedState
+    .subscribe((loaded: boolean) => {
+      if (loaded) {
+        this.tableLoaded = loaded;
+      } else {
+        this.tableLoaded = false;
+        this.onCancel();
+      }
+    });
+
     this.route.params
       .subscribe(
         (params: Params) => {

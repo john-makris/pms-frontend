@@ -33,6 +33,27 @@
                 <mat-label><mat-icon>domain</mat-icon> <b> Department</b></mat-label>
                 <mat-hint>Choose Department</mat-hint>
             </mat-form-field>
+            <mat-form-field fxFlex *ngIf="selectedDepartmentId"
+                appearance="outline">
+                <mat-select
+                    [(value)]="selectedStatus"
+                    panelClass="mat-select-panel"
+                    formControlName="status">
+                    <mat-option
+                        [value]="''"
+                        (click)="onSubmit()">-- All --</mat-option>
+                    <mat-option 
+                        *ngFor="let status of statusTypes"
+                        [value]="status"
+                        (click)="onSubmit()">
+                        <p>
+                            {{ status }}
+                        </p>
+                    </mat-option>
+                </mat-select>
+                <mat-label><b> Status </b></mat-label>
+                <mat-hint>Choose Status</mat-hint>
+            </mat-form-field>
         </form>
     </div>
 
@@ -90,7 +111,7 @@
 
                 <ng-container matColumnDef="status">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
-                    <mat-cell *matCellDef="let courseSchedule">{{ courseSchedule.status===true?'active':'pending' }}</mat-cell>
+                    <mat-cell *matCellDef="let courseSchedule">{{ courseSchedule.status === true ? 'Current' : courseSchedule.status === false ? 'Past' : 'Pending' }}</mat-cell>
                 </ng-container>
         
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

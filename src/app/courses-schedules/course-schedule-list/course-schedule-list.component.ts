@@ -34,6 +34,11 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
   currentColumnDef: string = 'id';
   currentActivityState: string = '';
 
+  selectedStatus: string  = 'Current';
+  statusTypes = ['Pending', 'Current', 'Past'];
+
+  departmentIdFormControlChangedSubscription!: Subscription;
+  statusFormControlChangedSubscription!: Subscription;
   snackbarSubscription!: Subscription;
   pageDetailSubscription!: Subscription;
   departmentsSubscription!: Subscription;
@@ -64,18 +69,29 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
     .subscribe(departments => {
       this.departments = departments;
     });
+
     this.selectDepartmentForm = this.formBuilder.group({
-      departmentId: [this.selectedDepartmentId]
+      departmentId: [this.selectedDepartmentId],
+      status: [this.selectedStatus]
     });
 
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
+
+    if (this.selectedDepartmentId !== null) {
+      this.courseScheduleService.courseScheduleTableLoadedSubject.next(true);
+    }
 
     this.departmentService.departmentIdSubject.next(+this.selectedDepartmentId);
 
     this.dataSource = new CoursesSchedulesDataSource(this.courseScheduleService);
 
-    this.dataSource.loadCoursesSchedules(this.selectDepartmentForm.value.departmentId, 
-      '', 0, 3, 'asc', this.currentColumnDef);
+    if (this.selectedDepartmentId === '') {
+      this.dataSource.loadCoursesSchedules(this.selectDepartmentForm.value.departmentId, '',
+        '', 0, 3, 'asc', this.currentColumnDef);
+    } else {
+      this.dataSource.loadCoursesSchedules(this.selectDepartmentForm.value.departmentId, this.selectedStatus,
+        '', 0, 3, 'asc', this.currentColumnDef);
+    }
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -118,9 +134,33 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
         }
       }
     );
+
+    this.statusFormControlChangedSubscription = this.selectDepartmentForm.controls.status.valueChanges
+    .subscribe((status: string) => {
+      console.log("Changed Status value !");
+      if (status === '') {
+        this.addTableElement('status');
+      } else {
+        this.removeTableElement('status');
+      }
+    });
+
   }
 
   get f() { return this.selectDepartmentForm.controls; }
+
+  removeTableElement(tableElement: string) {
+    this.displayedColumns.forEach((element,index)=>{
+        if(element===tableElement) this.displayedColumns.splice(index,1);
+    });
+  }
+
+  addTableElement(tableElement: string) {
+    const result = this.displayedColumns.find(element => element.match(tableElement));
+    if (result === undefined) {
+      this.displayedColumns.push(tableElement);
+    }
+  }
 
   onSubmit() {
     this.router.navigate(['/courses-schedules'], { relativeTo: this.route });
@@ -170,8 +210,10 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
   }
 
   loadCoursesSchedulesPage() {
+    this.checksBeforeLoading();
     this.dataSource.loadCoursesSchedules(
         +this.selectedDepartmentId,
+        this.selectedStatus,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,
@@ -186,6 +228,7 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
     } else {
       this.clearInput();
     }
+    this.courseScheduleService.courseScheduleTableLoadedSubject.next(true);
   }
 
   clearInput() {
@@ -193,10 +236,40 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
     this.loadCoursesSchedulesPage();
   }
 
+  checksBeforeLoading() {
+    if (this.selectedDepartmentId === '') {
+      this.selectedStatus = '';
+      this.selectDepartmentForm.patchValue({
+        status: ''
+      });
+    }
+
+    this.departmentIdFormControlChangedSubscription = this.selectDepartmentForm.controls.departmentId.valueChanges
+    .pipe(first())
+    .subscribe((departmentId: string) => {
+      console.log("Changed Department Id value !");
+      if (departmentId !== '') {
+        this.selectedStatus = 'Current';
+        this.selectDepartmentForm.patchValue({
+          status: 'Current'
+        });
+      }
+    });
+  }
+
   ngOnDestroy(): void {
-    this.departmentsSubscription.unsubscribe();
-    this.pageDetailSubscription.unsubscribe();
-    this.snackbarSubscription.unsubscribe();
+    if (this.departmentsSubscription) {
+      this.departmentsSubscription.unsubscribe();
+    }
+    if (this.pageDetailSubscription) {
+      this.pageDetailSubscription.unsubscribe();
+    }
+    if (this.snackbarSubscription) {
+      this.snackbarSubscription.unsubscribe();
+    }
+    if (this.statusFormControlChangedSubscription) {
+      this.statusFormControlChangedSubscription.unsubscribe();
+    }
   }
 
 }

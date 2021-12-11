@@ -32,6 +32,7 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
   selectedFiles!: FileList | undefined;
   currentFile!: File | undefined;
 
+  tableLoaded: boolean = false;
   state: boolean = false;
   currentTeachingStuff!: Array<UserData>;
   currentCourse!: Course;
@@ -43,6 +44,7 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
 
   @ViewChild('fileInput') input!: ElementRef;
 
+  tableLoadedStateSubscription!: Subscription;
   teachersSelectDialogSubscription!: Subscription;
   courseSelectDialogSubscription!: Subscription;
   routeSubscription!: Subscription;
@@ -63,6 +65,17 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+
+    this.tableLoadedStateSubscription = this.courseScheduleService.courseScheduleTableLoadedState
+    .subscribe((loaded: boolean) => {
+      if (loaded) {
+        this.tableLoaded = loaded;
+      } else {
+        this.tableLoaded = false;
+        this.onCancel();
+      }
+    });
+
     this.id = this.route.snapshot.params['id'];
     this.routeSubscription = this.route.params
       .subscribe(

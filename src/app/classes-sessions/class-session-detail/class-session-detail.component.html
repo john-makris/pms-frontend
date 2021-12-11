@@ -40,6 +40,10 @@
                     <label><strong>Presence Statements:</strong></label>
                     {{ classSession?.presenceStatementStatus ? 'Opened' : 'Closed' }}
                 </div>
+                <div>
+                    <label><strong>Status:</strong></label>
+                    {{ classSession?.status === true ? 'Current' : classSession?.status === false ? 'Past' : 'Pending' }}
+                </div>
             </mat-card-content>
             <mat-card-actions>
                 <div *ngIf="classSession?.status !== false">

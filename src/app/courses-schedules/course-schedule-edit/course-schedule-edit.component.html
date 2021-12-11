@@ -1,4 +1,4 @@
-<section *ngIf="currentCourse || isAddMode"
+<section *ngIf="(tableLoaded && currentCourse) || (tableLoaded && isAddMode)"
     [ngClass]="'container'"
     [ngClass.lt-md]="'min-container'"
     fxLayout>

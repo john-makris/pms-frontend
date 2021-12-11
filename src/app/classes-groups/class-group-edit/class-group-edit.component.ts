@@ -86,17 +86,17 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.loadRooms();
+
     this.authService.user.subscribe((user: AuthUser | null) => {
       if (user) {
         this.currentUser = user;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = true;
+        this.showStudentFeatures = false;
         // this.currentUser.roles.includes('STUDENT');
       }
     });
-
-    this.loadRooms();
 
     this.courseScheduleService.courseScheduleState.
     pipe(first())

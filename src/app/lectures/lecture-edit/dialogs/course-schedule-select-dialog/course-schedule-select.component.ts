@@ -63,7 +63,7 @@ export class CourseScheduleSelectDialogComponent implements OnInit, AfterViewIni
 
     this.dataSource = new CoursesSchedulesDataSource(this.courseScheduleService);
 
-    this.dataSource.loadCoursesSchedules(this.currentDepartmentId, '', 0, 3, 'asc', this.currentColumnDef);
+    this.dataSource.loadCoursesSchedules(this.currentDepartmentId, '', '', 0, 3, 'asc', this.currentColumnDef);
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -104,6 +104,7 @@ export class CourseScheduleSelectDialogComponent implements OnInit, AfterViewIni
   loadCoursesSchedulesPage() {
     this.dataSource.loadCoursesSchedules(
         this.currentDepartmentId,
+        '',
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,

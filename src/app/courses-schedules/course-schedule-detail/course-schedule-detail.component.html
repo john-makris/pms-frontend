@@ -1,4 +1,4 @@
-<section
+<section *ngIf="tableLoaded"
     [ngClass]="'container'"
     [ngClass.lt-md]="'min-container'"
     fxLayout>
@@ -66,11 +66,11 @@
                 <div>
                     <label><strong>Status: </strong></label>
                     <span *ngIf="courseSchedule.status === null">{{ 'pending' }}</span>
-                    <span *ngIf="courseSchedule.status !== null">{{ courseSchedule?.status === true ? 'active' : 'inactive' }}</span>
+                    <span *ngIf="courseSchedule.status !== null">{{ courseSchedule?.status === true ? 'Current' : courseSchedule?.status === false ? 'Past' : 'Pending' }}</span>
                 </div>
             </mat-card-content>
             <mat-card-actions>
-                <div>
+                <div *ngIf="courseSchedule?.status !== false">
                     <button
                         mat-raised-button color="primary"
                         (click)="editCourseSchedule()">

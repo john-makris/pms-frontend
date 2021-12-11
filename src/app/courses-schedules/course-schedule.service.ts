@@ -16,6 +16,10 @@ export class CourseScheduleService {
 
     courseScheduleState = this.courseScheduleSubject.asObservable();
 
+    courseScheduleTableLoadedSubject = new BehaviorSubject<boolean>(false);
+
+    courseScheduleTableLoadedState = this.courseScheduleTableLoadedSubject.asObservable();
+
     constructor(private http: HttpClient) { }
 
     getAllPageCoursesSchedules(params: HttpParams): Observable<any> {
@@ -24,6 +28,10 @@ export class CourseScheduleService {
 
     getAllPageCoursesSchedulesByCourseDepartmentId(params: HttpParams): Observable<any> {
         return this.http.get<CourseSchedule[]>(API_URL + 'per_department/all/paginated_sorted_filtered', { params });
+    }
+
+    getAllPageCoursesSchedulesByDepartmentIdAndStatus(params: HttpParams): Observable<any> {
+        return this.http.get<CourseSchedule[]>(API_URL + 'by_department_Id_and_status/all/paginated_sorted_filtered', { params });
     }
 
     getAllCoursesSchedules(): Observable<CourseSchedule[]> {
