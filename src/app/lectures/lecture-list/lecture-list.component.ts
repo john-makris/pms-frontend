@@ -42,7 +42,7 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
   totalItems: number = 0;
   currentPage: number = 0;
   currentPageItems: number = 0;
-  currentColumnDef: string = 'id';
+  currentColumnDef: string = 'name';
   currentActivityState: string = '';
 
   courseScheduleSelectDialogSubscription!: Subscription;

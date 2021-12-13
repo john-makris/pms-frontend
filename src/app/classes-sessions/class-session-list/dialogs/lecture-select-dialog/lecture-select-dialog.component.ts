@@ -27,7 +27,7 @@ export class LectureSelectDialogComponent implements OnInit, AfterViewInit, OnDe
   totalItems: number = 0;
   currentPage: number = 0;
   currentPageItems: number = 0;
-  currentColumnDef: string = 'id';
+  currentColumnDef: string = 'name';
 
   selectedRowId: number = -1;
   isRowSelected: boolean = false;

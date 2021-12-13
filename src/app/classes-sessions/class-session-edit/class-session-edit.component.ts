@@ -157,9 +157,9 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
                   this.currentClassSession = currentClassSessionData;
                   this.currentPresenceStatementStatus = currentClassSessionData.presenceStatementStatus;
                   if (currentClassSessionData.status) {
-                    this.currentClassSessionStatus = 'active';
+                    this.currentClassSessionStatus = 'current';
                   } else if (currentClassSessionData.status === false) {
-                    this.currentClassSessionStatus = 'inactive';
+                    this.currentClassSessionStatus = 'past';
                   } else {
                     this.currentClassSessionStatus = 'pending';
                   }

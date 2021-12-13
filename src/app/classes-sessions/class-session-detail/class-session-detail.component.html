@@ -53,7 +53,7 @@
                         Edit
                     </button>
               
-                    <button 
+                    <button *ngIf="classSession.status === null"
                         mat-raised-button color="warn"
                         (click)="deleteClassSession(classSession.id)">
                         Delete

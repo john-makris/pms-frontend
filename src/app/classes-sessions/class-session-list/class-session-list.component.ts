@@ -191,6 +191,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
           });
           this.selectedCourseSchedule = _courseSchedule;
           this.selectedCourseScheduleId = _courseSchedule.id.toString();
+          this.checkForLectureValue();
           this.searchClassesSessionsForm.patchValue({
             isLectureTypeNameTheory: true
           });
