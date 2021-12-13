@@ -167,11 +167,13 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
     
     if (this.isAddMode) {
       this.endTimeCalculator();
-
-      this.classGroupFormChangesSubscription = this.classGroupForm.controls.startTime.valueChanges.subscribe((startTime: string) => {
-        this.selectedStartTime = startTime;
-        this.endTimeCalculator();
-      });
+    } else {
+        this.classGroupFormChangesSubscription = this.classGroupForm.controls.startTime.valueChanges.subscribe((startTime: string) => {
+          this.selectedStartTime = startTime;
+          if (this.currentClassGroupType) {
+            this.endTimeCalculator();
+          }
+        });
     }
   }
 
