@@ -43,7 +43,7 @@ export class ExcuseApplicationDetailComponent implements OnInit, OnDestroy {
         this.currentUser = user;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = true;
+        this.showStudentFeatures = false;
         // this.currentUser.roles.includes('STUDENT');
 
         if (this.showStudentFeatures) {
@@ -82,6 +82,7 @@ export class ExcuseApplicationDetailComponent implements OnInit, OnDestroy {
     this.router.navigate(['/excuse-applications/edit/', this.id], { relativeTo: this.route });
   }
   
+  /*
   deleteExcuseApplication(id: number) {
 
     if (!this.excuseApplication) return;
@@ -106,7 +107,7 @@ export class ExcuseApplicationDetailComponent implements OnInit, OnDestroy {
           }
         }
       );
-  }
+  } */
 
   onCancel() {
     this.router.navigate(['../../'], { relativeTo: this.route });

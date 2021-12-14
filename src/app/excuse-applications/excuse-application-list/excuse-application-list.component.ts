@@ -144,7 +144,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
 
     if (this.currentUser && this.showStudentFeatures) {
       this.dataSource.loadUserExcuseApplications(
-        4, +this.selectedCourseScheduleId, this.selectedLectureTypeName,
+        2, +this.selectedCourseScheduleId, this.selectedLectureTypeName,
         this.selectedStatus, '', 0, 3, 'asc', this.currentColumnDef);
     }
 
@@ -351,7 +351,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
     }
     if (this.showStudentFeatures && this.currentUser) {
       this.dataSource.loadUserExcuseApplications(
-        4,
+        2,
         +this.selectedCourseScheduleId,
         this.selectedLectureTypeName,
         this.selectedStatus,
