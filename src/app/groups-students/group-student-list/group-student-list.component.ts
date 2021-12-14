@@ -53,6 +53,7 @@ export class GroupStudentListComponent implements OnInit, OnDestroy {
   currentColumnDef: string = 'id';
   currentActivityState: string = '';
 
+  departmentIdFormControlChangedSubscription!: Subscription;
   classGroupSelectDialogSubscription!: Subscription;
   courseScheduleSelectDialogSubscription!: Subscription;
   lectureTypeSubscription!: Subscription;
@@ -189,6 +190,12 @@ export class GroupStudentListComponent implements OnInit, OnDestroy {
           this.classGroupService.classGroupSubject.next(this.selectedClassGroup);
           this.onSearchStudentsOfGroupFormSubmit();
         }
+      });
+
+      this.departmentIdFormControlChangedSubscription = this.searchStudentsOfGroupsForm.controls.departmentId.valueChanges
+      .subscribe((departmentId: string) => {
+        console.log("Group Student Search departmentId value: "+(+departmentId));
+        this.departmentService.departmentIdSubject.next(+departmentId);
       });
 
     }

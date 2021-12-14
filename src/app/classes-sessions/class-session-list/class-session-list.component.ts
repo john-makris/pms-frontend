@@ -76,6 +76,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   selectedStatus: string  = 'Current';
   statusTypes = ['Pending', 'Current', 'Past'];
 
+  departmentIdFormControlChangedSubscription!: Subscription;
   statusFormControlChangedSubscription!: Subscription;
   updatePresenceSubscription!: Subscription;
   classSessionSubscription!: Subscription;
@@ -191,7 +192,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
           });
           this.selectedCourseSchedule = _courseSchedule;
           this.selectedCourseScheduleId = _courseSchedule.id.toString();
-          this.checkForLectureValue();
+          this.clearLectureTypeValue();
           this.searchClassesSessionsForm.patchValue({
             isLectureTypeNameTheory: true
           });
@@ -281,6 +282,12 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.departmentIdFormControlChangedSubscription = this.searchClassesSessionsForm.controls.departmentId.valueChanges
+    .subscribe((departmentId: string) => {
+      console.log("Session Search departmentId value: "+(+departmentId));
+      this.departmentService.departmentIdSubject.next(+departmentId);
+    });
+
   }
 
   get scsf() { return this.searchClassesSessionsForm.controls; }
@@ -366,6 +373,14 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   clearLectureAndResfresh() {
     this.clearLectureValue();
     this.refreshTable();
+  }
+
+  clearLectureTypeValue() {
+    this.searchClassesSessionsForm.patchValue({
+      isLectureTypeNameTheory: true
+    });
+    this.selectedLectureTypeName = 'Theory';
+    this.checkForLectureValue();
   }
 
   clearLectureValue() {
@@ -590,6 +605,9 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.classSessionService.classSessionTableLoadedSubject.next(false);
 
+    if(this.departmentIdFormControlChangedSubscription) {
+      this.departmentIdFormControlChangedSubscription.unsubscribe();
+    }
     if (this.courseScheduleSelectDialogSubscription) {
       this.courseScheduleSelectDialogSubscription.unsubscribe();
     }

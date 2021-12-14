@@ -105,7 +105,7 @@ export class DepartmentEditComponent implements OnInit, OnDestroy {
       }
     };
 
-    this.departmentForm.reset();
+    // this.departmentForm.reset();
 
     if (this.isAddMode) {
       this.createDepartment(departmentData);

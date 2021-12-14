@@ -45,6 +45,7 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
   currentColumnDef: string = 'name';
   currentActivityState: string = '';
 
+  departmentIdFormControlChangedSubscription!: Subscription;
   courseScheduleSelectDialogSubscription!: Subscription;
   lectureTypeSubscription!: Subscription;
   snackbarSubscription!: Subscription;
@@ -173,6 +174,13 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.onSearchLecturesFormSubmit();
       }
     });
+
+    this.departmentIdFormControlChangedSubscription = this.searchLecturesForm.controls.departmentId.valueChanges
+      .subscribe((departmentId: string) => {
+        console.log("Lecture Search departmentId value: "+(+departmentId));
+        this.departmentService.departmentIdSubject.next(+departmentId);
+      });
+
   }
 
   get slf() { return this.searchLecturesForm.controls; }
@@ -327,6 +335,9 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.lectureTypeSubscription.unsubscribe();
     if (this.courseScheduleSelectDialogSubscription) {
       this.courseScheduleSelectDialogSubscription.unsubscribe();
+    }
+    if (this.departmentIdFormControlChangedSubscription) {
+      this.departmentIdFormControlChangedSubscription.unsubscribe();
     }
  }
  

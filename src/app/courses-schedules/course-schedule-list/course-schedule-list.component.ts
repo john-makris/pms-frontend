@@ -72,7 +72,7 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
 
     this.selectDepartmentForm = this.formBuilder.group({
       departmentId: [this.selectedDepartmentId],
-      status: [this.selectedStatus]
+      status: ['']
     });
 
     console.log("DEPARTMENT ID: "+this.selectedDepartmentId);
@@ -113,7 +113,7 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
         this.currentActivityState = state.message;
         if(this.currentActivityState.includes('added')) {
           //console.log('Current State: '+this.currentState);
-          this.selectDepartmentForm.setValue(
+          this.selectDepartmentForm.patchValue(
             {
               departmentId: this.selectedDepartmentId
             });

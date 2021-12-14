@@ -63,6 +63,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
   currentColumnDef: string = 'name';
   currentActivityState: string = '';
 
+  departmentIdFormControlChangedSubscription!: Subscription;
   groupStudentSubscription!: Subscription;
   ensureDialogSubscription!: Subscription;
   createGroupStudentSubscription!: Subscription;
@@ -207,6 +208,13 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
         this.onSearchLecturesFormSubmit();
       }
     });
+
+    this.departmentIdFormControlChangedSubscription = this.searchClassesGroupsForm.controls.departmentId.valueChanges
+    .subscribe((departmentId: string) => {
+      console.log("Group Search departmentId value: "+(+departmentId));
+      this.departmentService.departmentIdSubject.next(+departmentId);
+    });
+
   }
 
   get slf() { return this.searchClassesGroupsForm.controls; }
@@ -473,6 +481,9 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
   }
   
   ngOnDestroy(): void {
+    if (this.departmentIdFormControlChangedSubscription) {
+      this.departmentIdFormControlChangedSubscription.unsubscribe();
+    }
     if (this.groupStudentSubscription) {
       this.groupStudentSubscription.unsubscribe();
     }
