@@ -73,7 +73,7 @@ export class PresenceDetailComponent implements OnInit, OnDestroy {
   editPresence() {
     this.router.navigate(['/presences/edit/', this.id], { relativeTo: this.route });
   }
-  
+  /*
   deletePresence(id: number) {
 
     if (!this.presence) return;
@@ -98,7 +98,7 @@ export class PresenceDetailComponent implements OnInit, OnDestroy {
           }
         }
       );
-  }
+  } */
 
   onCancel() {
     this.router.navigate(['../../'], { relativeTo: this.route });

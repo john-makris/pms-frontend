@@ -198,14 +198,14 @@ export class PresenceEditComponent implements  OnInit, OnDestroy {
       console.log("Status: "+this.presenceForm.value.status);
       //this.courseScheduleForm.reset();
       
-      if (this.isAddMode) {
-        this.createPresence(presenceData);
-      } else {
+      if (!this.isAddMode) {
+       /* this.createPresence(presenceData);
+      } else { */
         this.updatePresence(presenceData);
       }
     }
   }
-
+  /*
   private createPresence(presenceData: PresenceRequestData) {
     this.createPresenceSubscription = this.presenceService.createPresence(presenceData)
     .pipe(last())
@@ -214,7 +214,7 @@ export class PresenceEditComponent implements  OnInit, OnDestroy {
           this.snackbarService.success('Presence added');
           this.router.navigate(['../'], { relativeTo: this.route });
       }).add(() => { this.isLoading = false; });
-  }
+  }*/
 
   private updatePresence(presenceData: PresenceRequestData) {
     this.updatePresenceSubscription = this.presenceService.updatePresence(this.id, presenceData)
