@@ -73,7 +73,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   selectedRow: ClassSessionResponseData | null = null;
   selection = new SelectionModel<ClassSessionResponseData>(true, []);
 
-  selectedStatus: string  = 'Current';
+  selectedStatus: string  = '';
   statusTypes = ['Pending', 'Current', 'Past'];
 
   departmentIdFormControlChangedSubscription!: Subscription;
@@ -397,10 +397,10 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
 
   clearStatusValue() {
     this.searchClassesSessionsForm.patchValue({
-      status: 'Current'
+      status: ''
     });
 
-    this.selectedStatus = 'Current';
+    this.selectedStatus = '';
     this.removeTableElement('status');
     this.addTableElement('presenceStatementStatus');
   }

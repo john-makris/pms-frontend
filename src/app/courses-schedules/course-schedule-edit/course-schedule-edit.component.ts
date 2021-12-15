@@ -94,7 +94,11 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
                   maxLabLectures: currentCourseScheduleData.maxLabLectures,
                   teachingStuff: currentCourseScheduleData.teachingStuff,
                   status: currentCourseScheduleData.status,
-                  course: currentCourseScheduleData.course
+                  course: currentCourseScheduleData.course,
+                  theoryHours: this.hoursCalculator(currentCourseScheduleData.theoryLectureDuration),
+                  theoryMinutes: this.minutesCalculator(currentCourseScheduleData.theoryLectureDuration),
+                  labHours: this.hoursCalculator(currentCourseScheduleData.labLectureDuration),
+                  labMinutes: this.minutesCalculator(currentCourseScheduleData.labLectureDuration)
                 });
                 this.currentCourse = currentCourseScheduleData.course;
                 this.currentTeachingStuff = currentCourseScheduleData.teachingStuff;
@@ -299,6 +303,14 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
 
   durationCalculatorInSeconds(hours: number, minutes: number): number {
     return ((hours * 3600) + (minutes * 60));
+  }
+
+  hoursCalculator(duration: number): number {
+    return (duration/3600);
+  }
+
+  minutesCalculator(duration: number): number {
+    return (duration%3600);
   }
 
   onCancel() {

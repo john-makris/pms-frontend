@@ -18,45 +18,47 @@
             <mat-card-content fxLayout.lt-sm="column" fxLayout="row wrap"
             fxLayoutAlign="center">
 
-                <div fxLayout="column" fxFlex
-                    class="non-form-field-course" *ngIf="isAddMode">
-                    <!-- Course -->
-                    <button
-                    [class.border-invalid]="f.course.invalid && f.course.touched"
-                        [ngClass.gt-xs]="{'course-button': true}"
-                        type="button"
-                        mat-stroked-button color="primary"
-                        (click)="selectCourse()">
-                        Choose Course</button>
-                        <mat-label *ngIf="currentCourse">Selected Course: {{ currentCourse.name }}</mat-label>
-                        <mat-error class="validation-text" *ngIf="f.course.errors?.required && f.course.touched">Missing Course</mat-error>
-                </div>
+                <div fxLayout="row">
+                    <div fxLayout="column" fxFlex
+                        class="non-form-field-course" *ngIf="isAddMode">
+                        <!-- Course -->
+                        <button
+                        [class.border-invalid]="f.course.invalid && f.course.touched"
+                            [ngClass.gt-xs]="{'course-button': true}"
+                            type="button"
+                            mat-stroked-button color="primary"
+                            (click)="selectCourse()">
+                            Choose Course</button>
+                            <mat-label *ngIf="currentCourse">Selected Course: {{ currentCourse.name }}</mat-label>
+                            <mat-error class="validation-text" *ngIf="f.course.errors?.required && f.course.touched">Missing Course</mat-error>
+                    </div>
 
-                <div fxFlex
-                    class="non-form-field-students" fxLayoutGap.lt-sm="0.5em">
-                    <!-- Students -->
-                    <div fxLayout="row wrap" fxLayout.lt-sm="column">
-                        <div class="aligner" fxFlex>
-                            <mat-label><strong>Upload csv/excel of Students:</strong></mat-label>
-                        </div>
-                        <div class="aligner" fxFlex>
-                            <input
-                            [ngClass]="{'color-invalid': f.students.invalid && f.students.touched}"
-                            (focus)="onTouched()"
-                            (click)="state=true"
-                            (change)="selectStudentsFile($event)"
-                            #fileInput type="file">
+                    <div fxFlex [ngClass]="{ 'upload-students-edit-mode': !isAddMode }"
+                        class="non-form-field-students" fxLayoutGap.lt-sm="0.5em">
+                        <!-- Students -->
+                        <div fxLayout="row wrap" fxLayout.lt-sm="column">
+                            <div class="aligner" fxFlex>
+                                <mat-label><strong>Upload csv/excel of Students:</strong></mat-label>
+                            </div>
+                            <div class="aligner" fxFlex>
+                                <input
+                                [ngClass]="{'color-invalid': f.students.invalid && f.students.touched}"
+                                (focus)="onTouched()"
+                                (click)="state=true"
+                                (change)="selectStudentsFile($event)"
+                                #fileInput type="file">
 
-                            <div class="validation-text">
-                                <mat-error *ngIf="f.students.errors?.requiredFileTypes"> Wrong file type: csv/excel required</mat-error>
-                                <mat-error *ngIf="f.students.errors?.inappropriate && f.students.touched">Inappropriate file</mat-error>
-                                <mat-error *ngIf="f.students.errors?.required && f.students.touched">Missing file</mat-error>
+                                <div class="validation-text">
+                                    <mat-error *ngIf="f.students.errors?.requiredFileTypes"> Wrong file type: csv/excel required</mat-error>
+                                    <mat-error *ngIf="f.students.errors?.inappropriate && f.students.touched">Inappropriate file</mat-error>
+                                    <mat-error *ngIf="f.students.errors?.required && f.students.touched">Missing file</mat-error>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div *ngIf="isAddMode"
+                <div
                     fxFlex 
                     fxLayout.lt-sm="column" 
                     fxLayout="row" 

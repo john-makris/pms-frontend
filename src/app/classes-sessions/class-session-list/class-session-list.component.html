@@ -161,8 +161,9 @@
                 </ng-container>
 
                 <ng-container matColumnDef="date">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Date</mat-header-cell>
-                    <mat-cell *matCellDef="let classSession" class="collapse-text">{{ classSession.date }}</mat-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Date & Time</mat-header-cell>
+                    <mat-cell *matCellDef="let classSession" class="collapse-text">{{ classSession.date
+                         + ' ' + classSession.classGroup.startTime + ' - ' + classSession.classGroup.endTime }}</mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="classGroup">

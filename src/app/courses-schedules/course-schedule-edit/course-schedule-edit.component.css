@@ -75,3 +75,7 @@ mat-card-actions {
 .radio-container {
     padding-left: 0.5em;
 }
+
+.upload-students-edit-mode {
+    margin-right: 5em;
+}
