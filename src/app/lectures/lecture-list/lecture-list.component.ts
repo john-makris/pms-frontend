@@ -6,6 +6,7 @@ import { MatSort } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
@@ -13,6 +14,7 @@ import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model'
 import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
 import { Department } from 'src/app/departments/department.model';
 import { DepartmentService } from 'src/app/departments/department.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 import { LecturesDataSource } from '../common/tableDataHelper/lectures.datasource';
 import { CourseScheduleSelectDialogService } from '../lecture-edit/services/course-schedule-select-dialog.sevice';
 import { LectureType } from '../lecture-types/lecture-type.model';
@@ -26,6 +28,12 @@ import { LectureService } from '../lecture.service';
 })
 export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
   searchLecturesForm!: FormGroup;
+
+  currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
 
   isLoading: boolean = false;
   submitted: boolean = false;
@@ -72,10 +80,26 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
     private courseScheduleService: CourseScheduleService,
     private courseScheduleSelectDialogService: CourseScheduleSelectDialogService,
     private snackbarService: SnackbarService,
-    private departmentService: DepartmentService) {}
+    private departmentService: DepartmentService,
+    private authService: AuthService) {}
 
 
   ngOnInit(): void {
+
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+
+        if (this.showTeacherFeatures && !this.showAdminFeatures) {
+          this.currentUserId = this.currentUser.id;
+          console.log("Current User Id: "+this.currentUserId);
+          this.selectedDepartmentId = this.currentUser.department.id.toString();
+          console.log("Teachers department: "+this.selectedDepartmentId);
+        }
+      }
+    });
 
     this.lectureTypeSubscription = this.lectureTypeService.getAllLectureTypes()
     .pipe(first())
@@ -84,11 +108,13 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log(this.lectureTypes);
     });
 
-    this.departmentsSubscription = this.departmentService.getAllDepartments()
-    .pipe(first())
-    .subscribe(departments => {
-      this.departments = departments;
-    });
+    if (this.showAdminFeatures) {
+      this.departmentsSubscription = this.departmentService.getAllDepartments()
+      .pipe(first())
+      .subscribe(departments => {
+        this.departments = departments;
+      });
+    }
 
     this.searchLecturesForm = this.formBuilder.group({
       departmentId: [this.selectedDepartmentId],
@@ -115,8 +141,16 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataSource = new LecturesDataSource(this.lectureService);
 
     if (+this.searchLecturesForm.value.departmentId && +this.selectedCourseScheduleId) {
-      this.dataSource.loadLectures( +this.selectedCourseScheduleId,
-        this.selectedLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
+      if (this.showAdminFeatures) {
+        this.dataSource.loadLectures(this.currentUserId, +this.selectedCourseScheduleId,
+          this.selectedLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
+      } else {
+        if (this.currentUserId !== 0) {
+          this.dataSource.loadLectures(this.currentUserId, +this.selectedCourseScheduleId,
+            this.selectedLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
+        }
+      }
+
     }
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
@@ -275,6 +309,7 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   loadLecturesPage() {
     this.dataSource.loadLectures(
+        this.currentUserId,
         +this.selectedCourseScheduleId,
         this.selectedLectureTypeName,
         this.input.nativeElement.value,
@@ -329,10 +364,18 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.departmentsSubscription.unsubscribe();
-    this.pageDetailSubscription.unsubscribe();
-    this.snackbarSubscription.unsubscribe();
-    this.lectureTypeSubscription.unsubscribe();
+    if (this.departmentsSubscription) {
+      this.departmentsSubscription.unsubscribe();
+    }
+    if (this.pageDetailSubscription) {
+      this.pageDetailSubscription.unsubscribe();
+    }
+    if (this.snackbarSubscription) {
+      this.snackbarSubscription.unsubscribe();
+    }
+    if (this.lectureTypeSubscription) {
+      this.lectureTypeSubscription.unsubscribe();
+    }
     if (this.courseScheduleSelectDialogSubscription) {
       this.courseScheduleSelectDialogSubscription.unsubscribe();
     }

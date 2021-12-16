@@ -6,11 +6,13 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { CoursesSchedulesDataSource } from 'src/app/courses-schedules/common/tableDataHelper/coursesSchedules.datasource';
 import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model';
 import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
 import { DepartmentService } from 'src/app/departments/department.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 
 @Component({
   selector: 'app-course-schedule-select',
@@ -21,6 +23,12 @@ export class CourseScheduleSelectDialogComponent implements OnInit, AfterViewIni
   
   dialogStarted: boolean = true;
   dataSource!: CoursesSchedulesDataSource;
+
+  currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
 
   totalItems: number = 0;
   currentPage: number = 0;
@@ -51,19 +59,40 @@ export class CourseScheduleSelectDialogComponent implements OnInit, AfterViewIni
     private departmentService: DepartmentService,
     private courseScheduleService: CourseScheduleService,
     private dialogRef: MatDialogRef<CourseScheduleSelectDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data :CourseSchedule) {}
+    @Inject(MAT_DIALOG_DATA) public data :CourseSchedule,
+    private authService: AuthService) {}
 
 
   ngOnInit(): void {
 
-    this.departmentIdSubscription = this.departmentService.departmentIdState
-      .subscribe((departmentId: number) => {
-        this.currentDepartmentId = departmentId;
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+
+        if (this.showTeacherFeatures && !this.showAdminFeatures) {
+          this.currentUserId = this.currentUser.id;
+          this.currentDepartmentId = this.currentUser.department.id;
+        }
+
+        if (this.showAdminFeatures) {
+          this.currentUserId = this.currentUser.id;
+        }
+      }
     });
+
+    if (this.showAdminFeatures) {
+      this.departmentIdSubscription = this.departmentService.departmentIdState
+        .subscribe((departmentId: number) => {
+          this.currentDepartmentId = departmentId;
+      });
+    }
 
     this.dataSource = new CoursesSchedulesDataSource(this.courseScheduleService);
 
-    this.dataSource.loadCoursesSchedules(this.currentDepartmentId, '', '', 0, 3, 'asc', this.currentColumnDef);
+    this.dataSource.loadCoursesSchedules(this.currentUserId, this.currentDepartmentId,
+       '', '', 0, 3, 'asc', this.currentColumnDef);
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -103,6 +132,7 @@ export class CourseScheduleSelectDialogComponent implements OnInit, AfterViewIni
 
   loadCoursesSchedulesPage() {
     this.dataSource.loadCoursesSchedules(
+      this.currentUserId,
         this.currentDepartmentId,
         '',
         this.input.nativeElement.value,

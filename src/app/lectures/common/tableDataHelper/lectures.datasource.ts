@@ -26,7 +26,8 @@ export class LecturesDataSource implements DataSource<LectureResponseData> {
 
     constructor(private lectureService: LectureService) { }
 
-    loadLectures(courseScheduleId: number,
+    loadLectures(userId: number,
+                courseScheduleId: number,
                 lectureTypeName: string,
                 filter:string,
                 pageIndex:number,
@@ -35,7 +36,7 @@ export class LecturesDataSource implements DataSource<LectureResponseData> {
                 currentColumnDef:string) {
 
         if (courseScheduleId) {
-            let params: HttpParams = this.createParams(courseScheduleId, lectureTypeName,
+            let params: HttpParams = this.createParams(userId, courseScheduleId, lectureTypeName,
                 filter, pageIndex, pageSize, sortDirection, currentColumnDef);
                 console.log("PARAMS: "+params);
 
@@ -83,6 +84,7 @@ export class LecturesDataSource implements DataSource<LectureResponseData> {
     }
 
     createParams(
+        userId: number,
         courseScheduleId: number,
         lectureTypeName: string,
         filter:string,
@@ -92,6 +94,11 @@ export class LecturesDataSource implements DataSource<LectureResponseData> {
         currentColumnDef:string): HttpParams {
 
             let params = new HttpParams();
+
+            if (userId) {
+                //console.log("ID: "+userId);
+                params=params.set('userId', userId);
+            }
 
             if (courseScheduleId) {
                 //console.log("ID: "+courseScheduleId);

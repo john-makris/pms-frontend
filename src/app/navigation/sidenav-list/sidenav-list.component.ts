@@ -15,8 +15,8 @@ export class SidenavListComponent implements OnInit {
 
   private roles!: string[];
   showAdminFeatures = false;
-  showProfessorFearures = false;
-  showStudentFearures = false;
+  showProfessorFeatures = false;
+  showStudentFeatures = false;
   username!: string;
 
   private userSubscription!: Subscription;
@@ -35,12 +35,12 @@ export class SidenavListComponent implements OnInit {
           console.log("user: " + this.user.roles);
   
           this.showAdminFeatures = this.roles.includes('ROLE_ADMIN');
-          this.showProfessorFearures = this.roles.includes('ROLE_PROFESSOR');
-          this.showStudentFearures = this.roles.includes('ROLE_STUDENT');
+          this.showProfessorFeatures = this.roles.includes('ROLE_TEACHER');
+          this.showStudentFeatures = this.roles.includes('ROLE_STUDENT');
         } else {
           this.showAdminFeatures = false;
-          this.showProfessorFearures = false;
-          this.showStudentFearures = false;
+          this.showProfessorFeatures = false;
+          this.showStudentFeatures = false;
         }
       });
       console.log("WHAT??? " + this.isAuth);

@@ -86,10 +86,10 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
     this.dataSource = new CoursesSchedulesDataSource(this.courseScheduleService);
 
     if (this.selectedDepartmentId === '') {
-      this.dataSource.loadCoursesSchedules(this.selectDepartmentForm.value.departmentId, '',
+      this.dataSource.loadCoursesSchedules(0, this.selectDepartmentForm.value.departmentId, '',
         '', 0, 3, 'asc', this.currentColumnDef);
     } else {
-      this.dataSource.loadCoursesSchedules(this.selectDepartmentForm.value.departmentId, this.selectedStatus,
+      this.dataSource.loadCoursesSchedules(0, this.selectDepartmentForm.value.departmentId, this.selectedStatus,
         '', 0, 3, 'asc', this.currentColumnDef);
     }
 
@@ -212,6 +212,7 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
   loadCoursesSchedulesPage() {
     this.checksBeforeLoading();
     this.dataSource.loadCoursesSchedules(
+        0,
         +this.selectedDepartmentId,
         this.selectedStatus,
         this.input.nativeElement.value,

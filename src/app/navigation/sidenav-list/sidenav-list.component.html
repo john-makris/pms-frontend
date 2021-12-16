@@ -7,43 +7,54 @@
         <mat-icon>input</mat-icon>
         <span class="nav-caption">Login</span>
     </a>
-    <a mat-list-item routerLink="/schools" (click)="onClose()" *ngIf="isAuth">
+    <a mat-list-item routerLink="/schools" (click)="onClose()" 
+        *ngIf="isAuth && showAdminFeatures">
         <mat-icon>school</mat-icon>
         <span class="nav-caption">Schools</span>
     </a>
-    <a mat-list-item routerLink="/departments" (click)="onClose()" *ngIf="isAuth">
+    <a mat-list-item routerLink="/departments" (click)="onClose()" 
+        *ngIf="isAuth && showAdminFeatures">
         <mat-icon>domain</mat-icon>
         <span class="nav-caption">Departments</span>
     </a>
-    <a mat-list-item routerLink="/courses" (click)="onClose()" *ngIf="isAuth">
+    <a mat-list-item routerLink="/courses" (click)="onClose()" 
+        *ngIf="isAuth && showAdminFeatures">
         <mat-icon>book</mat-icon>
         <span class="nav-caption">Courses</span>
     </a>
-    <a mat-list-item routerLink="/courses-schedules" (click)="onClose()" *ngIf="isAuth">
+    <a mat-list-item routerLink="/courses-schedules" (click)="onClose()" 
+        *ngIf="isAuth && (showAdminFeatures)">
         <mat-icon>date_range</mat-icon>
         <span class="nav-caption">Courses Schedules</span>
     </a>
-    <a mat-list-item routerLink="/lectures" (click)="onClose()" *ngIf="isAuth">
+    <a mat-list-item routerLink="/lectures" (click)="onClose()" 
+        *ngIf="isAuth && (showAdminFeatures || showProfessorFeatures)">
         <mat-icon>menu_book</mat-icon>
         <span class="nav-caption">Lectures</span>
     </a>
-    <a mat-list-item routerLink="/classes-groups" (click)="onClose()" *ngIf="isAuth">
+    <a mat-list-item routerLink="/classes-groups" (click)="onClose()" 
+        *ngIf="isAuth && (showAdminFeatures || showProfessorFeatures || showStudentFeatures)">
         <mat-icon>groups</mat-icon>
         <span class="nav-caption">Classes Groups</span>
     </a>
-    <a mat-list-item routerLink="/students-of-groups" (click)="onClose()" *ngIf="isAuth">
+    <a mat-list-item routerLink="/students-of-groups" (click)="onClose()" 
+        *ngIf="isAuth && (showAdminFeatures || showProfessorFeatures)">
         <mat-icon>groups</mat-icon>
         <span class="nav-caption">Students of Groups</span>
     </a>
-    <a mat-list-item routerLink="/classes-sessions" (click)="onClose()" *ngIf="isAuth">
+    <a mat-list-item routerLink="/classes-sessions" (click)="onClose()" 
+        *ngIf="isAuth && (showAdminFeatures || showProfessorFeatures || showStudentFeatures)">
         <mat-icon>play_lesson</mat-icon>
-        <span class="nav-caption">Classes Sessions</span>
+        <span class="nav-caption" *ngIf="!showStudentFeatures">Classes Sessions</span>
+        <span class="nav-caption" *ngIf="showStudentFeatures">Current Lectures</span>
     </a>
-    <a mat-list-item routerLink="/presences" (click)="onClose()" *ngIf="isAuth">
+    <a mat-list-item routerLink="/presences" (click)="onClose()" 
+        *ngIf="isAuth && (showAdminFeatures || showProfessorFeatures)">
         <mat-icon>rule</mat-icon>
         <span class="nav-caption">Presences</span>
     </a>
-    <a mat-list-item routerLink="/excuse-applications" (click)="onClose()" *ngIf="isAuth">
+    <a mat-list-item routerLink="/excuse-applications" (click)="onClose()" 
+        *ngIf="isAuth && (showStudentFeatures || showAdminFeatures)">
         <mat-icon>article</mat-icon>
         <span class="nav-caption">Excuse Applications</span>
     </a>

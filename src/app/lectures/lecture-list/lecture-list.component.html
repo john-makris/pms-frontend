@@ -15,7 +15,7 @@
         <!-- Search Lectures Form -->
         <form fxLayout="column"
             [formGroup]="searchLecturesForm" fxLayoutGap="0.5em">
-            <mat-form-field
+            <mat-form-field *ngIf="showAdminFeatures"
                 appearance="outline">
                 <mat-select
                     [(value)]="selectedDepartmentId"
@@ -71,7 +71,7 @@
         matTooltipPosition="after"
         [matTooltipDisabled]="selectedDepartmentId !=='' && selectedCourseScheduleId !==''">
         <button
-            *ngIf="departments"
+            *ngIf="departments || showTeacherFeatures"
             type="button"
             mat-raised-button
             color="primary"
