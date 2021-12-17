@@ -114,19 +114,18 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
     this.authService.user.subscribe((user: AuthUser | null) => {
       if (user) {
         this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
+        console.log("Current User Id: "+this.currentUserId);
         this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
         this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
 
         if (this.showStudentFeatures) {
-          this.currentUserId = this.currentUser.id;
           this.displayedColumns = [];
           this.displayedColumns = ['name', 'startTime', 'capacity', 'subscription'];
           this.selectedDepartmentId = this.currentUser.department.id.toString();
         }
         if (this.showTeacherFeatures && !this.showAdminFeatures) {
-          this.currentUserId = this.currentUser.id;
-          console.log("Current User Id: "+this.currentUserId);
           this.selectedDepartmentId = this.currentUser.department.id.toString();
           console.log("Teachers department: "+this.selectedDepartmentId);
         }
@@ -155,6 +154,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
 
     if (+this.searchClassesGroupsForm.value.departmentId && +this.selectedCourseScheduleId) {
       this.dataSource.loadClassesGroups(
+        this.currentUserId,
         null,
         +this.selectedCourseScheduleId,
         this.selectedLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
@@ -327,6 +327,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
 
   loadClassesGroupsPage() {
     this.dataSource.loadClassesGroups(
+        this.currentUserId,
         null,
         +this.selectedCourseScheduleId,
         this.selectedLectureTypeName,

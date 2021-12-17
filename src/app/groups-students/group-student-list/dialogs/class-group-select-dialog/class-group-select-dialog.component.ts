@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ClassGroup } from 'src/app/classes-groups/class-group.model';
 import { ClassGroupService } from 'src/app/classes-groups/class-group.service';
 import { ClassesGroupsDataSource } from 'src/app/classes-groups/common/tableDataHelper/classes-groups.datasource';
@@ -15,6 +16,7 @@ import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model'
 import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
 import { LectureType } from 'src/app/lectures/lecture-types/lecture-type.model';
 import { LectureTypeService } from 'src/app/lectures/lecture-types/lecture-type.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 
 @Component({
   selector: 'app-class-group-select-dialog',
@@ -25,6 +27,12 @@ export class ClassGroupSelectDialogComponent implements OnInit, AfterViewInit, O
   
   dialogStarted: boolean = true;
   dataSource!: ClassesGroupsDataSource;
+
+  currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
 
   totalItems: number = 0;
   currentPage: number = 0;
@@ -63,12 +71,25 @@ export class ClassGroupSelectDialogComponent implements OnInit, AfterViewInit, O
     private classGroupService: ClassGroupService,
     private classSessionService: ClassSessionService,
     private dialogRef: MatDialogRef<ClassGroupSelectDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data :ClassGroup) {}
+    @Inject(MAT_DIALOG_DATA) public data :ClassGroup,
+    private authService: AuthService) {}
 
 
   ngOnInit(): void {
 
     this.dataSource = new ClassesGroupsDataSource(this.classGroupService);
+
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
+        console.log("Current User Id: "+this.currentUserId);
+
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
+      }
+    });
 
     this.classSessionTableLoadedSubscription = this.classSessionService.classSessionTableLoadedState
       .subscribe((status: boolean) => {
@@ -98,10 +119,10 @@ export class ClassGroupSelectDialogComponent implements OnInit, AfterViewInit, O
           console.log("Lecture Type name: " + this.currentLectureTypeName);
 
           if (this.dataForClassSessionComponent) {
-            this.dataSource.loadClassesGroups(false, this.currentCourseScheduleId, 
+            this.dataSource.loadClassesGroups(this.currentUserId, false, this.currentCourseScheduleId, 
               this.currentLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
           } else {
-            this.dataSource.loadClassesGroups(null, this.currentCourseScheduleId, 
+            this.dataSource.loadClassesGroups(this.currentUserId, null, this.currentCourseScheduleId, 
               this.currentLectureTypeName, '', 0, 3, 'asc', this.currentColumnDef);
           }
         }
@@ -147,6 +168,7 @@ export class ClassGroupSelectDialogComponent implements OnInit, AfterViewInit, O
     if (this.dataForClassSessionComponent !== undefined) {
       if (this.dataForClassSessionComponent) {
         this.dataSource.loadClassesGroups(
+          this.currentUserId,
           false,
           this.currentCourseScheduleId,
           this.currentLectureTypeName,
@@ -157,6 +179,7 @@ export class ClassGroupSelectDialogComponent implements OnInit, AfterViewInit, O
           this.currentColumnDef);
       } else {
         this.dataSource.loadClassesGroups(
+          this.currentUserId,
           null,
           this.currentCourseScheduleId,
           this.currentLectureTypeName,

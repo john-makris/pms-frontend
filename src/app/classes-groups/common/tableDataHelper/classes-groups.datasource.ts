@@ -26,7 +26,7 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
 
     constructor(private classGroupService: ClassGroupService) { }
 
-    loadClassesGroups(
+    loadClassesGroups(userId: number,
                 status: boolean | null,
                 courseScheduleId: number,
                 lectureTypeName: string,
@@ -37,7 +37,7 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
                 currentColumnDef:string) {
 
         if (courseScheduleId) {
-            let params: HttpParams = this.createParams(status, courseScheduleId, lectureTypeName,
+            let params: HttpParams = this.createParams(userId, status, courseScheduleId, lectureTypeName,
                 filter, pageIndex, pageSize, sortDirection, currentColumnDef);
                 console.log("PARAMS: "+params);
 
@@ -98,6 +98,7 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
     }
 
     createParams(
+        userId: number,
         status: boolean | null,
         courseScheduleId: number,
         lectureTypeName: string,
@@ -112,6 +113,11 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
             if (status !== null) {
                 //console.log("Status: "+status);
                 params=params.set('status', status);
+            }
+
+            if (userId) {
+                //console.log("USER ID: "+userId);
+                params=params.set('userId', userId);
             }
 
             if (courseScheduleId) {
