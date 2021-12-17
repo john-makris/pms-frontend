@@ -35,6 +35,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
   searchClassesGroupsForm!: FormGroup;
 
   currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
   showAdminFeatures: boolean = false;
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
@@ -103,22 +104,6 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.authService.user.subscribe((user: AuthUser | null) => {
-      if (user) {
-        this.currentUser = user;
-        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
-        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
-        // this.currentUser.roles.includes('STUDENT');
-
-        if (this.showStudentFeatures) {
-          this.displayedColumns = [];
-          this.displayedColumns = ['name', 'startTime', 'capacity', 'subscription'];
-          this.selectedDepartmentId = '1'; //this.currentUser.department.id.toString();
-        }
-      }
-    });
-
     this.lectureTypeSubscription = this.lectureTypeService.getAllLectureTypes()
     .pipe(first())
     .subscribe(lectureTypes => {
@@ -126,7 +111,29 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
       console.log(this.lectureTypes);
     });
 
-    if (!this.showStudentFeatures) {
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
+
+        if (this.showStudentFeatures) {
+          this.currentUserId = this.currentUser.id;
+          this.displayedColumns = [];
+          this.displayedColumns = ['name', 'startTime', 'capacity', 'subscription'];
+          this.selectedDepartmentId = this.currentUser.department.id.toString();
+        }
+        if (this.showTeacherFeatures && !this.showAdminFeatures) {
+          this.currentUserId = this.currentUser.id;
+          console.log("Current User Id: "+this.currentUserId);
+          this.selectedDepartmentId = this.currentUser.department.id.toString();
+          console.log("Teachers department: "+this.selectedDepartmentId);
+        }
+      }
+    });
+
+    if (this.showAdminFeatures) {
       this.departmentsSubscription = this.departmentService.getAllDepartments()
       .pipe(first())
       .subscribe(departments => {

@@ -101,6 +101,12 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
+    this.searchLecturesForm = this.formBuilder.group({
+      departmentId: [this.selectedDepartmentId],
+      courseSchedule: [''],
+      isLectureTypeNameTheory : [true]
+    });
+
     this.lectureTypeSubscription = this.lectureTypeService.getAllLectureTypes()
     .pipe(first())
     .subscribe(lectureTypes => {
@@ -115,12 +121,6 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.departments = departments;
       });
     }
-
-    this.searchLecturesForm = this.formBuilder.group({
-      departmentId: [this.selectedDepartmentId],
-      courseSchedule: [''],
-      isLectureTypeNameTheory : [true]
-    });
 
     /*this.lectureTypeSubscription = this.lectureTypeService.lectureTypeIdState.subscribe((lectureType: string) => {
       console.log("I am inside lecture type subscriber: "+lectureType);
