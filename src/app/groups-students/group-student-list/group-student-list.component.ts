@@ -18,6 +18,7 @@ import { DepartmentService } from 'src/app/departments/department.service';
 import { CourseScheduleSelectDialogService } from 'src/app/lectures/lecture-edit/services/course-schedule-select-dialog.sevice';
 import { LectureType } from 'src/app/lectures/lecture-types/lecture-type.model';
 import { LectureTypeService } from 'src/app/lectures/lecture-types/lecture-type.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 import { StudentsOfGroupDataSource } from '../common/tableDataHelper/students-of-group.datasource';
 import { GroupStudentService } from '../group-student.service';
 import { ClassGroupSelectDialogService } from './services/class-group-select-dialog.service';
@@ -29,6 +30,12 @@ import { ClassGroupSelectDialogService } from './services/class-group-select-dia
 })
 export class GroupStudentListComponent implements OnInit, OnDestroy {
   searchStudentsOfGroupsForm!: FormGroup;
+
+  currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
 
   isLoading: boolean = false;
   submitted: boolean = false;
@@ -87,6 +94,22 @@ export class GroupStudentListComponent implements OnInit, OnDestroy {
     private authService: AuthService) {}
 
     ngOnInit(): void {
+
+      this.authService.user.subscribe((user: AuthUser | null) => {
+        if (user) {
+          this.currentUser = user;
+          this.currentUserId = this.currentUser.id;
+          console.log("Current User Id: "+this.currentUserId);
+  
+          this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+          this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+  
+          if (this.showTeacherFeatures && !this.showAdminFeatures) {
+            this.selectedDepartmentId = this.currentUser.department.id.toString();
+            console.log("Teachers department: "+this.selectedDepartmentId);
+          }
+        }
+      });
   
       this.lectureTypeSubscription = this.lectureTypeService.getAllLectureTypes()
       .pipe(first())
@@ -96,11 +119,13 @@ export class GroupStudentListComponent implements OnInit, OnDestroy {
         this.publishLectureType();
       });
   
-      this.departmentsSubscription = this.departmentService.getAllDepartments()
-      .pipe(first())
-      .subscribe(departments => {
-        this.departments = departments;
-      });
+      if (this.showAdminFeatures) {
+        this.departmentsSubscription = this.departmentService.getAllDepartments()
+        .pipe(first())
+        .subscribe(departments => {
+          this.departments = departments;
+        });
+      }
   
       this.searchStudentsOfGroupsForm = this.formBuilder.group({
         departmentId: [this.selectedDepartmentId],
@@ -116,7 +141,7 @@ export class GroupStudentListComponent implements OnInit, OnDestroy {
       this.dataSource = new StudentsOfGroupDataSource(this.groupStudentService);
   
       if (+this.searchStudentsOfGroupsForm.value.departmentId && +this.selectedCourseScheduleId && this.selectedClassGroupId) {
-        this.dataSource.loadStudentsOfGroup(+this.selectedClassGroupId, '', 0, 3, 'asc', this.currentColumnDef);
+        this.dataSource.loadStudentsOfGroup(this.currentUserId, +this.selectedClassGroupId, '', 0, 3, 'asc', this.currentColumnDef);
       }
   
       this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
@@ -276,6 +301,7 @@ export class GroupStudentListComponent implements OnInit, OnDestroy {
   
     loadStudentsOfGroupPage() {
       this.dataSource.loadStudentsOfGroup(
+          this.currentUserId,
           +this.selectedClassGroupId,
           this.input.nativeElement.value,
           this.paginator.pageIndex,

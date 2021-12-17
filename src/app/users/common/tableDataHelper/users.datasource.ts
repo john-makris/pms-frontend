@@ -58,14 +58,15 @@ export class UsersDataSource implements DataSource<UserData> {
         this.retrieveCourseScheduleStudents(params);             
     }
 
-    loadStudentsWithoutGroup(courseScheduleId: number,
+    loadStudentsWithoutGroup(userId: number,
+        courseScheduleId: number,
         classGroupTypeId: number,              
         filter:string,
         pageIndex:number,
         pageSize:number,
         sortDirection:string,
         currentColumnDef:string) {
-        let params: HttpParams = this.createStudentWithoutGroupParams(courseScheduleId, classGroupTypeId, filter,
+        let params: HttpParams = this.createStudentWithoutGroupParams(userId, courseScheduleId, classGroupTypeId, filter,
         pageIndex, pageSize, sortDirection, currentColumnDef);
         console.log("PARAMS: "+params);
 
@@ -246,6 +247,7 @@ export class UsersDataSource implements DataSource<UserData> {
     }
 
     createStudentWithoutGroupParams(
+        userId: number,
         courseScheduleId: number,
         classGroupTypeId: number,
         filter:string,
@@ -255,6 +257,11 @@ export class UsersDataSource implements DataSource<UserData> {
         currentColumnDef:string): HttpParams {
 
             let params = new HttpParams();
+
+            if (userId) {
+                console.log("userId: "+userId);
+                params=params.set('userId', userId);
+            }
 
             if (courseScheduleId) {
                 console.log("courseScheduleId: "+courseScheduleId);

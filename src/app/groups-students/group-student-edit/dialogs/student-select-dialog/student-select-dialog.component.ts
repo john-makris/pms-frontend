@@ -5,7 +5,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
+import { AuthUser } from 'src/app/users/auth-user.model';
 import { UserResponseData } from 'src/app/users/common/payload/response/userResponseData.interface';
 import { UsersDataSource } from 'src/app/users/common/tableDataHelper/users.datasource';
 import { UserService } from 'src/app/users/user.service';
@@ -19,6 +21,12 @@ export class StudentSelectDialogComponent implements OnInit, AfterViewInit, OnDe
   
   dialogStarted: boolean = true;
   dataSource!: UsersDataSource;
+
+  currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
 
   currentNameIdentifier: string = '';
 
@@ -53,12 +61,25 @@ export class StudentSelectDialogComponent implements OnInit, AfterViewInit, OnDe
   constructor(
     private userService: UserService,
     private dialogRef: MatDialogRef<StudentSelectDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data :{object: any}) {}
+    @Inject(MAT_DIALOG_DATA) public data :{object: any},
+    private authService: AuthService) {}
 
 
   ngOnInit(): void {
 
     this.dataSource = new UsersDataSource(this.userService);
+
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
+        console.log("Current User Id: "+this.currentUserId);
+
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
+      }
+    });
 
     this.currentNameIdentifier = this.data.object.nameIdentifier;
 
@@ -70,7 +91,7 @@ export class StudentSelectDialogComponent implements OnInit, AfterViewInit, OnDe
       this.currentClassGroupTypeId = this.data.object.groupType.id;
       console.log("Class Group Type Id: " + this.currentClassGroupTypeId);
   
-      this.dataSource.loadStudentsWithoutGroup(this.departmentId, 
+      this.dataSource.loadStudentsWithoutGroup(this.currentUserId, this.departmentId, 
         this.currentClassGroupTypeId, '', 0, 3, 'asc', this.currentColumnDef);
     }else if (this.currentNameIdentifier.includes('session')) {
       console.log("Instance of Class Session");
@@ -128,6 +149,7 @@ export class StudentSelectDialogComponent implements OnInit, AfterViewInit, OnDe
   loadStudentsPage() {
     if (this.currentNameIdentifier.includes('group')) {
       this.dataSource.loadStudentsWithoutGroup(
+        this.currentUserId,
         this.departmentId,
         this.currentClassGroupTypeId,
         this.input.nativeElement.value,

@@ -26,7 +26,7 @@ export class StudentsOfGroupDataSource implements DataSource<StudentOfGroupRespo
 
     constructor(private groupStudentService: GroupStudentService) { }
 
-    loadStudentsOfGroup(
+    loadStudentsOfGroup(userId: number,
                 classGroupId: number,
                 filter:string,
                 pageIndex:number,
@@ -36,6 +36,7 @@ export class StudentsOfGroupDataSource implements DataSource<StudentOfGroupRespo
 
             if (classGroupId) {
                 let params: HttpParams = this.createParams(
+                    userId,
                     classGroupId,
                     filter, 
                     pageIndex, 
@@ -86,7 +87,7 @@ export class StudentsOfGroupDataSource implements DataSource<StudentOfGroupRespo
         }
     }
 
-    createParams(
+    createParams(userId: number,
         classGroupId: number,
         filter:string,
         pageIndex:number,
@@ -95,6 +96,11 @@ export class StudentsOfGroupDataSource implements DataSource<StudentOfGroupRespo
         currentColumnDef:string): HttpParams {
 
             let params = new HttpParams();
+
+            if (userId) {
+                //console.log("User ID: "+userId);
+                params=params.set('userId', userId);
+            }
 
             if (classGroupId) {
                 //console.log("Class Group ID: "+classGroupId);

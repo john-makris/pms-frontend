@@ -91,7 +91,7 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentUser = user;
         this.currentUserId = this.currentUser.id;
         console.log("Current User Id: "+this.currentUserId);
-        
+
         this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
 
