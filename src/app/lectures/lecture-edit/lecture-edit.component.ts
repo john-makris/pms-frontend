@@ -16,6 +16,8 @@ import { MatSelect } from '@angular/material/select';
 import { SelectionHelper } from 'src/app/common/helpers/selectionHelper';
 import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule.service';
 import { LectureResponseData } from '../common/payload/response/lectureResponseData.interface';
+import { AuthService } from 'src/app/auth/auth.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 
 @Component({
   selector: 'app-lecture-edit',
@@ -28,6 +30,12 @@ export class LectureEditComponent implements OnInit, OnDestroy {
   isAddMode!: boolean;
   isLoading: boolean = false;
   submitted: boolean = false;
+
+  currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
 
   selectedLectureNumber: string = '';
 
@@ -69,10 +77,22 @@ export class LectureEditComponent implements OnInit, OnDestroy {
     private courseScheduleService: CourseScheduleService,
     private lectureService: LectureService,
     private lectureTypeService: LectureTypeService,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
+        console.log("Current User Id: "+this.currentUserId);
+
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+      }
+    });
 
     this.courseScheduleService.courseScheduleState.subscribe((_courseSchedule: CourseSchedule | null) => {
       if (_courseSchedule !== null) {
@@ -99,7 +119,7 @@ export class LectureEditComponent implements OnInit, OnDestroy {
           this.id = params['id'];
           this.isAddMode = params['id'] == null;
           if(!this.isAddMode) {
-            this.lectureSubscription = this.lectureService.getLectureById(this.id)
+            this.lectureSubscription = this.lectureService.getLectureById(this.id, this.currentUserId)
               .pipe(first())
               .subscribe((currentLectureData: LectureResponseData) => {
                 if (currentLectureData !== null) {
@@ -175,7 +195,7 @@ export class LectureEditComponent implements OnInit, OnDestroy {
   }
 
   private createLecture(lectureData: LectureRequestData) {
-    this.createLectureSubscription = this.lectureService.createLecture(lectureData)
+    this.createLectureSubscription = this.lectureService.createLecture(lectureData, this.currentUserId)
     .pipe(last())
       .subscribe(() => {
         console.log("DATA: "+ "Mpike sto subscribe");
@@ -185,7 +205,7 @@ export class LectureEditComponent implements OnInit, OnDestroy {
   }
 
   private updateLecture(lectureData: LectureRequestData) {
-    this.updateLectureSubscription = this.lectureService.updateLecture(this.id, lectureData)
+    this.updateLectureSubscription = this.lectureService.updateLecture(this.id, this.currentUserId, lectureData)
       .pipe(last())
       .subscribe(() => {
         this.snackbarService.success('Lecture updated');

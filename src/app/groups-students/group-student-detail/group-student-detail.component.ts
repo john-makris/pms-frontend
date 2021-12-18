@@ -45,9 +45,17 @@ export class GroupStudentDetailComponent implements OnInit, OnDestroy {
           this.classGroupId = params['classGroupId'];
           this.groupStudentService.getStudentOfGroup(this.studentId, this.classGroupId)
           .pipe(first())
-          .subscribe((currentStudentOfGroup: UserResponseData) => {
-            this.studentOfGroup = currentStudentOfGroup;
-            console.log("Group Student Details: "+JSON.stringify(this.studentOfGroup));
+          .subscribe(
+            (currentStudentOfGroup: UserResponseData) => {
+            if (currentStudentOfGroup) {
+              this.studentOfGroup = currentStudentOfGroup;
+              console.log("Group Student Details: "+JSON.stringify(this.studentOfGroup));
+            } else {
+              this.router.navigate(['/students-of-groups'], { relativeTo: this.route});
+            }
+          },
+          (err: any) => {
+            this.router.navigate(['/students-of-groups'], { relativeTo: this.route});
           });
       }
     );

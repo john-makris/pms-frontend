@@ -51,23 +51,23 @@ export class LectureService {
         return this.http.get<Lecture[]>(API_URL + 'all');
     }
 
-    getLectureById(lectureId: number): Observable<LectureResponseData> {
-        return this.http.get<LectureResponseData>(API_URL + lectureId);
+    getLectureById(lectureId: number, userId: number): Observable<LectureResponseData> {
+        return this.http.get<LectureResponseData>(API_URL + lectureId +'/' + userId);
     }
 
     deleteAllLectures(): Observable<Lecture[]> {
         return this.http.delete<Lecture[]>(API_URL + 'delete/all');
     }
 
-    deleteLectureById(lectureId: number): Observable<Lecture> {
-        return this.http.delete<Lecture>(API_URL + 'delete/' + lectureId);
+    deleteLectureById(lectureId: number, userId: number): Observable<Lecture> {
+        return this.http.delete<Lecture>(API_URL + 'delete/' + lectureId + '/' + userId);
     }
 
-    createLecture(lectureData: LectureRequestData): Observable<LectureRequestData> {
-        return this.http.post<LectureRequestData>(API_URL + 'create/', lectureData);
+    createLecture(lectureData: LectureRequestData, userId: number): Observable<LectureRequestData> {
+        return this.http.post<LectureRequestData>(API_URL + 'create/' + userId, lectureData);
     }
 
-    updateLecture(lectureId: number, lectureData: LectureRequestData): Observable<any> {
-        return this.http.put(API_URL + 'update/' + lectureId, lectureData);
+    updateLecture(lectureId: number, userId: number, lectureData: LectureRequestData): Observable<any> {
+        return this.http.put(API_URL + 'update/' + lectureId + '/' + userId, lectureData);
     }
 }

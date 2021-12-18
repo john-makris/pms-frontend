@@ -46,12 +46,18 @@ export class ClassSessionDetailComponent implements OnInit, OnDestroy {
           this.classSessionService.getClassSessionById(this.id)
           .pipe(first())
           .subscribe((currentClassSession: ClassSessionResponseData) => {
-            this.classSession = currentClassSession;
-            this.classSessionService.classSessionSubject.next(this.classSession);
-            console.log("Class Session Details: "+JSON.stringify(this.classSession));
+            if (currentClassSession) {
+              this.classSession = currentClassSession;
+              this.classSessionService.classSessionSubject.next(this.classSession);
+              console.log("Class Session Details: "+JSON.stringify(this.classSession));
+            } else {
+              this.router.navigate(['/classes-sessions'], { relativeTo: this.route});
+            }
           });
-      }
-    );
+      },
+      (err: any) => {
+        this.router.navigate(['/classes-sessions'], { relativeTo: this.route});
+      });
   }
 
   editClassSession() {

@@ -39,6 +39,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   searchClassesSessionsForm!: FormGroup;
 
   currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
   showAdminFeatures: boolean = false;
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
@@ -125,14 +126,20 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
     this.authService.user.subscribe((user: AuthUser | null) => {
       if (user) {
         this.currentUser = user;
-        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
-        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
-        // this.currentUser.roles.includes('STUDENT');
+        this.currentUserId = this.currentUser.id;
+        console.log("Current User Id: "+this.currentUserId);
+
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
 
         if (this.showStudentFeatures) {
           this.displayedColumns = [];
           this.displayedColumns = ['course', 'lecture', 'dateTime', 'presenceStatement'];
+        }
+
+        if (this.showTeacherFeatures && !this.showAdminFeatures) {
+          this.selectedDepartmentId = this.currentUser.department.id.toString();
         }
       }
     });
@@ -176,11 +183,13 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
         this.publishLectureType();
       });
   
-      this.departmentsSubscription = this.departmentService.getAllDepartments()
-      .pipe(first())
-      .subscribe(departments => {
-        this.departments = departments;
-      });
+      if (this.showAdminFeatures) {
+        this.departmentsSubscription = this.departmentService.getAllDepartments()
+        .pipe(first())
+        .subscribe(departments => {
+          this.departments = departments;
+        });
+      }
 
       this.courseScheduleSelectDialogSubscription = this.courseScheduleSelectDialogService.courseScheduleSelectDialogState
       .subscribe((_courseSchedule: CourseSchedule | null) => {
