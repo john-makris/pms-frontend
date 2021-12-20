@@ -40,8 +40,8 @@ export class GroupStudentService {
         return this.http.get<any[]>(API_URL + 'all/students_of_group', { params });
     }
 
-    getStudentOfGroup(studentId: number, classGroupId: number): Observable<any> {
-        return this.http.get<any[]>(API_URL + 'by_student_id_and_classGroup_id/' +studentId+ '/' +classGroupId);
+    getStudentOfGroup(studentId: number, classGroupId: number, userId: number): Observable<any> {
+        return this.http.get<any[]>(API_URL + 'by_student_id_and_classGroup_id/' +studentId+ '/' +classGroupId + '/' + userId);
     }
 
     getAllGroupsOfStudents(): Observable<any[]> {
@@ -64,12 +64,12 @@ export class GroupStudentService {
         return this.http.delete<any>(API_URL + 'delete/' + groupStudentId);
     }
 
-    deleteGroupStudentByClassGroupIdAndStudentId(classGroupId: number, studentId: number): Observable<any> {
-        return this.http.delete<any>(API_URL + 'delete/' + classGroupId + '/' + studentId);
+    deleteGroupStudentByClassGroupIdAndStudentId(classGroupId: number, studentId: number, userId: number): Observable<any> {
+        return this.http.delete<any>(API_URL + 'delete/' + classGroupId + '/' + studentId + '/' + userId);
     }
 
-    createGroupStudent(groupStudentData: any): Observable<any> {
-        return this.http.post<any>(API_URL + 'create/', groupStudentData);
+    createGroupStudent(groupStudentData: any, userId: number): Observable<any> {
+        return this.http.post<any>(API_URL + 'create/' + userId, groupStudentData);
     }
 
     updateGroupStudent(groupStudentId: number, groupStudentData: any): Observable<any> {

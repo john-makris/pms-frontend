@@ -13,6 +13,8 @@ import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule
 import { CourseSchedule } from 'src/app/courses-schedules/course-schedule.model';
 import { ClassSessionService } from 'src/app/classes-sessions/class-session.service';
 import { ClassSessionResponseData } from 'src/app/classes-sessions/common/payload/response/classSessionResponseData.interface';
+import { AuthUser } from 'src/app/users/auth-user.model';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-students-preview-dialog',
@@ -24,6 +26,12 @@ export class StudentsPreviewDialogComponent implements OnInit, OnDestroy {
   dialogStarted: boolean = true;
   isLoading: boolean = false;
   submitted: boolean = false;
+
+  currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
   
   delimeter: string = '\n';
 
@@ -58,30 +66,32 @@ export class StudentsPreviewDialogComponent implements OnInit, OnDestroy {
     private courseScheduleService: CourseScheduleService,
     private classSessionService: ClassSessionService,
     private dialogRef: MatDialogRef<TeachersSelectDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data :{searchId: number}) {}
+    @Inject(MAT_DIALOG_DATA) public data : any,
+    private authService: AuthService) {}
 
 
   ngOnInit(): void {
 
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
+        console.log("Current User Id: "+this.currentUserId);
+
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
+        
+      }
+    });
+
     this.dataSource = new UsersDataSource(this.userService);
 
-    this.courseScheduleSubscription = this.courseScheduleService.courseScheduleState
-    .subscribe((_courseSchedule: CourseSchedule | null) => {
-      this.currentCourseSchedule = _courseSchedule;
-      if (_courseSchedule && _courseSchedule.id === this.data.searchId) {
-        console.log("Course Schedule ID: "+JSON.stringify(this.data.searchId));
-        this.dataSource.loadCourseScheduleStudents(this.data.searchId,'', 0, 3, 'asc', this.currentColumnDef);
-      }
-    });
-
-    this.classSessionSubscription = this.classSessionService.classSessionState
-    .subscribe((_classSession: ClassSessionResponseData | null) => {
-      this.currentClassSession = _classSession;
-      if (_classSession && _classSession.id === this.data.searchId) {
-        console.log("Class Session ID: "+JSON.stringify(this.data.searchId));
-        this.dataSource.loadClassSessionStudents(this.data.searchId,'', 0, 3, 'asc', this.currentColumnDef);
-      }
-    });
+    if (this.data.identifier.includes('session')) {
+      this.dataSource.loadClassSessionStudents(this.currentUserId, this.data.searchId,'', 0, 3, 'asc', this.currentColumnDef);
+    } else {
+      this.dataSource.loadCourseScheduleStudents(this.data.searchId,'', 0, 3, 'asc', this.currentColumnDef);
+    }
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(
       switchMap(async (pageDetail: PageDetail) => {
@@ -120,18 +130,17 @@ export class StudentsPreviewDialogComponent implements OnInit, OnDestroy {
   }
 
   loadStudentsPage() {
-    if (this.currentCourseSchedule) {
-      this.dataSource.loadCourseScheduleStudents(
+    if (this.data.identifier.includes('session')) {
+      this.dataSource.loadClassSessionStudents(
+        this.currentUserId,
         this.data.searchId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,
         this.paginator.pageSize,
         this.sort.direction,
         this.currentColumnDef);
-    }
-
-    if (this.currentClassSession) {
-      this.dataSource.loadClassSessionStudents(
+    } else {
+      this.dataSource.loadCourseScheduleStudents(
         this.data.searchId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,

@@ -467,7 +467,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
   }
 
   private createGroupStudent(groupStudentData: GroupStudentRequestData) {
-    this.createGroupStudentSubscription = this.groupStudentService.createGroupStudent(groupStudentData)
+    this.createGroupStudentSubscription = this.groupStudentService.createGroupStudent(groupStudentData, this.currentUserId)
     .pipe(last())
     .subscribe(() => {
       console.log("DATA: "+ "Entered sto subscribe");
@@ -478,7 +478,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
 
   deleteGroupStudent(classGroupId: number, studentId: number, row: ClassGroup) {
     console.log("Hallo "+this.ensureDialogStatus);
-    this.groupStudentService.deleteGroupStudentByClassGroupIdAndStudentId(classGroupId, studentId)
+    this.groupStudentService.deleteGroupStudentByClassGroupIdAndStudentId(classGroupId, studentId, this.currentUserId)
         .pipe(first())
         .subscribe(() => {
           //this.groupStudent.isDeleting = false;

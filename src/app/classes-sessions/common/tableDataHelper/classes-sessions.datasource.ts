@@ -26,7 +26,7 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
 
     constructor(private classSessionService: ClassSessionService) { }
 
-    loadClassesSessions(
+    loadClassesSessions(userId: number,
                 lectureId: number,
                 status: string,
                 filter:string,
@@ -36,7 +36,7 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
                 currentColumnDef:string) {
 
         if (lectureId) {
-            let params: HttpParams = this.createParams(lectureId, status,
+            let params: HttpParams = this.createParams(userId, lectureId, status,
                 filter, pageIndex, pageSize, sortDirection, currentColumnDef);
                 console.log("PARAMS: "+params);
 
@@ -175,6 +175,7 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
     }
 
     createParams(
+        userId: number,
         lectureId: number,
         status: string,
         filter:string,
@@ -184,6 +185,11 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
         currentColumnDef:string): HttpParams {
 
             let params = new HttpParams();
+
+            if (userId) {
+                //console.log("User Id: "+userId);
+                params=params.set('userId', userId);
+            }
 
             if (lectureId) {
                 //console.log("Lecture Id: "+lectureId);

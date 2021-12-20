@@ -71,9 +71,13 @@ export class CourseScheduleSelectDialogComponent implements OnInit, AfterViewIni
         this.currentUserId = this.currentUser.id;
         this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
 
         if (this.showTeacherFeatures && !this.showAdminFeatures) {
-          this.currentUserId = this.currentUser.id;
+          this.currentDepartmentId = this.currentUser.department.id;
+        }
+
+        if (this.showStudentFeatures) {
           this.currentDepartmentId = this.currentUser.department.id;
         }
       }

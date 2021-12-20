@@ -78,13 +78,14 @@ export class UsersDataSource implements DataSource<UserData> {
         this.retrieveStudentsWithoutGroup(params);
     }
 
-    loadClassSessionStudents(classSessionId: number,             
+    loadClassSessionStudents(userId: number,
+        classSessionId: number,             
         filter:string,
         pageIndex:number,
         pageSize:number,
         sortDirection:string,
         currentColumnDef:string) {
-        let params: HttpParams = this.createClassSessionStudentParams(classSessionId, filter,
+        let params: HttpParams = this.createClassSessionStudentParams(userId, classSessionId, filter,
         pageIndex, pageSize, sortDirection, currentColumnDef);
         console.log("PARAMS: "+params);
 
@@ -210,6 +211,7 @@ export class UsersDataSource implements DataSource<UserData> {
     }
 
     createClassSessionStudentParams(
+        userId: number,
         classSessionId: number,
         filter:string,
         pageIndex:number,
@@ -218,6 +220,11 @@ export class UsersDataSource implements DataSource<UserData> {
         currentColumnDef:string): HttpParams {
 
             let params = new HttpParams();
+
+            if (userId) {
+                console.log("userId: "+userId);
+                params=params.set('userId', userId);
+            }
 
             if (classSessionId) {
                 console.log("classSessionId: "+classSessionId);

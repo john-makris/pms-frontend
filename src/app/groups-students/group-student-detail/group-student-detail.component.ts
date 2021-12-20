@@ -2,8 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.service';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 import { UserResponseData } from 'src/app/users/common/payload/response/userResponseData.interface';
 import { GroupStudentService } from '../group-student.service';
 
@@ -19,6 +21,12 @@ export class GroupStudentDetailComponent implements OnInit, OnDestroy {
   ensureDialogStatus!: boolean;
   classGroupTable: boolean = false;
 
+  currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
+
   private ensureDialogSubscription!: Subscription;
   classGroupTableLoadedSubscription!: Subscription;
 
@@ -26,9 +34,22 @@ export class GroupStudentDetailComponent implements OnInit, OnDestroy {
     private router: Router,
     private groupStudentService: GroupStudentService,
     private snackbarService: SnackbarService,
-    private ensureDialogService: EnsureDialogService) { }
+    private ensureDialogService: EnsureDialogService,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
+
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
+        console.log("Current User Id: "+this.currentUserId);
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
+      }
+    });
+
     this.classGroupTableLoadedSubscription = this.groupStudentService.groupStudentTableLoadedState
     .subscribe((tableStatus: boolean) => {
       if (tableStatus) {
@@ -43,7 +64,7 @@ export class GroupStudentDetailComponent implements OnInit, OnDestroy {
         (params: Params) => {
           this.studentId = params['studentId'];
           this.classGroupId = params['classGroupId'];
-          this.groupStudentService.getStudentOfGroup(this.studentId, this.classGroupId)
+          this.groupStudentService.getStudentOfGroup(this.studentId, this.classGroupId, this.currentUserId)
           .pipe(first())
           .subscribe(
             (currentStudentOfGroup: UserResponseData) => {
@@ -73,7 +94,7 @@ export class GroupStudentDetailComponent implements OnInit, OnDestroy {
           if (this.ensureDialogStatus) {
             //this.classGroup.isDeleting = true;
             console.log("Hallo "+this.ensureDialogStatus);
-            this.groupStudentService.deleteGroupStudentByClassGroupIdAndStudentId(classGroupId, studentId)
+            this.groupStudentService.deleteGroupStudentByClassGroupIdAndStudentId(classGroupId, studentId, this.currentUserId)
                 .pipe(first())
                 .subscribe(() => {
                   //this.classGroup.isDeleting = false;

@@ -43,6 +43,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
   submitted: boolean = false;
 
   currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
   showAdminFeatures: boolean = false;
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
@@ -102,10 +103,10 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
     this.authService.user.subscribe((user: AuthUser | null) => {
       if (user) {
         this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
-        // this.currentUser.roles.includes('STUDENT');
+        this.showStudentFeatures = this.currentUser.roles.includes('STUDENT');
       }
     });
 
@@ -138,7 +139,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
             if (this.showStudentFeatures) {
               this.router.navigate(['../../'], { relativeTo: this.route });
             }
-            this.classSessionSubscription = this.classSessionService.getClassSessionById(this.id)
+            this.classSessionSubscription = this.classSessionService.getClassSessionById(this.id, this.currentUserId)
               .pipe(first())
               .subscribe((currentClassSessionData: any) => {
                 if (currentClassSessionData !== null) {
@@ -317,7 +318,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
   }
 
   private createClassSession(classSessionData: ClassSessionRequestData) {
-    this.createClassSessionSubscription = this.classSessionService.createClassSession(classSessionData)
+    this.createClassSessionSubscription = this.classSessionService.createClassSession(classSessionData, this.currentUserId)
     .pipe(last())
       .subscribe(() => {
         console.log("DATA: "+ "Mpike sto subscribe");
@@ -327,7 +328,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
   }
 
   private updateClassSession(classSessionData: ClassSessionRequestData) {
-    this.updateClassSessionSubscription = this.classSessionService.updateClassSession(this.id, classSessionData)
+    this.updateClassSessionSubscription = this.classSessionService.updateClassSession(this.id, this.currentUserId, classSessionData)
       .pipe(last())
       .subscribe(() => {
         if (this.currentClassSessionStatus === 'pending') {

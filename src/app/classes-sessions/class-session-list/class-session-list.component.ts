@@ -96,7 +96,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
     'nameIdentifier',
     'date',
     'classGroup',
-    'presenceStatementStatus'
+    'status'
   ];
 
   @ViewChild(MatCheckbox) checkbox!: MatCheckbox;
@@ -253,7 +253,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
       );
 
       if (this.searchClassesSessionsForm.valid) {
-        this.dataSource.loadClassesSessions(
+        this.dataSource.loadClassesSessions(this.currentUserId,
           +this.selectedLectureId, this.selectedStatus, '', 0, 3, 'asc', this.currentColumnDef);
       }
     } else {
@@ -328,7 +328,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
 
   checkForStatusValue() {
     if (this.searchClassesSessionsForm.value.status !== null) {
-      this.clearStatusValue();
+      this.clearPsStatusValue();
     }
   }
 
@@ -401,17 +401,17 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
     this.selectedLectureId = '';
 
     this.lectureService.lectureSubject.next(this.selectedLecture);
-    this.clearStatusValue();
+    this.clearPsStatusValue();
   }
 
-  clearStatusValue() {
+  clearPsStatusValue() {
     this.searchClassesSessionsForm.patchValue({
       status: ''
     });
 
     this.selectedStatus = '';
-    this.removeTableElement('status');
-    this.addTableElement('presenceStatementStatus');
+    this.removeTableElement('presenceStatementStatus');
+    this.addTableElement('status');
   }
 
   onLectureTypeSelect(lectureTypeNameSelection: boolean) {
@@ -461,6 +461,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   loadClassesSessionsPage() {
     if (!this.showStudentFeatures) {
       this.dataSource.loadClassesSessions(
+        this.currentUserId,
         +this.selectedLectureId,
         this.selectedStatus,
         this.input.nativeElement.value,

@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ClassGroupService } from 'src/app/classes-groups/class-group.service';
 import { ClassSession } from 'src/app/classes-sessions/class-session.model';
 import { ClassSessionService } from 'src/app/classes-sessions/class-session.service';
@@ -14,6 +15,7 @@ import { CourseScheduleService } from 'src/app/courses-schedules/course-schedule
 import { LectureTypeService } from 'src/app/lectures/lecture-types/lecture-type.service';
 import { Lecture } from 'src/app/lectures/lecture.model';
 import { LectureService } from 'src/app/lectures/lecture.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 
 @Component({
   selector: 'app-class-session-select-dialog',
@@ -24,6 +26,12 @@ export class ClassSessionSelectDialogComponent implements OnInit, AfterViewInit,
   
   dialogStarted: boolean = true;
   dataSource!: ClassesSessionsDataSource;
+
+  currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
 
   totalItems: number = 0;
   currentPage: number = 0;
@@ -55,10 +63,24 @@ export class ClassSessionSelectDialogComponent implements OnInit, AfterViewInit,
     private lectureService: LectureService,
     private classSessionService: ClassSessionService,
     private dialogRef: MatDialogRef<ClassSessionSelectDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data :{classSession: ClassSession}) {}
+    @Inject(MAT_DIALOG_DATA) public data :{classSession: ClassSession},
+    private authService: AuthService) {}
 
 
   ngOnInit(): void {
+
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
+        console.log("Current User Id: "+this.currentUserId);
+
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
+        
+      }
+    });
 
     this.dataSource = new ClassesSessionsDataSource(this.classSessionService);
 
@@ -67,7 +89,7 @@ export class ClassSessionSelectDialogComponent implements OnInit, AfterViewInit,
         if (lecture) {
           this.currentLectureId = lecture.id;
           console.log("Current Lecture Id: " + this.currentLectureId);
-          this.dataSource.loadClassesSessions(this.currentLectureId, '',
+          this.dataSource.loadClassesSessions(this.currentUserId, this.currentLectureId, '',
             '', 0, 3, 'asc', this.currentColumnDef);
         }
       });
@@ -110,6 +132,7 @@ export class ClassSessionSelectDialogComponent implements OnInit, AfterViewInit,
 
   loadClassesSessionsPage() {
     this.dataSource.loadClassesSessions(
+        this.currentUserId,
         this.currentLectureId,
         '',
         this.input.nativeElement.value,

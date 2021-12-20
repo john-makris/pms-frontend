@@ -2,9 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.service';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { StudentsPreviewDialogService } from 'src/app/courses-schedules/course-schedule-detail/services/students-preview-dialog.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 import { ClassSessionService } from '../class-session.service';
 import { ClassSessionResponseData } from '../common/payload/response/classSessionResponseData.interface';
 
@@ -19,6 +21,12 @@ export class ClassSessionDetailComponent implements OnInit, OnDestroy {
   ensureDialogStatus!: boolean;
   classSessionTable: boolean = false;
 
+  currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
+
   private ensureDialogSubscription!: Subscription;
   classGroupTableLoadedSubscription!: Subscription;
 
@@ -27,7 +35,8 @@ export class ClassSessionDetailComponent implements OnInit, OnDestroy {
     private classSessionService: ClassSessionService,
     private snackbarService: SnackbarService,
     private ensureDialogService: EnsureDialogService,
-    private studentsPreviewDialogService: StudentsPreviewDialogService) { }
+    private studentsPreviewDialogService: StudentsPreviewDialogService,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
     this.classGroupTableLoadedSubscription = this.classSessionService.classSessionTableLoadedState
@@ -39,13 +48,27 @@ export class ClassSessionDetailComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
+        console.log("Current User Id: "+this.currentUserId);
+
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
+        
+      }
+    });
+
     this.route.params
       .subscribe(
         (params: Params) => {
           this.id = params['id'];
-          this.classSessionService.getClassSessionById(this.id)
+          this.classSessionService.getClassSessionById(this.id, this.currentUserId)
           .pipe(first())
-          .subscribe((currentClassSession: ClassSessionResponseData) => {
+          .subscribe(
+            (currentClassSession: ClassSessionResponseData) => {
             if (currentClassSession) {
               this.classSession = currentClassSession;
               this.classSessionService.classSessionSubject.next(this.classSession);
@@ -53,6 +76,9 @@ export class ClassSessionDetailComponent implements OnInit, OnDestroy {
             } else {
               this.router.navigate(['/classes-sessions'], { relativeTo: this.route});
             }
+          },
+          (error: any) => {
+            this.router.navigate(['/classes-sessions'], { relativeTo: this.route});
           });
       },
       (err: any) => {
@@ -85,7 +111,7 @@ export class ClassSessionDetailComponent implements OnInit, OnDestroy {
           if (this.ensureDialogStatus) {
             //this.classGroup.isDeleting = true;
             console.log("Hallo "+this.ensureDialogStatus);
-            this.classSessionService.deleteClassSessionById(id)
+            this.classSessionService.deleteClassSessionById(id, this.currentUserId)
                 .pipe(first())
                 .subscribe(() => {
                   //this.classGroup.isDeleting = false;
@@ -98,7 +124,10 @@ export class ClassSessionDetailComponent implements OnInit, OnDestroy {
   }
   
   previewStudents() {
-    this.studentsPreviewDialogService.showStudents(this.classSession.id);
+    this.studentsPreviewDialogService.showStudents({
+      searchId: this.classSession.id,
+      identifier: 'session'
+    });
   }
 
   onCancel() {

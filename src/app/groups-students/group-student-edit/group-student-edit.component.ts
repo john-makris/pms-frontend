@@ -4,9 +4,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { last } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { ClassGroupService } from 'src/app/classes-groups/class-group.service';
 import { ClassGroupResponseData } from 'src/app/classes-groups/common/payload/response/classGroupResponseData.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 import { UserResponseData } from 'src/app/users/common/payload/response/userResponseData.interface';
 import { GroupStudentRequestData } from '../common/payload/request/groupStudentRequestData.interface';
 import { GroupStudentService } from '../group-student.service';
@@ -21,6 +23,12 @@ export class GroupStudentEditComponent implements OnInit, OnDestroy {
   groupStudentForm!: FormGroup;
   isLoading: boolean = false;
   submitted: boolean = false;
+
+  currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
 
   tableLoaded: boolean = false;
   delimeter: string = ',' + '\xa0';
@@ -42,10 +50,22 @@ export class GroupStudentEditComponent implements OnInit, OnDestroy {
     private classGroupService: ClassGroupService,
     private groupStudentService: GroupStudentService,
     private studentSelectDialogService: StudentSelectDialogService,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
+        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
+        this.showStudentFeatures = false;
+        // this.currentUser.roles.includes('STUDENT');
+      }
+    });
 
     console.log("BEFORE FORM INITIALIZATION: ");
     this.groupStudentForm = this.formBuilder.group({
@@ -123,7 +143,7 @@ export class GroupStudentEditComponent implements OnInit, OnDestroy {
   }
 
   private createGroupStudent(groupStudentData: GroupStudentRequestData) {
-    this.createGroupStudentSubscription = this.groupStudentService.createGroupStudent(groupStudentData)
+    this.createGroupStudentSubscription = this.groupStudentService.createGroupStudent(groupStudentData, this.currentUserId)
     .pipe(last())
       .subscribe(() => {
         console.log("DATA: "+ "Mpike sto subscribe");

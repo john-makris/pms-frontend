@@ -99,7 +99,7 @@ export class StudentSelectDialogComponent implements OnInit, AfterViewInit, OnDe
       this.currentClassSessionId = this.data.object.id;
       console.log("Class Session Id: " + this.currentClassSessionId);
   
-      this.dataSource.loadClassSessionStudents(this.currentClassSessionId, 
+      this.dataSource.loadClassSessionStudents(this.currentUserId, this.currentClassSessionId, 
         '', 0, 3, 'asc', this.currentColumnDef);
     } else {
       console.log("Instance of Excuse Application");
@@ -159,6 +159,7 @@ export class StudentSelectDialogComponent implements OnInit, AfterViewInit, OnDe
         this.currentColumnDef);
     } else if (this.currentNameIdentifier.includes('session')) {
       this.dataSource.loadClassSessionStudents(
+        this.currentUserId,
         this.currentClassSessionId,
         this.input.nativeElement.value,
         this.paginator.pageIndex,

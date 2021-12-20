@@ -95,8 +95,7 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
         this.currentUserId = this.currentUser.id;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
-        // this.currentUser.roles.includes('STUDENT');
+        this.showStudentFeatures = this.currentUser.roles.includes('STUDENT');
       }
     });
 
