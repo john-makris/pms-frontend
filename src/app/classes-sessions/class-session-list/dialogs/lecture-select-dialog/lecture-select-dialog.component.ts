@@ -74,12 +74,10 @@ export class LectureSelectDialogComponent implements OnInit, AfterViewInit, OnDe
     this.authService.user.subscribe((user: AuthUser | null) => {
       if (user) {
         this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
         this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
 
-        if (this.showTeacherFeatures && !this.showAdminFeatures) {
-          this.currentUserId = this.currentUser.id;
-        }
       }
     });
 

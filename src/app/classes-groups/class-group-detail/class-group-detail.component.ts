@@ -22,6 +22,7 @@ export class ClassGroupDetailComponent implements OnInit, OnDestroy {
   classGroupTable: boolean = false;
 
   currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
   showAdminFeatures: boolean = false;
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
@@ -40,10 +41,10 @@ export class ClassGroupDetailComponent implements OnInit, OnDestroy {
     this.authService.user.subscribe((user: AuthUser | null) => {
       if (user) {
         this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
-        // this.currentUser.roles.includes('STUDENT');
+        this.showStudentFeatures = this.currentUser.roles.includes('STUDENT');
       }
     });
 
@@ -63,11 +64,15 @@ export class ClassGroupDetailComponent implements OnInit, OnDestroy {
             this.router.navigate(['/classes-groups'], { relativeTo: this.route});
           }
           this.id = params['id'];
-          this.classGroupService.getClassGroupById(this.id)
+          this.classGroupService.getClassGroupById(this.id, this.currentUserId)
           .pipe(first())
-          .subscribe((currentClassGroup: ClassGroupResponseData) => {
+          .subscribe(
+            (currentClassGroup: ClassGroupResponseData) => {
             this.classGroup = currentClassGroup;
             console.log("Class Group Details: "+JSON.stringify(this.classGroup));
+          },
+          (error: any) => {
+            this.router.navigate(['/classes-groups'], { relativeTo: this.route});
           });
       }
     );
@@ -97,7 +102,7 @@ export class ClassGroupDetailComponent implements OnInit, OnDestroy {
           if (this.ensureDialogStatus) {
             //this.classGroup.isDeleting = true;
             console.log("Hallo "+this.ensureDialogStatus);
-            this.classGroupService.deleteClassGroupById(id)
+            this.classGroupService.deleteClassGroupById(id, this.currentUserId)
                 .pipe(first())
                 .subscribe(() => {
                   //this.classGroup.isDeleting = false;

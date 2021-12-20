@@ -52,23 +52,23 @@ export class ClassGroupService {
         return this.http.get<any[]>(API_URL + 'all');
     }
 
-    getClassGroupById(classGroupId: number): Observable<ClassGroupResponseData> {
-        return this.http.get<any>(API_URL + classGroupId);
+    getClassGroupById(classGroupId: number, userId: number): Observable<ClassGroupResponseData> {
+        return this.http.get<any>(API_URL + classGroupId + '/' +userId);
     }
 
     deleteAllClassesGroups(): Observable<any[]> {
         return this.http.delete<any[]>(API_URL + 'delete/all');
     }
 
-    deleteClassGroupById(classGroupId: number): Observable<any> {
-        return this.http.delete<any>(API_URL + 'delete/' + classGroupId);
+    deleteClassGroupById(classGroupId: number, userId: number): Observable<any> {
+        return this.http.delete<any>(API_URL + 'delete/' + classGroupId + '/' + userId);
     }
 
-    createClassGroup(classGroupData: any): Observable<any> {
-        return this.http.post<any>(API_URL + 'create/', classGroupData);
+    createClassGroup(classGroupData: any, userId: number): Observable<any> {
+        return this.http.post<any>(API_URL + 'create/' + userId, classGroupData);
     }
 
-    updateClassGroup(classGroupId: number, classGroupData: any): Observable<any> {
-        return this.http.put(API_URL + 'update/' + classGroupId, classGroupData);
+    updateClassGroup(classGroupId: number, userId: number, classGroupData: any): Observable<any> {
+        return this.http.put(API_URL + 'update/' + classGroupId + '/' + userId, classGroupData);
     }
 }

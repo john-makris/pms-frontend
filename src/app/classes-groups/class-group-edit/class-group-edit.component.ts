@@ -33,6 +33,7 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
   submitted: boolean = false;
 
   currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
   showAdminFeatures: boolean = false;
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
@@ -91,6 +92,7 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
     this.authService.user.subscribe((user: AuthUser | null) => {
       if (user) {
         this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
         this.showStudentFeatures = false;
@@ -129,7 +131,7 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
           this.id = params['id'];
           this.isAddMode = params['id'] == null;
           if(!this.isAddMode) {
-            this.classGroupSubscription = this.classGroupService.getClassGroupById(this.id)
+            this.classGroupSubscription = this.classGroupService.getClassGroupById(this.id, this.currentUserId)
               .pipe(first())
               .subscribe((currentClassGroupData: ClassGroupResponseData) => {
                 if (currentClassGroupData !== null) {
@@ -220,7 +222,7 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
   }
 
   private createClassGroup(classGroupData: ClassGroupRequestData) {
-    this.createClassGroupSubscription = this.classGroupService.createClassGroup(classGroupData)
+    this.createClassGroupSubscription = this.classGroupService.createClassGroup(classGroupData, this.currentUserId)
     .pipe(last())
       .subscribe(() => {
         console.log("DATA: "+ "Mpike sto subscribe");
@@ -230,7 +232,7 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
   }
 
   private updateClassGroup(classGroupData: ClassGroupRequestData) {
-    this.updateClassGroupSubscription = this.classGroupService.updateClassGroup(this.id, classGroupData)
+    this.updateClassGroupSubscription = this.classGroupService.updateClassGroup(this.id, this.currentUserId, classGroupData)
       .pipe(last())
       .subscribe(() => {
         this.snackbarService.success('Class Group updated');
