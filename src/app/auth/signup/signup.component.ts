@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { matchValidator } from 'src/app/common/helpers/passwordMatch.validator';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -11,6 +12,7 @@ import { AuthService } from '../auth.service';
 export class SignupComponent implements OnInit {
   signupForm!: FormGroup;
   hide: boolean = true;
+  confirmPasswordHide: boolean = true;
   isLoading: boolean = false;
   isSuccessful = false;
   isSignUpFailed = false;
@@ -31,7 +33,10 @@ export class SignupComponent implements OnInit {
       }),
       email: new FormControl('', { validators: [Validators.required, Validators.email, Validators.maxLength(20)]
       }),
-      password: new FormControl('', { validators: [Validators.required, Validators.minLength(10), Validators.maxLength(18)]})
+      password: new FormControl('', { validators: [Validators.required, Validators.minLength(10),
+         Validators.maxLength(18), matchValidator('confirmPassword', true)]}),
+      confirmPassword: new FormControl('', { validators: [Validators.required, Validators.minLength(10),
+         Validators.maxLength(18), matchValidator('password')]})
     });
   }
 
@@ -46,9 +51,10 @@ export class SignupComponent implements OnInit {
     const username = this.signupForm.value.username;
     const email = this.signupForm.value.email;
     const password = this.signupForm.value.password;
+    const confirmPassword = this.signupForm.value.confirmPassword;
     this.isLoading = true;
     
-    this.authService.signup(firstname, lastname, username, email, password).subscribe(
+    this.authService.signup(firstname, lastname, username, email, password, confirmPassword).subscribe(
       data => {
         console.log(data);
         this.isSuccessful = true;

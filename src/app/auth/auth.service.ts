@@ -32,13 +32,14 @@ export class AuthService {
         private tokenStorageService: TokenStorageService,
         private matDialog: MatDialog) {}
 
-    signup(firstname: string, lastname: string, username: string, email: string, password: string) {
+    signup(firstname: string, lastname: string, username: string, email: string, password: string, confirmPassword: string) {
         return this.http.post<string>(AUTH_API + 'signup', {
             firstname: firstname,
             lastname: lastname,
             username: username,
             email: email,
-            password: password
+            password: password,
+            confirmPassword: confirmPassword
         }, httpOptions);
     }
 

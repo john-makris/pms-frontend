@@ -7,98 +7,126 @@
         fxLayout="row" 
         [formGroup]="signupForm"
         (ngSubmit)="onSubmit()">
-        <mat-card fxFlex.xs="19em" fxFlex="23.3em">
+        <mat-card fxFlex.xs="19em" fxFlex="42em">
             <mat-card-title fxLayoutAlign="center">
-                Sign Up
+                Teacher Sign Up
             </mat-card-title>
             <mat-card-content fxLayout="column" 
             fxLayoutAlign="center">
 
-                <mat-form-field appearance="outline">
-                    <mat-label>First name</mat-label>
-                    <input 
-                        type="firstname" 
-                        matInput 
-                        placeholder="First name"
-                        formControlName="firstname">
+                <div fxLayout fxLayout.lt-sm="column">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>First name</mat-label>
+                        <input 
+                            type="firstname" 
+                            matInput 
+                            placeholder="First name"
+                            formControlName="firstname">
+    
+                        <div matSuffix>
+                            <mat-icon>code</mat-icon>
+                        </div>
+    
+                        <mat-hint>Please enter a valid first name.</mat-hint>
+                        <mat-error *ngIf="f.firstname.errors?.required">Missing first name.</mat-error>
+                        <mat-error *ngIf="f.firstname.errors?.maxlength">First name maximum length is 25 characters.</mat-error>
+                    </mat-form-field>
+    
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Last name</mat-label>
+                        <input 
+                            type="lastname" 
+                            matInput 
+                            placeholder="Last name"
+                            formControlName="lastname">
+    
+                        <div matSuffix>
+                            <mat-icon>code</mat-icon>
+                        </div>
+    
+                        <mat-hint>Please enter a valid last name.</mat-hint>
+                        <mat-error *ngIf="f.lastname.errors?.required">Missing last name.</mat-error>
+                        <mat-error *ngIf="f.lastname.errors?.maxlength">Last name maximum length is 25 characters.</mat-error>
+                    </mat-form-field>
+                </div>
 
-                    <div matSuffix>
-                        <mat-icon>code</mat-icon>
-                    </div>
+                <div fxLayout fxLayout.lt-sm="column">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Username</mat-label>
+                        <input 
+                            type="username" 
+                            matInput 
+                            placeholder="Username"
+                            formControlName="username">
+    
+                        <div matSuffix>
+                            <mat-icon>person</mat-icon>
+                        </div>
+                        <mat-hint>Please enter a valid username.</mat-hint>
+                        <mat-error *ngIf="f.username.errors?.required">Missing username.</mat-error>
+                        <mat-error *ngIf="f.username.errors?.maxlength">Username maximum length is 25 characters.</mat-error>
+                    </mat-form-field>
+                    
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Email</mat-label>
+                        <input 
+                            type="email"
+                            matInput 
+                            placeholder="Email"
+                            formControlName="email">
+                        <div matSuffix>
+                            <mat-icon>email</mat-icon>
+                        </div>
+                        <mat-hint>Please enter a valid email.</mat-hint>
+                        <mat-error *ngIf="f.email.errors?.required">Missing email.</mat-error>
+                        <mat-error *ngIf="f.email.errors?.maxlength">Email maximum length is 20 characters.</mat-error>
+                        <mat-error *ngIf="f.email.errors?.email">Invalid email.</mat-error>
+                    </mat-form-field>
+                </div>
 
-                    <mat-hint>Please enter a valid first name.</mat-hint>
-                    <mat-error *ngIf="f.firstname.errors?.required">Missing first name.</mat-error>
-                    <mat-error *ngIf="f.firstname.errors?.maxlength">First name maximum length is 25 characters.</mat-error>
-                </mat-form-field>
-
-                <mat-form-field appearance="outline">
-                    <mat-label>Last name</mat-label>
-                    <input 
-                        type="lastname" 
-                        matInput 
-                        placeholder="Last name"
-                        formControlName="lastname">
-
-                    <div matSuffix>
-                        <mat-icon>code</mat-icon>
-                    </div>
-
-                    <mat-hint>Please enter a valid last name.</mat-hint>
-                    <mat-error *ngIf="f.lastname.errors?.required">Missing last name.</mat-error>
-                    <mat-error *ngIf="f.lastname.errors?.maxlength">Last name maximum length is 25 characters.</mat-error>
-                </mat-form-field>
-
-                <mat-form-field appearance="outline">
-                    <mat-label>Username</mat-label>
-                    <input 
-                        type="username" 
-                        matInput 
-                        placeholder="Username"
-                        formControlName="username">
-
-                    <div matSuffix>
-                        <mat-icon>person</mat-icon>
-                    </div>
-                    <mat-hint>Please enter a valid username.</mat-hint>
-                    <mat-error *ngIf="f.username.errors?.required">Missing username.</mat-error>
-                    <mat-error *ngIf="f.username.errors?.maxlength">Username maximum length is 25 characters.</mat-error>
-                </mat-form-field>
-                
-                <mat-form-field appearance="outline">
-                    <mat-label>Email</mat-label>
-                    <input 
-                        type="email"
-                        matInput 
-                        placeholder="Email"
-                        formControlName="email">
-                    <div matSuffix>
-                        <mat-icon>email</mat-icon>
-                    </div>
-                    <mat-hint>Please enter a valid email.</mat-hint>
-                    <mat-error *ngIf="f.email.errors?.required">Missing email.</mat-error>
-                    <mat-error *ngIf="f.email.errors?.maxlength">Email maximum length is 20 characters.</mat-error>
-                    <mat-error *ngIf="f.email.errors?.email">Invalid email.</mat-error>
-                </mat-form-field>
-
-                <mat-form-field appearance="outline">
-                    <mat-label>Password</mat-label>
-                    <input 
-                        type="password" 
-                        matInput [type]="hide ? 'password' : 'text'"
-                        placeholder="Password"
-                        formControlName="password">
-                        <mat-hint align="end" >{{ f.password.value?.length }} / {{ f.password.value?.length > 10 ? '18' : 10 }}</mat-hint>
-                        <mat-error *ngIf="f.password.errors?.minlength">Password has to be at least 10 characters long.</mat-error>
-                        <mat-error *ngIf="f.password.errors?.maxlength">Password has to be the most 18 characters long.</mat-error>
-                    <span fxLayout="row" matSuffix>
-                        <button type="button" mat-icon-button (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-                            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                        </button>
-                        <mat-icon style="margin-top:'5px'">lock</mat-icon>
-                    </span>
-                    <mat-hint>Please enter your password.</mat-hint>
-                    <mat-error *ngIf="f.password.errors?.required">Missing password.</mat-error>
-                </mat-form-field>
+                <div fxLayout fxLayout.lt-sm="column" fxFlex>
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Password</mat-label>
+                        <input 
+                            type="password" 
+                            matInput [type]="hide ? 'password' : 'text'"
+                            placeholder="Password"
+                            formControlName="password">
+                            <mat-hint align="end" >{{ f.password.value?.length }} / {{ f.password.value?.length > 10 ? '18' : 10 }}</mat-hint>
+                            <mat-error *ngIf="f.password.errors?.minlength">Password has to be at least 10 characters long.</mat-error>
+                            <mat-error *ngIf="f.password.errors?.maxlength">Password has to be the most 18 characters long.</mat-error>
+                        <span fxLayout="row" matSuffix>
+                            <button type="button" mat-icon-button (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                            </button>
+                            <mat-icon style="margin-top:'5px'">lock</mat-icon>
+                        </span>
+                        <mat-hint>Please enter your password.</mat-hint>
+                        <mat-error *ngIf="f.password.errors?.required">Missing password.</mat-error>
+                    </mat-form-field>
+    
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Confirm Password</mat-label>
+                        <input 
+                            type="password" 
+                            matInput [type]="confirmPasswordHide ? 'password' : 'text'"
+                            placeholder="Confirm Password"
+                            formControlName="confirmPassword">
+                            <mat-hint align="end" >{{ f.confirmPassword.value?.length }} / {{ f.confirmPassword.value?.length > 10 ? '18' : 10 }}</mat-hint>
+                            <mat-error *ngIf="f.confirmPassword.errors?.minlength">Password has to be at least 10 characters long.</mat-error>
+                            <mat-error *ngIf="f.confirmPassword.errors?.maxlength">Password has to be the most 18 characters long.</mat-error>
+                            <mat-error *ngIf="!(f.confirmPassword.errors?.minlength) 
+                            && !(f.confirmPassword.errors?.maxlength) && f.confirmPassword.errors?.matching">Passwords don't match.</mat-error>
+                        <span fxLayout="row" matSuffix>
+                            <button type="button" mat-icon-button (click)="confirmPasswordHide = !confirmPasswordHide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="confirmPasswordHide">
+                                <mat-icon>{{confirmPasswordHide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                            </button>
+                            <mat-icon style="margin-top:'5px'">lock</mat-icon>
+                        </span>
+                        <mat-hint>Please confirm your password.</mat-hint>
+                        <mat-error *ngIf="f.confirmPassword.errors?.required">Missing password.</mat-error>
+                    </mat-form-field>
+                </div>
 
                 <div fxLayoutAlign="center">
                     <mat-spinner *ngIf="isLoading"></mat-spinner>
