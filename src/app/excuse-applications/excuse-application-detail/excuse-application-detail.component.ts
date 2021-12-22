@@ -23,8 +23,9 @@ export class ExcuseApplicationDetailComponent implements OnInit, OnDestroy {
   panelOpenState: boolean = false;
 
   currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
   showAdminFeatures: boolean = false;
-  showTeacherFeatures: boolean = false;
+  showSecretaryFeatures: boolean = false;
   showStudentFeatures: boolean = false;
 
   private ensureDialogSubscription!: Subscription;
@@ -41,16 +42,10 @@ export class ExcuseApplicationDetailComponent implements OnInit, OnDestroy {
     this.authService.user.subscribe((user: AuthUser | null) => {
       if (user) {
         this.currentUser = user;
-        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
-        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
-        // this.currentUser.roles.includes('STUDENT');
-
-        if (this.showStudentFeatures) {
-          //this.displayedColumns = [];
-          //this.displayedColumns = ['name', 'startTime', 'capacity', 'subscription'];
-          // this.selectedDepartmentId = '1'; //this.currentUser.department.id.toString();
-        }
+        this.currentUserId = this.currentUser.id;
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
+        this.showSecretaryFeatures = this.currentUser.roles.includes('ROLE_SECRETARY');
       }
     });
 
@@ -67,12 +62,16 @@ export class ExcuseApplicationDetailComponent implements OnInit, OnDestroy {
       .subscribe(
         (params: Params) => {
           this.id = params['id'];
-          this.excuseApplicationService.getExcuseApplicationById(this.id)
+          this.excuseApplicationService.getExcuseApplicationById(this.id, this.currentUserId)
           .pipe(first())
-          .subscribe((currentExcuseApplication: ExcuseApplicationResponseData) => {
+          .subscribe(
+            (currentExcuseApplication: ExcuseApplicationResponseData) => {
             this.excuseApplication = currentExcuseApplication;
             this.excuseApplicationService.excuseApplicationSubject.next(this.excuseApplication);
             console.log("Excuse Application Details: "+JSON.stringify(this.excuseApplication));
+          },
+          (error: any) => {
+            this.router.navigate(['/excuse-applications'], { relativeTo: this.route});
           });
       }
     );

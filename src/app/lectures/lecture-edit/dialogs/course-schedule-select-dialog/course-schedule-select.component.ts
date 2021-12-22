@@ -29,6 +29,7 @@ export class CourseScheduleSelectDialogComponent implements OnInit, AfterViewIni
   showAdminFeatures: boolean = false;
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
+  showSecretaryFeatures: boolean = false;
 
   totalItems: number = 0;
   currentPage: number = 0;
@@ -72,12 +73,13 @@ export class CourseScheduleSelectDialogComponent implements OnInit, AfterViewIni
         this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
         this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
+        this.showSecretaryFeatures = this.currentUser.roles.includes('ROLE_SECRETARY');
 
         if (this.showTeacherFeatures && !this.showAdminFeatures) {
           this.currentDepartmentId = this.currentUser.department.id;
         }
 
-        if (this.showStudentFeatures) {
+        if (this.showStudentFeatures || this.showSecretaryFeatures) {
           this.currentDepartmentId = this.currentUser.department.id;
         }
       }

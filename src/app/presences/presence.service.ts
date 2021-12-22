@@ -71,8 +71,8 @@ export class PresenceService {
         return this.http.get<PresenceResponseData>(API_URL + classSessionId +'/' + studentId);
     }
 
-    getPresenceById(presenceId: number): Observable<PresenceResponseData> {
-        return this.http.get<PresenceResponseData>(API_URL + presenceId);
+    getPresenceById(presenceId: number, userId: number): Observable<PresenceResponseData> {
+        return this.http.get<PresenceResponseData>(API_URL + presenceId + '/' + userId);
     }
 
     deleteAllPresences(): Observable<Presence[]> {
@@ -87,16 +87,16 @@ export class PresenceService {
         return this.http.post<PresenceRequestData>(API_URL + 'create/', presenceData);
     }
 
-    updatePresence(presenceId: number, presenceData: PresenceRequestData): Observable<any> {
-        return this.http.put(API_URL + 'update/' + presenceId, presenceData);
+    updatePresence(presenceId: number, userId: number, presenceData: PresenceRequestData): Observable<any> {
+        return this.http.put(API_URL + 'update/' + presenceId + '/' + userId + '/', presenceData);
     }
 
-    createPresences(createPresencesRequestData: ManagePresencesRequestData): Observable<ManagePresencesRequestData> {
-        return this.http.post<ManagePresencesRequestData>(API_URL + 'create_presences/', createPresencesRequestData);
+    createPresences(createPresencesRequestData: ManagePresencesRequestData, userId: number): Observable<ManagePresencesRequestData> {
+        return this.http.post<ManagePresencesRequestData>(API_URL + 'create_presences/' + userId + '/', createPresencesRequestData);
     }
 
-    updatePresences(createPresencesRequestData: ManagePresencesRequestData): Observable<any> {
-        return this.http.put(API_URL + 'update_presences/', createPresencesRequestData);
+    updatePresences(createPresencesRequestData: ManagePresencesRequestData, userId: number): Observable<any> {
+        return this.http.put(API_URL + 'update_presences/' + userId + '/', createPresencesRequestData);
     }
 
     updatePresenceStatus(presenceData: PresenceRequestData): Observable<any> {

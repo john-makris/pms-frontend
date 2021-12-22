@@ -21,6 +21,7 @@ export class PresenceDetailComponent implements OnInit, OnDestroy {
   presenceTable: boolean = false;
 
   currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
   showAdminFeatures: boolean = false;
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
@@ -39,10 +40,10 @@ export class PresenceDetailComponent implements OnInit, OnDestroy {
     this.authService.user.subscribe((user: AuthUser | null) => {
       if (user) {
         this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
-        // this.currentUser.roles.includes('STUDENT');
+        this.showStudentFeatures = this.currentUser.roles.includes('STUDENT');
       }
     });
 
@@ -59,12 +60,16 @@ export class PresenceDetailComponent implements OnInit, OnDestroy {
       .subscribe(
         (params: Params) => {
           this.id = params['id'];
-          this.presenceService.getPresenceById(this.id)
+          this.presenceService.getPresenceById(this.id, this.currentUserId)
           .pipe(first())
-          .subscribe((currentPresence: PresenceResponseData) => {
-            this.presence = currentPresence;
-            this.presenceService.presenceSubject.next(this.presence);
-            console.log("Presence Details: "+JSON.stringify(this.presence));
+          .subscribe(
+            (currentPresence: PresenceResponseData) => {
+              this.presence = currentPresence;
+              this.presenceService.presenceSubject.next(this.presence);
+              console.log("Presence Details: "+JSON.stringify(this.presence));
+          },
+          (error: any) => {
+            this.router.navigate(['/presences'], { relativeTo: this.route});
           });
       }
     );

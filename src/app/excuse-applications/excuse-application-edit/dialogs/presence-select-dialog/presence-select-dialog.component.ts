@@ -5,10 +5,12 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { PresenceResponseData } from 'src/app/presences/common/payload/response/presenceResponseData.interface';
 import { PresencesDataSource } from 'src/app/presences/common/tableDataHelper/presences.datasource';
 import { PresenceService } from 'src/app/presences/presence.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 import { PresenceSelectDialogData } from '../../data/presenceSelectDialogData.interface';
 
 @Component({
@@ -32,6 +34,12 @@ export class PresenceSelectDialogComponent implements OnInit, AfterViewInit, OnD
   isRowSelected: boolean = false;
   selectedPresence!: PresenceResponseData | null;
 
+  currentUser: AuthUser | null = null;
+  loadedUserId: number = 0;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
+
   currentUserId: number = 0;
   currentPresenceStatus: string = '';
   currentExcuseStatus: string = '';
@@ -52,10 +60,24 @@ export class PresenceSelectDialogComponent implements OnInit, AfterViewInit, OnD
   constructor(
     private presenceService: PresenceService,
     private dialogRef: MatDialogRef<PresenceSelectDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data :{object: PresenceSelectDialogData}) {}
+    @Inject(MAT_DIALOG_DATA) public data :{object: PresenceSelectDialogData},
+    private authService: AuthService) {}
 
 
   ngOnInit(): void {
+
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
+
+        if (this.showAdminFeatures) {
+          this.loadedUserId = this.currentUser.id;
+        }
+      }
+    });
 
     this.dataSource = new PresencesDataSource(this.presenceService);
 
@@ -63,7 +85,7 @@ export class PresenceSelectDialogComponent implements OnInit, AfterViewInit, OnD
     this.currentPresenceStatus = this.data.object.presenceStatus === null ? '' : this.data.object.presenceStatus.toString() ;
     this.currentExcuseStatus = this.data.object.excuseStatus === null ? '' : this.data.object.excuseStatus.toString() ;
 
-    this.dataSource.loadUserPresences(this.currentUserId, 0, '',
+    this.dataSource.loadUserPresences(this.loadedUserId, this.currentUserId, 0, '',
       this.currentPresenceStatus, this.currentExcuseStatus, '', 0, 3, 'asc', this.currentColumnDef);
 
 
@@ -105,6 +127,7 @@ export class PresenceSelectDialogComponent implements OnInit, AfterViewInit, OnD
 
   loadPresencesPage() {
       this.dataSource.loadUserPresences(
+        0,
         this.currentUserId,
         0,
         '',

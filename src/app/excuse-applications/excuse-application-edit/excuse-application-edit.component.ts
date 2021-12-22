@@ -33,6 +33,7 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
   ensureDialogStatus!: boolean;
 
   currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
   showAdminFeatures: boolean = false;
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
@@ -76,21 +77,24 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
     this.authService.user.subscribe((user: AuthUser | null) => {
       if (user) {
         this.currentUser = user;
-        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
-        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
-        // this.currentUser.roles.includes('STUDENT');
+        this.currentUserId = this.currentUser.id;
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
 
         if (this.showStudentFeatures) {
-          this.userService.getUserById(4)
+          console.log("Inside student features");
+          if (this.currentUser) {
+            this.currentDepartmentId = this.currentUser?.department.id;
+          } else {
+            this.currentDepartmentId = 0;
+          }
+          this.userService.getUserById(this.currentUserId)
           .pipe(first())
           .subscribe((userResponseData: UserResponseData) => {
             this.currentStudent = userResponseData;
             this.setStudentInfo(this.currentStudent);
-            this.currentDepartmentId = 1; //this.currentUser.department.id.toString();
           });
-          //this.displayedColumns = [];
-          //this.displayedColumns = ['name', 'startTime', 'capacity', 'subscription'];
         }
       }
     });
@@ -113,7 +117,7 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
             if (this.showStudentFeatures) {
               this.router.navigate(['../../'], { relativeTo: this.route });
             }
-            this.presenceSubscription = this.excuseApplicationService.getExcuseApplicationById(this.id)
+            this.presenceSubscription = this.excuseApplicationService.getExcuseApplicationById(this.id, this.currentUserId)
               .pipe(first())
               .subscribe((currentExcuseApplicationData: any) => {
                 if (currentExcuseApplicationData !== null) {
@@ -291,7 +295,7 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
           if (this.ensureDialogStatus) {
             //this.classGroup.isDeleting = true;
             console.log("Hallo "+this.ensureDialogStatus);
-            this.createExcuseApplicationSubscription = this.excuseApplicationService.createExcuseApplication(excuseApplicationData)
+            this.createExcuseApplicationSubscription = this.excuseApplicationService.createExcuseApplication(excuseApplicationData, this.currentUserId)
               .pipe(last())
                 .subscribe(() => {
                   console.log("DATA: "+ "Mpike sto subscribe");

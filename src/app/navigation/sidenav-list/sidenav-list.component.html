@@ -54,11 +54,12 @@
         <span class="nav-caption">Presences</span>
     </a>
     <a mat-list-item routerLink="/excuse-applications" (click)="onClose()" 
-        *ngIf="isAuth && (showStudentFeatures || showAdminFeatures)">
+        *ngIf="isAuth && (showStudentFeatures || showAdminFeatures || showSecretaryFeatures)">
         <mat-icon>article</mat-icon>
         <span class="nav-caption">Excuse Applications</span>
     </a>
-    <a mat-list-item routerLink="/users" (click)="onClose()" *ngIf="isAuth">
+    <a mat-list-item routerLink="/users" (click)="onClose()"
+       *ngIf="isAuth && showAdminFeatures">
         <mat-icon>person</mat-icon>
         <span class="nav-caption">Users</span>
     </a>

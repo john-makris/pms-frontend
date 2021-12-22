@@ -113,6 +113,7 @@
                                     <span *ngSwitchCase="'ROLE_ADMIN'">Admin</span>
                                     <span *ngSwitchCase="'ROLE_TEACHER'">Teacher</span>
                                     <span *ngSwitchCase="'ROLE_STUDENT'">Student</span>
+                                    <span *ngSwitchCase="'ROLE_SECRETARY'">Secretary</span>
                                 </container-element>
                             </span>
 
@@ -125,6 +126,7 @@
                                 <container-element [ngSwitch]="roleName">
                                     <span *ngSwitchCase="'ROLE_TEACHER'">Teacher</span>
                                     <span *ngSwitchCase="'ROLE_STUDENT'">Student</span>
+                                    <span *ngSwitchCase="'ROLE_SECRETARY'">Secretary</span>
                                 </container-element>
                             </mat-option>
                         </ng-container>

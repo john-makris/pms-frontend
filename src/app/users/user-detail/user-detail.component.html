@@ -41,6 +41,7 @@
                             <span *ngSwitchCase="'ROLE_ADMIN'">Admin</span>
                             <span *ngSwitchCase="'ROLE_TEACHER'">Teacher</span>
                             <span *ngSwitchCase="'ROLE_STUDENT'">Student</span>
+                            <span *ngSwitchCase="'ROLE_SECRETARY'">Secretary</span>
                         </container-element>
                         <span *ngIf="i+1 > 0 && i+1 < user.roles.length">{{delimeter}}</span>
                     </span>

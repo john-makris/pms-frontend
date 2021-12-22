@@ -298,7 +298,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
   }
 
   private createClassSessionPresences(managePresencesRequestData: ManagePresencesRequestData) {
-    this.createClassSessionPresencesSubscription = this.presenceService.createPresences(managePresencesRequestData)
+    this.createClassSessionPresencesSubscription = this.presenceService.createPresences(managePresencesRequestData, this.currentUserId)
     .pipe(last())
       .subscribe(() => {
         console.log("DATA: "+ "Mpike sto subscribe");
@@ -308,7 +308,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
   }
 
   private updateClassSessionPresences(managePresencesRequestData: ManagePresencesRequestData) {
-    this.updateClassSessionPresencesSubscription = this.presenceService.updatePresences(managePresencesRequestData)
+    this.updateClassSessionPresencesSubscription = this.presenceService.updatePresences(managePresencesRequestData, this.currentUserId)
     .pipe(last())
       .subscribe(() => {
         console.log("DATA: "+ "Mpike sto subscribe");

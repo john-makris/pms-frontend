@@ -26,7 +26,7 @@ export class ExcuseApplicationsDataSource implements DataSource<ExcuseApplicatio
 
     constructor(private excuseApplicationService: ExcuseApplicationService) { }
 
-    loadDepartmentExcuseApplications(
+    loadDepartmentExcuseApplications(userId: number,
                 departmentId: number,
                 courseScheduleId: number,
                 lectureType: string,
@@ -38,7 +38,7 @@ export class ExcuseApplicationsDataSource implements DataSource<ExcuseApplicatio
                 currentColumnDef:string) {
 
         if (departmentId) {
-            let params: HttpParams = this.createParams(departmentId, courseScheduleId, lectureType,
+            let params: HttpParams = this.createParams(userId, departmentId, courseScheduleId, lectureType,
                 status, filter, pageIndex, pageSize, sortDirection, currentColumnDef);
                 console.log("PARAMS: "+params);
 
@@ -369,6 +369,7 @@ export class ExcuseApplicationsDataSource implements DataSource<ExcuseApplicatio
     }
 
     createParams(
+        userId: number,
         departmentId: number,
         courseScheduleId: number,
         lectureType: string,
@@ -380,6 +381,11 @@ export class ExcuseApplicationsDataSource implements DataSource<ExcuseApplicatio
         currentColumnDef:string): HttpParams {
 
             let params = new HttpParams();
+
+            if (userId) {
+                //console.log("User Id: "+userId);
+                params=params.set('userId', userId);
+            }
 
             if (departmentId) {
                 //console.log("Department Id: "+departmentId);

@@ -37,6 +37,7 @@ export class PresenceListComponent implements OnInit, OnDestroy {
   searchPresencesForm!: FormGroup;
 
   currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
   showAdminFeatures: boolean = false;
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
@@ -124,6 +125,26 @@ export class PresenceListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
+
+        if (this.showStudentFeatures) {
+          this.selectedDepartmentId = '1';
+          this.displayedColumns = [];
+          this.displayedColumns = ['lecture', 'session_date', 'status'];
+        }
+
+        if (this.showTeacherFeatures && !this.showAdminFeatures) {
+          this.selectedDepartmentId = this.currentUser.department.id.toString();
+        }
+      }
+    });
+
     this.searchPresencesForm = this.formBuilder.group({
       departmentId: [this.selectedDepartmentId],
       courseSchedule: ['', Validators.required],
@@ -134,22 +155,6 @@ export class PresenceListComponent implements OnInit, OnDestroy {
       excuseStatus: [this.selectedExcuseStatus]
     });
 
-    this.authService.user.subscribe((user: AuthUser | null) => {
-      if (user) {
-        this.currentUser = user;
-        this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
-        this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
-        // this.currentUser.roles.includes('STUDENT');
-
-        if (this.showStudentFeatures) {
-          this.selectedDepartmentId = '1';
-          this.displayedColumns = [];
-          this.displayedColumns = ['lecture', 'session_date', 'status'];
-        }
-      }
-    });
-
     this.lectureTypeSubscription = this.lectureTypeService.getAllLectureTypes()
     .pipe(first())
     .subscribe(lectureTypes => {
@@ -158,13 +163,15 @@ export class PresenceListComponent implements OnInit, OnDestroy {
       this.publishLectureType();
     });
 
-    if (!this.showStudentFeatures) {
+    if (this.showAdminFeatures) {
       this.departmentsSubscription = this.departmentService.getAllDepartments()
       .pipe(first())
       .subscribe(departments => {
         this.departments = departments;
       });
+    }
 
+    if (!this.showStudentFeatures) {
       this.lectureSelectDialogSubscription = this.lectureSelectDialogService.lectureSelectDialogState
       .subscribe((_lecture: LectureResponseData | null) => {
         console.log("Lecture Data: "+JSON.stringify(_lecture));
@@ -209,7 +216,7 @@ export class PresenceListComponent implements OnInit, OnDestroy {
     this.dataSource = new PresencesDataSource(this.presenceService);
 
     if (this.searchPresencesForm.valid) {
-      this.dataSource.loadPresences(+this.selectedClassSessionId, 
+      this.dataSource.loadPresences(this.currentUserId, +this.selectedClassSessionId,
         this.selectedStatus, this.selectedExcuseStatus, '', 0, 3, 'asc', this.currentColumnDef);
     }
 
@@ -501,6 +508,7 @@ export class PresenceListComponent implements OnInit, OnDestroy {
   loadPresencesPage() {
     if (!this.showStudentFeatures) {
       this.dataSource.loadPresences(
+        this.currentUserId,
         +this.selectedClassSessionId,
         this.selectedStatus,
         this.selectedExcuseStatus,
@@ -512,7 +520,8 @@ export class PresenceListComponent implements OnInit, OnDestroy {
     }
     if (this.showStudentFeatures && this.currentUser) {
       this.dataSource.loadUserPresences(
-        4,
+        0,
+        this.currentUserId,
         +this.selectedCourseScheduleId,
         this.selectedLectureTypeName,
         this.selectedStatus,

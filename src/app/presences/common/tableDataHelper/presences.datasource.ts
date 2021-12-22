@@ -26,7 +26,8 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
 
     constructor(private presenceService: PresenceService) { }
 
-    loadPresences(classSessionId: number,
+    loadPresences(userId: number,
+                classSessionId: number,
                 status: string,
                 excuseStatus: string,
                 filter:string,
@@ -36,7 +37,7 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
                 currentColumnDef:string) {
 
         if (classSessionId) {
-            let params: HttpParams = this.createParams(classSessionId, status, excuseStatus,
+            let params: HttpParams = this.createParams(userId, classSessionId, status, excuseStatus,
                 filter, pageIndex, pageSize, sortDirection, currentColumnDef);
                 console.log("PARAMS: "+params);
 
@@ -49,7 +50,8 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
 
     }
 
-    loadUserPresences(userId: number,
+    loadUserPresences(currentUserId: number,
+        userId: number,
         courseScheduleId: number,
         lectureType: string,
         status: string,
@@ -61,7 +63,7 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
         currentColumnDef:string) {
 
         if (userId) {
-            let params: HttpParams = this.createPresenceByUserParams(userId,
+            let params: HttpParams = this.createPresenceByUserParams(currentUserId, userId,
                 courseScheduleId, lectureType, status, excuseStatus, filter, pageIndex, pageSize, sortDirection, currentColumnDef);
                 console.log("PARAMS: "+params);
 
@@ -184,7 +186,7 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
         }
     }
 
-    createPresenceByUserParams(
+    createPresenceByUserParams(currentUserId: number,
         userId: number,
         courseScheduleId: number,
         lectureType: string,
@@ -197,6 +199,11 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
         currentColumnDef:string): HttpParams {
 
             let params = new HttpParams();
+
+            if (currentUserId) {
+                //console.log("Current User Id: "+currentUserId);
+                params=params.set('currentUserId', currentUserId);
+            }
 
             if (userId) {
                 //console.log("ID: "+userId);
@@ -246,6 +253,7 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
     }
 
     createParams(
+        userId: number,
         classSessionId: number,
         status: string,
         excuseStatus: string,
@@ -256,6 +264,11 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
         currentColumnDef:string): HttpParams {
 
             let params = new HttpParams();
+
+            if (userId) {
+                //console.log("userId: "+userId);
+                params=params.set('userId', userId);
+            }
 
             if (classSessionId) {
                 //console.log("classSessionId: "+classSessionId);

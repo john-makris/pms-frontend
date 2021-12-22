@@ -71,6 +71,8 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   currentColumnDef: string = 'nameIdentifier';
   currentActivityState: string = '';
 
+  message: string = '';
+
   selectedRow: ClassSessionResponseData | null = null;
   selection = new SelectionModel<ClassSessionResponseData>(true, []);
 
@@ -600,15 +602,15 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   private updatePresenceStatus(presenceData: PresenceRequestData) {
     this.updatePresenceSubscription = this.presenceService.updatePresenceStatus(presenceData)
       .pipe(last())
-      .pipe(
-        catchError(err => {
-          console.log("Error message: "+err.error.message);
-            this.unCheck(this.selectedRow);
-            return throwError(err);
-        })
-      )
-      .subscribe(() => {
+      .subscribe(
+        () => {
         this.snackbarService.success('Presence statement was successfully');
+      },
+      () => {
+        if (this.selectedRow) {
+          this.checkbox.toggle();
+          this.message = "You already have an absence for this session, so you cannot make a statement anymore";
+        }
       }).add(() => this.isLoading = false);
   }
   

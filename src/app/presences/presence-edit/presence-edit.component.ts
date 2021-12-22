@@ -27,6 +27,7 @@ export class PresenceEditComponent implements  OnInit, OnDestroy {
   submitted: boolean = false;
 
   currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
   showAdminFeatures: boolean = false;
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
@@ -69,10 +70,10 @@ export class PresenceEditComponent implements  OnInit, OnDestroy {
     this.authService.user.subscribe((user: AuthUser | null) => {
       if (user) {
         this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
         this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('TEACHER');
-        this.showStudentFeatures = false;
-        // this.currentUser.roles.includes('STUDENT');
+        this.showStudentFeatures = this.currentUser.roles.includes('STUDENT');
       }
     });
 
@@ -102,7 +103,7 @@ export class PresenceEditComponent implements  OnInit, OnDestroy {
           this.id = params['id'];
           this.isAddMode = params['id'] == null;
           if(!this.isAddMode) {
-            this.presenceSubscription = this.presenceService.getPresenceById(this.id)
+            this.presenceSubscription = this.presenceService.getPresenceById(this.id, this.currentUserId)
               .pipe(first())
               .subscribe((currentPresenceData: any) => {
                 if (currentPresenceData !== null) {
@@ -217,11 +218,16 @@ export class PresenceEditComponent implements  OnInit, OnDestroy {
   }*/
 
   private updatePresence(presenceData: PresenceRequestData) {
-    this.updatePresenceSubscription = this.presenceService.updatePresence(this.id, presenceData)
+    this.updatePresenceSubscription = this.presenceService.updatePresence(this.id, this.currentUserId, presenceData)
       .pipe(last())
       .subscribe(() => {
         this.snackbarService.success('Presence updated');
         this.router.navigate(['../../'], { relativeTo: this.route});
+      },
+      (error: any) => {
+        this.presenceForm.patchValue({
+          status: false
+        });
       }).add(() => this.isLoading = false);
   }
 

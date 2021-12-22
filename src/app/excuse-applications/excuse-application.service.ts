@@ -26,8 +26,8 @@ export class ExcuseApplicationService {
 
     constructor(private http: HttpClient) { }
 
-    createExcuseApplication(excuseApplicationRequestData: ExcuseApplicationRequestData): Observable<ExcuseApplicationRequestData> {
-        return this.http.post<ExcuseApplicationRequestData>(API_URL + 'create/', excuseApplicationRequestData);
+    createExcuseApplication(excuseApplicationRequestData: ExcuseApplicationRequestData, userId: number): Observable<ExcuseApplicationRequestData> {
+        return this.http.post<ExcuseApplicationRequestData>(API_URL + 'create/' + userId + '/', excuseApplicationRequestData);
     }
 
     updateExcuseApplication(excuseApplicationId: number, excuseApplicationRequestData: ExcuseApplicationRequestData): Observable<any> {
@@ -38,8 +38,8 @@ export class ExcuseApplicationService {
         return this.http.delete<any>(API_URL + 'delete/' + excuseApplicationId);
     }
 
-    getExcuseApplicationById(excuseApplicationId: number): Observable<ExcuseApplicationResponseData> {
-        return this.http.get<ExcuseApplicationResponseData>(API_URL + excuseApplicationId);
+    getExcuseApplicationById(excuseApplicationId: number, userId: number): Observable<ExcuseApplicationResponseData> {
+        return this.http.get<ExcuseApplicationResponseData>(API_URL + excuseApplicationId + '/' + userId);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

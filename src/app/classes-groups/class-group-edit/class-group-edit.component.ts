@@ -233,9 +233,15 @@ export class ClassGroupEditComponent implements OnInit, OnDestroy {
   private updateClassGroup(classGroupData: ClassGroupRequestData) {
     this.updateClassGroupSubscription = this.classGroupService.updateClassGroup(this.id, this.currentUserId, classGroupData)
       .pipe(last())
-      .subscribe(() => {
-        this.snackbarService.success('Class Group updated');
-        this.router.navigate(['../../'], { relativeTo: this.route});
+      .subscribe(
+        () => {
+          this.snackbarService.success('Class Group updated');
+          this.router.navigate(['../../'], { relativeTo: this.route});
+      },
+      (error: any) => {
+        this.classGroupForm.patchValue({
+          status: false
+        });
       }).add(() => this.isLoading = false);
   }
 
