@@ -1,0 +1,91 @@
+<section
+    [ngClass]="'container'"
+    fxLayout="column"
+    fxLayoutAlign="center">
+
+    <h2 mat-dialog-title fxLayoutAlign="center">
+        Change your Password !
+    </h2>
+
+    <mat-dialog-content fxLayoutAlign="center">
+        <form fxLayout="column"
+            [formGroup]="changePersonalDetailsForm" fxLayoutGap="0.5em">
+
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>Old Password</mat-label>
+                <input 
+                    type="password" 
+                    matInput [type]="hideOldPassword ? 'password' : 'text'"
+                    placeholder="Old Password"
+                    formControlName="oldPassword">
+                    <mat-hint align="end" >{{ f.oldPassword.value?.length }} / {{ f.oldPassword.value?.length > 10 ? '18' : 10 }}</mat-hint>
+                    <mat-error *ngIf="f.oldPassword.errors?.minlength">Password has to be at least 10 characters long.</mat-error>
+                    <mat-error *ngIf="f.oldPassword.errors?.maxlength">Password has to be the most 18 characters long.</mat-error>
+                <span fxLayout="row" matSuffix>
+                    <button type="button" mat-icon-button (click)="hideOldPassword = !hideOldPassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideOldPassword">
+                        <mat-icon>{{hideOldPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                    <mat-icon style="margin-top:'5px'">lock</mat-icon>
+                </span>
+                <mat-hint>Please enter the old password.</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>New Password</mat-label>
+                <input 
+                    type="password" 
+                    matInput [type]="hideNewPassword ? 'password' : 'text'"
+                    placeholder="New Password"
+                    formControlName="newPassword">
+                    <mat-hint align="end" >{{ f.newPassword.value?.length }} / {{ f.newPassword.value?.length > 10 ? '18' : 10 }}</mat-hint>
+                    <mat-error *ngIf="f.newPassword.errors?.minlength">Password has to be at least 10 characters long.</mat-error>
+                    <mat-error *ngIf="f.newPassword.errors?.maxlength">Password has to be the most 18 characters long.</mat-error>
+                <span fxLayout="row" matSuffix>
+                    <button type="button" mat-icon-button (click)="hideNewPassword = !hideNewPassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideNewPassword">
+                        <mat-icon>{{hideNewPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                    <mat-icon style="margin-top:'5px'">lock</mat-icon>
+                </span>
+                <mat-hint>Please enter the new password.</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>Retype new Password</mat-label>
+                <input 
+                    type="password" 
+                    matInput [type]="hideRetypedNewPassword ? 'password' : 'text'"
+                    placeholder="Retype New Password"
+                    formControlName="retypedNewPassword">
+                    <mat-hint align="end" >{{ f.retypedNewPassword.value?.length }} / {{ f.retypedNewPassword.value?.length > 10 ? '18' : 10 }}</mat-hint>
+                    <mat-error *ngIf="f.retypedNewPassword.errors?.minlength">Password has to be at least 10 characters long.</mat-error>
+                    <mat-error *ngIf="f.retypedNewPassword.errors?.maxlength">Password has to be the most 18 characters long.</mat-error>
+                    <mat-error *ngIf="!(f.retypedNewPassword.errors?.minlength) 
+                    && !(f.retypedNewPassword.errors?.maxlength) && f.retypedNewPassword.errors?.matching">Passwords don't match.</mat-error>
+                <span fxLayout="row" matSuffix>
+                    <button type="button" mat-icon-button (click)="hideRetypedNewPassword = !hideRetypedNewPassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideRetypedNewPassword">
+                        <mat-icon>{{hideRetypedNewPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                    <mat-icon style="margin-top:'5px'">lock</mat-icon>
+                </span>
+                <mat-hint>Please retype the new password.</mat-hint>
+            </mat-form-field>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions fxLayoutGap="0.5em">
+        <button
+            *ngIf="dialogStarted"
+            type="button" 
+            mat-raised-button color="primary" 
+            [disabled]="changePersonalDetailsForm.invalid"
+            (click)="ok()">
+            OK
+        </button>
+        <button 
+            mat-button
+            color="warn"
+            (click)="close()">
+            Close
+        </button>
+    </mat-dialog-actions>
+</section>

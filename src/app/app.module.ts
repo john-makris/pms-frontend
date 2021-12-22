@@ -25,6 +25,7 @@ import { GroupsStudentsModule } from './groups-students/groups-students.module';
 import { ClassesSessionsModule } from './classes-sessions/classes-sessions.module';
 import { PresencesModule } from './presences/presences.module';
 import { ExcuseApplicationsModule } from './excuse-applications/excuse-applications.module';
+import { ProfileModule } from './profile/profile.module';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { ExcuseApplicationsModule } from './excuse-applications/excuse-applicati
     GroupsStudentsModule,
     ClassesSessionsModule,
     PresencesModule,
-    ExcuseApplicationsModule
+    ExcuseApplicationsModule,
+    ProfileModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }

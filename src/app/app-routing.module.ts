@@ -5,6 +5,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
 
 const routes: Routes = [
   { path: '', component: WelcomeComponent },
+  { path: 'home', component: WelcomeComponent },
   { path: 'users',
   loadChildren: () => import('./users/users.module')
     .then(m => m.UsersModule),
@@ -59,6 +60,11 @@ const routes: Routes = [
   { path: 'excuse-applications',
   loadChildren: () => import('./excuse-applications/excuse-applications.module')
     .then(m => m.ExcuseApplicationsModule),
+    canLoad: [AuthGuard]
+  },
+  { path: 'profile',
+  loadChildren: () => import('./profile/profile.module')
+    .then(m => m.ProfileModule),
     canLoad: [AuthGuard]
   }
 ];

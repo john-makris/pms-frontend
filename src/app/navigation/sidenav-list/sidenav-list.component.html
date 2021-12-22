@@ -1,4 +1,8 @@
 <mat-nav-list>
+    <a mat-list-item routerLink="/home" (click)="onClose()">
+        <mat-icon>home</mat-icon>
+        <span class="nav-caption">Home</span>
+    </a>
     <a mat-list-item routerLink="/signup" (click)="onClose()" *ngIf="!isAuth">
         <mat-icon>face</mat-icon>
         <span class="nav-caption">Signup</span>
@@ -62,6 +66,11 @@
        *ngIf="isAuth && showAdminFeatures">
         <mat-icon>person</mat-icon>
         <span class="nav-caption">Users</span>
+    </a>
+    <a mat-list-item routerLink="/profile" (click)="onClose()"
+        *ngIf="isAuth">
+        <mat-icon>person</mat-icon>
+        <span class="nav-caption">My Profile</span>
     </a>
     <mat-list-item *ngIf="isAuth">
         <button mat-icon-button (click)="onLogout()">

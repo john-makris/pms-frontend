@@ -13,3 +13,8 @@ a:active {
     padding: 0;
     margin: 0;
 }
+
+.icon-text {
+    display: flex;
+    align-items: center;
+}

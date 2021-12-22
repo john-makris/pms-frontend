@@ -15,8 +15,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private roles!: string[];
   showAdminFeatures = false;
-  showProfessorFearures = false;
-  showStudentFearures = false;
+  showTeacherFeatures = false;
+  showStudentFeatures = false;
+  showSecretaryFeatures = false;
   username!: string;
 
   private userSubscription!: Subscription;
@@ -35,12 +36,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
           console.log("user: " + this.user.roles);
   
           this.showAdminFeatures = this.roles.includes('ROLE_ADMIN');
-          this.showProfessorFearures = this.roles.includes('ROLE_PROFESSOR');
-          this.showStudentFearures = this.roles.includes('ROLE_STUDENT');
+          this.showTeacherFeatures = this.roles.includes('ROLE_TEACHER');
+          this.showStudentFeatures = this.roles.includes('ROLE_STUDENT');
+          this.showSecretaryFeatures = this.roles.includes('ROLE_SECRETARY');
         } else {
           this.showAdminFeatures = false;
-          this.showProfessorFearures = false;
-          this.showStudentFearures = false;
+          this.showTeacherFeatures = false;
+          this.showStudentFeatures = false;
         }
       });
       console.log("WHAT??? " + this.isAuth);

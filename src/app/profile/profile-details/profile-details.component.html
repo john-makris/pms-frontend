@@ -1,0 +1,111 @@
+<div 
+    [ngClass]="'container'"
+    [ngClass.lt-sm]="'min-container'"
+    fxFlex="50em"
+    fxFlex.gt-md="50em"
+    fxFlex.md="50em"
+    fxFlex.lt-md="50em"
+    fxFlex.lt-sm="40em"  
+>
+    <div class="selectorContainer" fxLayout="column">
+        <h1>Account Details</h1>
+        <mat-divider></mat-divider>
+        <br>
+        <br>
+        <br>
+        <form fxLayout="column"
+            [formGroup]="profileForm" fxLayoutGap="0.5em">
+
+            <div fxLayout fxLayoutGap="0.5em" fxLayout.lt-xs="column">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>First name</mat-label>
+                    <input 
+                        type="firstname" 
+                        matInput 
+                        placeholder="Firstname"
+                        formControlName="firstname"
+                        readonly>
+                    <div matSuffix>
+                        <mat-icon>code</mat-icon>
+                    </div>
+                </mat-form-field>
+    
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Last name</mat-label>
+                    <input 
+                        type="lastname" 
+                        matInput 
+                        placeholder="Lastname"
+                        formControlName="lastname"
+                        readonly>
+                    <div matSuffix>
+                        <mat-icon>code</mat-icon>
+                    </div>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout fxLayoutGap="0.5em" fxLayout.lt-xs="column">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Username</mat-label>
+                    <input 
+                        type="username" 
+                        matInput 
+                        placeholder="Username"
+                        formControlName="username"
+                        readonly>
+                    <div matSuffix>
+                        <mat-icon>person</mat-icon>
+                    </div>
+                </mat-form-field>
+    
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Email</mat-label>
+                    <input 
+                        type="email"
+                        matInput 
+                        placeholder="Email"
+                        formControlName="email"
+                        readonly>
+                    <div matSuffix>
+                        <mat-icon>email</mat-icon>
+                    </div>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout fxLayoutGap="0.5em" fxLayout.lt-xs="column">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Roles</mat-label>
+                    <input 
+                        type="roles"
+                        matInput 
+                        placeholder="Roles"
+                        formControlName="roleNames"
+                        readonly>
+                    <div matSuffix>
+                        <mat-icon>badge</mat-icon>
+                    </div>
+                </mat-form-field>
+    
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Department</mat-label>
+                    <input 
+                        type="department" 
+                        matInput 
+                        placeholder="Department"
+                        formControlName="department"
+                        readonly>
+                    <div matSuffix>
+                        <mat-icon>domain</mat-icon>
+                    </div>
+                </mat-form-field>
+            </div>
+
+            <div>
+                <button mat-raised-button
+                    color="primary" (click)="changePassword()">
+                        Change your password
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

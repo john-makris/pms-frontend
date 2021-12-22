@@ -1,0 +1,16 @@
+.container {
+    /*border: 2px solid black;*/
+    padding: 2em;
+}
+
+.min-container {
+    /*border: 2px solid black;*/
+    padding-top: 2em;
+    padding-bottom: 2em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.selectorContainer {
+    padding-bottom: 1em;
+}

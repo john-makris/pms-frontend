@@ -6,6 +6,7 @@ import { UserData } from "./common/payload/response/userData.interface";
 import { AuthUser } from "./auth-user.model";
 import { UserResponseData } from "./common/payload/response/userResponseData.interface";
 import { UserRequestData } from "./common/payload/request/userRequestData.interface";
+import { UserDetailsRequestData } from "../profile/common/payload/request/userDetailsRequestData.interface";
 
 const API_URL = 'http://localhost:8080/pms/users/';
 
@@ -74,5 +75,9 @@ export class UserService {
 
     updateUser(userId: number, userData: UserRequestData): Observable<any> {
         return this.http.put(API_URL + 'update/' + userId, userData);
+    }
+
+    updateUserDetails(userId: number, userData: UserDetailsRequestData): Observable<any> {
+        return this.http.put(API_URL + 'update_user_details/' + userId, userData);
     }
 }
