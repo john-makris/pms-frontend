@@ -30,8 +30,8 @@ export class ExcuseApplicationService {
         return this.http.post<ExcuseApplicationRequestData>(API_URL + 'create/' + userId + '/', excuseApplicationRequestData);
     }
 
-    updateExcuseApplication(excuseApplicationId: number, excuseApplicationRequestData: ExcuseApplicationRequestData): Observable<any> {
-        return this.http.put(API_URL + 'update/' + excuseApplicationId, excuseApplicationRequestData);
+    updateExcuseApplication(excuseApplicationId: number, userId: number, excuseApplicationRequestData: ExcuseApplicationRequestData): Observable<any> {
+        return this.http.put(API_URL + 'update/' + userId + '/' + excuseApplicationId + '/', excuseApplicationRequestData);
     }
 
     deleteExcuseApplicationById(excuseApplicationId: number): Observable<any> {

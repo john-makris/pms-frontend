@@ -35,7 +35,7 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
   currentUser: AuthUser | null = null;
   currentUserId: number = 0;
   showAdminFeatures: boolean = false;
-  showTeacherFeatures: boolean = false;
+  showSecretaryFeatures: boolean = false;
   showStudentFeatures: boolean = false;
 
   delimeter: string = ',' + '\xa0';
@@ -79,7 +79,7 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
         this.currentUser = user;
         this.currentUserId = this.currentUser.id;
         this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
-        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+        this.showSecretaryFeatures = this.currentUser.roles.includes('ROLE_SECRETARY');
         this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
 
         if (this.showStudentFeatures) {
@@ -308,7 +308,7 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
   }
 
   private updateExcuseApplication(excuseApplicationData: ExcuseApplicationRequestData) {
-    this.updateExcuseApplicationSubscription = this.excuseApplicationService.updateExcuseApplication(this.id, excuseApplicationData)
+    this.updateExcuseApplicationSubscription = this.excuseApplicationService.updateExcuseApplication(this.id, this.currentUserId, excuseApplicationData)
       .pipe(last())
       .subscribe(() => {
         this.snackbarService.success(excuseApplicationData.status ? (excuseApplicationData.status === true ? "Excuse application Approved" : "Excuse application Rejected") : "Excuse application Rejected" );
