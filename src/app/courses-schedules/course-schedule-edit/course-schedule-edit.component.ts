@@ -35,7 +35,7 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
   tableLoaded: boolean = false;
   state: boolean = false;
   currentTeachingStuff!: Array<UserData>;
-  currentCourse!: Course;
+  currentCourse!: Course | null;
   currentCourseSchedule!: CourseScheduleResponseData;
   selectedAcademicYear: string = '';
 
@@ -219,6 +219,13 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
 
   selectTeachers() {
     this.teachersSelectDialogService.selectTeachers(this.courseScheduleForm.value.teachingStuff);
+  }
+
+  clearFormValues() {
+    this.currentCourse = null;
+    this.courseScheduleForm.patchValue({
+      course: null
+    });
   }
 
   onSubmit() {

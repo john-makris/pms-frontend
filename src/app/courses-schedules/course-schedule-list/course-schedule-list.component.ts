@@ -5,11 +5,13 @@ import { MatSort } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, first, switchMap, tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/auth/auth.service';
 import { PageDetail } from 'src/app/common/models/pageDetail.model';
 import { SnackbarData } from 'src/app/common/snackbars/snackbar-data.interface';
 import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { Department } from 'src/app/departments/department.model';
 import { DepartmentService } from 'src/app/departments/department.service';
+import { AuthUser } from 'src/app/users/auth-user.model';
 import { CoursesSchedulesDataSource } from '../common/tableDataHelper/coursesSchedules.datasource';
 import { CourseScheduleService } from '../course-schedule.service';
 
@@ -23,6 +25,12 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
   selectDepartmentForm!: FormGroup;
   isLoading: boolean = false;
   submitted: boolean = false;
+
+  currentUser: AuthUser | null = null;
+  currentUserId: number = 0;
+  showAdminFeatures: boolean = false;
+  showTeacherFeatures: boolean = false;
+  showStudentFeatures: boolean = false;
   
   dataSource!: CoursesSchedulesDataSource;
   departments!: Department[];
@@ -60,10 +68,24 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
     private formBuilder: FormBuilder,
     private snackbarService: SnackbarService,
     private departmentService: DepartmentService,
-    private courseScheduleService: CourseScheduleService) {}
+    private courseScheduleService: CourseScheduleService,
+    private authService: AuthService) {}
 
 
   ngOnInit(): void {
+
+    this.authService.user.subscribe((user: AuthUser | null) => {
+      if (user) {
+        this.currentUser = user;
+        this.currentUserId = this.currentUser.id;
+        console.log("Current User Id: "+this.currentUserId);
+
+        this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
+        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
+        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
+      }
+    });
+
     this.departmentsSubscription = this.departmentService.getAllDepartments()
     .pipe(first())
     .subscribe(departments => {
@@ -212,7 +234,7 @@ export class CourseScheduleListComponent implements OnInit, AfterViewInit, OnDes
   loadCoursesSchedulesPage() {
     this.checksBeforeLoading();
     this.dataSource.loadCoursesSchedules(
-        0,
+        this.currentUserId,
         +this.selectedDepartmentId,
         this.selectedStatus,
         this.input.nativeElement.value,

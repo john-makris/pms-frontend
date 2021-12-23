@@ -13,15 +13,15 @@
             fxFlex.gt-sm="40em">
             <mat-card-title fxLayoutAlign="center">
                 <h1 *ngIf="isAddMode">Add Course Schedule</h1>
-                <h1 *ngIf="!isAddMode">{{ currentCourse.name }} Schedule</h1>
+                <h1 *ngIf="!isAddMode">{{ currentCourse?.name }} Schedule</h1>
             </mat-card-title>
             <mat-card-content fxLayout.lt-sm="column" fxLayout="row wrap"
             fxLayoutAlign="center">
 
-                <div fxLayout="row">
-                    <div fxLayout="column" fxFlex
+                <div fxLayout="row" fxLayout.lt-sm="column">
+                    <!-- <div fxLayout="column" fxFlex
                         class="non-form-field-course" *ngIf="isAddMode">
-                        <!-- Course -->
+                        
                         <button
                         [class.border-invalid]="f.course.invalid && f.course.touched"
                             [ngClass.gt-xs]="{'course-button': true}"
@@ -31,6 +31,31 @@
                             Choose Course</button>
                             <mat-label *ngIf="currentCourse">Selected Course: {{ currentCourse.name }}</mat-label>
                             <mat-error class="validation-text" *ngIf="f.course.errors?.required && f.course.touched">Missing Course</mat-error>
+                    </div> -->
+
+                    <!-- dokimi gia antikatastasi tou course button -->
+                    <div fxLayout="column" class="class-group-aligner" fxFlex *ngIf="isAddMode">
+                        <div fxLayout fxLayoutGap="0.5em">
+                            <!-- Student -->
+                            <button fxFlex
+                            [class.border-invalid]="f.course.invalid && f.course.touched"
+                                class="collapse-button-text"
+                                type="button"
+                                mat-stroked-button
+                                (click)="selectCourse()">
+                                <div>{{'Selected: '}}{{ currentCourse ? currentCourse.name : ' -- None -- ' }}</div>
+                            </button>
+                            <div *ngIf="currentCourse" class="aligner">
+                                <button class="mat-icon-button-search-form"
+                                    type="button"
+                                    mat-icon-button
+                                    (click)="clearFormValues()">
+                                    <mat-icon inline="true">close</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <mat-hint *ngIf="!(f.course.errors?.required && f.course.touched)" class="course-schedule-hint-text">Choose Course Schedule</mat-hint>
+                        <mat-error  class="course-schedule-hint-text" *ngIf="f.course.errors?.required && f.course.touched">Missing Course Schedule</mat-error>
                     </div>
 
                     <div fxFlex [ngClass]="{ 'upload-students-edit-mode': !isAddMode }"
