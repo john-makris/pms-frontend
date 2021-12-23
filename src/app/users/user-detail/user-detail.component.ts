@@ -62,7 +62,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   editUser() {
     this.router.navigate(['/users/edit/', this.id], { relativeTo: this.route });
   }
-
+  /*
   deleteUser(id: number) {
     if (!this.user) return;
     this.ensureDialogService.openDialog('will be Deleted', this.user.username, 'delete');
@@ -83,7 +83,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
           }
         }
       );
-  }
+  }*/
 
   onClose() {
     this.router.navigate(['../../'], { relativeTo: this.route });
