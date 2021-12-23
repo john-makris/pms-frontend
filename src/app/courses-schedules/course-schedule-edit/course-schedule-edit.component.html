@@ -221,7 +221,7 @@
 
                 <div fxLayout="column" fxFlexFill
                     class="non-form-field-teacher">
-                    <!-- Teachers -->
+                    <!-- Teachers
                     <button
                         [ngClass]="{'border-invalid': f.teachingStuff.invalid && f.teachingStuff.touched}"
                         type="button"
@@ -230,7 +230,32 @@
                         (click)="selectTeachers()">
                         Choose Teacher(s)</button>
                         <mat-error class="aligner" class="validation-text" *ngIf="f.teachingStuff.errors?.required && f.teachingStuff.touched">Missing Teacher(s)</mat-error>
-                    
+                    -->
+                    <!-- New Teachers Button -->
+                    <div fxLayout="column" class="class-group-aligner" fxFlex *ngIf="isAddMode">
+                        <div fxLayout fxLayoutGap="0.5em">
+                            <!-- TEACHERS -->
+                            <button fxFlex
+                            [class.border-invalid]="f.teachingStuff.invalid && f.teachingStuff.touched"
+                                class="collapse-button-text"
+                                type="button"
+                                mat-stroked-button
+                                (click)="selectTeachers()">
+                                <div>{{'Selected: '}}{{ teachersCompleted ? currentTeachers : ' -- None -- ' }}</div>
+                            </button>
+                            <div *ngIf="teachersCompleted" class="aligner">
+                                <button class="mat-icon-button-search-form"
+                                    type="button"
+                                    mat-icon-button
+                                    (click)="clearTeacherFormValues()">
+                                    <mat-icon inline="true">close</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <mat-hint *ngIf="!(f.teachingStuff.errors?.required && f.teachingStuff.touched)" class="course-schedule-hint-text">Choose Teacher(s)</mat-hint>
+                        <mat-error  class="course-schedule-hint-text" *ngIf="f.teachingStuff.errors?.required && f.teachingStuff.touched">Missing Teacher(s)</mat-error>
+                    </div>
+                    <!--
                     <mat-accordion class="aligner"
                         *ngIf="currentTeachingStuff">
                         <mat-expansion-panel 
@@ -252,7 +277,7 @@
                                 </span>
                             </div>
                         </mat-expansion-panel>
-                    </mat-accordion>
+                    </mat-accordion> -->
                 </div>
 
                 <div fxLayoutAlign="center">

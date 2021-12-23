@@ -32,9 +32,12 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
   selectedFiles!: FileList | undefined;
   currentFile!: File | undefined;
 
+  teachersCompleted: boolean = false;
+
   tableLoaded: boolean = false;
   state: boolean = false;
-  currentTeachingStuff!: Array<UserData>;
+  currentTeachers: string = '';
+  currentTeachingStuff!: Array<UserData> | null;
   currentCourse!: Course | null;
   currentCourseSchedule!: CourseScheduleResponseData;
   selectedAcademicYear: string = '';
@@ -102,6 +105,7 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
                 });
                 this.currentCourse = currentCourseScheduleData.course;
                 this.currentTeachingStuff = currentCourseScheduleData.teachingStuff;
+                this.createCurrentTeachers(this.currentTeachingStuff);
                 this.selectedAcademicYear = currentCourseScheduleData.academicYear;
               });
           }
@@ -160,6 +164,7 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
           });
           this.courseScheduleForm.patchValue({teachingStuff: _teachers});
           this.currentTeachingStuff = _teachers;
+          this.createCurrentTeachers(this.currentTeachingStuff);
           console.log("Teachers"+this.f.teachingStuff.valid);
         } else {
           if (!this.currentTeachingStuff) {
@@ -174,6 +179,23 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
   }
 
   get f() { return this.courseScheduleForm.controls; }
+
+  createCurrentTeachers(teachingStuff: Array<UserData>) {
+    this.currentTeachers = '';
+    if (this.teachersCompleted) {
+      this.teachersCompleted = false;
+    }
+    teachingStuff.forEach(teacher => {
+      let fullname = '';
+      fullname = teacher.firstname + ' ' + teacher.lastname;
+      if (this.currentTeachers === '') {
+        this.currentTeachers = fullname;
+      } else {
+        this.currentTeachers = this.currentTeachers + ', ' + fullname;
+      }
+    });
+    this.teachersCompleted = true;
+  }
 
   selectCourse() {
     this.courseSelectDialogService.selectCourse(this.courseScheduleForm.value.course);
@@ -225,6 +247,15 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
     this.currentCourse = null;
     this.courseScheduleForm.patchValue({
       course: null
+    });
+  }
+
+  clearTeacherFormValues() {
+    this.currentTeachingStuff = null;
+    this.currentTeachers = '';
+    this.teachersCompleted = false;
+    this.courseScheduleForm.patchValue({
+      teachingStuff: null
     });
   }
 
