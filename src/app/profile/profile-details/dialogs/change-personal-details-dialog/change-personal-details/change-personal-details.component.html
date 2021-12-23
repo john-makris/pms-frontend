@@ -47,6 +47,7 @@
                     <mat-icon style="margin-top:'5px'">lock</mat-icon>
                 </span>
                 <mat-hint>Please enter the new password.</mat-hint>
+                <mat-error *ngIf="f.newPassword.errors?.required">Missing password.</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" fxFlex>
@@ -60,7 +61,9 @@
                     <mat-error *ngIf="f.retypedNewPassword.errors?.minlength">Password has to be at least 10 characters long.</mat-error>
                     <mat-error *ngIf="f.retypedNewPassword.errors?.maxlength">Password has to be the most 18 characters long.</mat-error>
                     <mat-error *ngIf="!(f.retypedNewPassword.errors?.minlength) 
-                    && !(f.retypedNewPassword.errors?.maxlength) && f.retypedNewPassword.errors?.matching">Passwords don't match.</mat-error>
+                    && !(f.retypedNewPassword.errors?.maxlength)
+                    && !(f.retypedNewPassword.errors?.required)
+                    && f.retypedNewPassword.errors?.matching">Passwords don't match.</mat-error>
                 <span fxLayout="row" matSuffix>
                     <button type="button" mat-icon-button (click)="hideRetypedNewPassword = !hideRetypedNewPassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideRetypedNewPassword">
                         <mat-icon>{{hideRetypedNewPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
@@ -68,6 +71,7 @@
                     <mat-icon style="margin-top:'5px'">lock</mat-icon>
                 </span>
                 <mat-hint>Please retype the new password.</mat-hint>
+                <mat-error *ngIf="f.retypedNewPassword.errors?.required">Missing password.</mat-error>
             </mat-form-field>
         </form>
     </mat-dialog-content>

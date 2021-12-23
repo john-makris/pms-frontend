@@ -116,7 +116,9 @@
                             <mat-error *ngIf="f.confirmPassword.errors?.minlength">Password has to be at least 10 characters long.</mat-error>
                             <mat-error *ngIf="f.confirmPassword.errors?.maxlength">Password has to be the most 18 characters long.</mat-error>
                             <mat-error *ngIf="!(f.confirmPassword.errors?.minlength) 
-                            && !(f.confirmPassword.errors?.maxlength) && f.confirmPassword.errors?.matching">Passwords don't match.</mat-error>
+                            && !(f.confirmPassword.errors?.maxlength)
+                            && !(f.confirmPassword.errors?.required)
+                            && f.confirmPassword.errors?.matching">Passwords don't match.</mat-error>
                         <span fxLayout="row" matSuffix>
                             <button type="button" mat-icon-button (click)="confirmPasswordHide = !confirmPasswordHide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="confirmPasswordHide">
                                 <mat-icon>{{confirmPasswordHide ? 'visibility_off' : 'visibility'}}</mat-icon>
