@@ -30,6 +30,16 @@
                     <mat-label><strong>Time:</strong></mat-label>
                     {{ classSession?.classGroup?.startTime+' - '+classSession?.classGroup?.endTime }}
                 </div>
+                <div fxLayout="row wrap">
+                    <label><strong>{{ "Teaching Stuff:"}}{{ space }}</strong></label>
+                    <span
+                        *ngFor="let teacher of classSession.lecture.courseSchedule.teachingStuff; let i = index">
+                        <span>
+                            <span>{{ teacher.firstname }} {{ teacher.lastname }}</span>
+                            <span *ngIf="i+1 > 0 && i+1 < classSession.lecture.courseSchedule.teachingStuff.length">{{delimeter}}</span>
+                        </span>
+                    </span>
+                </div>
                 <div>
                     <label><strong>Students: </strong></label>
                     <button 

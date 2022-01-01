@@ -54,8 +54,8 @@
                                 </button>
                             </div>
                         </div>
-                        <mat-hint *ngIf="!(f.course.errors?.required && f.course.touched)" class="course-schedule-hint-text">Choose Course Schedule</mat-hint>
-                        <mat-error  class="course-schedule-hint-text" *ngIf="f.course.errors?.required && f.course.touched">Missing Course Schedule</mat-error>
+                        <mat-hint *ngIf="!(f.course.errors?.required && f.course.touched)" class="course-schedule-hint-text">Choose Course</mat-hint>
+                        <mat-error  class="course-schedule-hint-text" *ngIf="f.course.errors?.required && f.course.touched">Missing Course</mat-error>
                     </div>
 
                     <div fxFlex [ngClass]="{ 'upload-students-edit-mode': !isAddMode }"

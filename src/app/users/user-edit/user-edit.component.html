@@ -134,6 +134,7 @@
                             <mat-option *ngFor="let roleName of editModeRoleNames" [value]="roleName">
                                 <container-element [ngSwitch]="roleName">
                                     <span *ngSwitchCase="'ROLE_TEACHER'">Teacher</span>
+                                    <span *ngSwitchCase="'ROLE_SECRETARY'">Secretary</span>
                                 </container-element>
                             </mat-option>
                         </ng-container>

@@ -44,7 +44,7 @@
                 </div>
             </mat-card-content>
             <mat-card-actions>
-                <div *ngIf="!showStudentFeatures">
+                <div *ngIf="!showStudentFeatures && presence.excuseStatus === false">
                     <button
                         mat-raised-button color="primary"
                         (click)="editPresence()">

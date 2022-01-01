@@ -21,6 +21,9 @@ export class ClassSessionDetailComponent implements OnInit, OnDestroy {
   ensureDialogStatus!: boolean;
   classSessionTable: boolean = false;
 
+  space: string = '\xa0';
+  delimeter: string = ',' + '\xa0';
+
   currentUser: AuthUser | null = null;
   currentUserId: number = 0;
   showAdminFeatures: boolean = false;
