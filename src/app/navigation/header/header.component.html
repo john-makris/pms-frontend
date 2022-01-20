@@ -12,13 +12,13 @@
     <div fxLayout fxLayoutGap="3em">
         <div><a routerLink="/">HUA Pms</a></div>
 
-        <mat-label *ngIf="isAuth && showAdminFeatures" fxHide.xs>ADMIN PANEL</mat-label>
-        <mat-label *ngIf="isAuth && showTeacherFeatures && !showAdminFeatures" fxHide.xs>TEACHER PANEL</mat-label>
-        <mat-label *ngIf="isAuth && showSecretaryFeatures" fxHide.xs>SECRETARY PANEL</mat-label>
+        <mat-label *ngIf="isAuth && showAdminFeatures">ADMIN PANEL</mat-label>
+        <mat-label *ngIf="isAuth && showTeacherFeatures && !showAdminFeatures">TEACHER PANEL</mat-label>
+        <mat-label *ngIf="isAuth && showSecretaryFeatures">SECRETARY PANEL</mat-label>
 
     </div>
 
-    <div fxFlex fxLayout fxLayoutAlign="flex-end" fxHide.xs>
+    <div fxFlex fxLayout fxLayoutAlign="flex-end" fxHide.lt-md>
         <ul fxLayout fxLayoutGap="1em" class="navigation-items">
             <li *ngIf="!isAuth">
                 <a routerLink="/signup">Signup</a>

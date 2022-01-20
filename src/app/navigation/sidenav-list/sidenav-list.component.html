@@ -43,7 +43,7 @@
     </a>
     <a mat-list-item routerLink="/students-of-groups" (click)="onClose()" 
         *ngIf="isAuth && (showAdminFeatures || showProfessorFeatures)">
-        <mat-icon>groups</mat-icon>
+        <mat-icon>people</mat-icon>
         <span class="nav-caption">Students of Groups</span>
     </a>
     <a mat-list-item routerLink="/classes-sessions" (click)="onClose()" 
@@ -64,7 +64,7 @@
     </a>
     <a mat-list-item routerLink="/users" (click)="onClose()"
        *ngIf="isAuth && showAdminFeatures">
-        <mat-icon>person</mat-icon>
+        <mat-icon>people_outline</mat-icon>
         <span class="nav-caption">Users</span>
     </a>
     <a mat-list-item routerLink="/profile" (click)="onClose()"

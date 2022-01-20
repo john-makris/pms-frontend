@@ -102,7 +102,10 @@ export class CourseScheduleDetailComponent implements OnInit, OnDestroy {
   }
 
   previewStudents() {
-    this.studentsPreviewDialogService.showStudents(this.courseSchedule.id);
+    this.studentsPreviewDialogService.showStudents({
+      searchId: this.courseSchedule.id,
+      identifier: 'course_schedule'
+    });
   }
 
   onCancel() {

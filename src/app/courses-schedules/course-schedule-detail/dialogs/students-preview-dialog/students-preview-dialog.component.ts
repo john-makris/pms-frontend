@@ -86,8 +86,9 @@ export class StudentsPreviewDialogComponent implements OnInit, OnDestroy {
     });
 
     this.dataSource = new UsersDataSource(this.userService);
-
-    if (this.data.identifier.includes('session')) {
+    console.log("data identifier: "+this.data.identifier);
+    console.log("data searchId: "+this.data.searchId);
+    if (this.data.identifier && this.data.identifier.includes('session')) {
       this.dataSource.loadClassSessionStudents(this.currentUserId, this.data.searchId,'', 0, 3, 'asc', this.currentColumnDef);
     } else {
       this.dataSource.loadCourseScheduleStudents(this.data.searchId,'', 0, 3, 'asc', this.currentColumnDef);
