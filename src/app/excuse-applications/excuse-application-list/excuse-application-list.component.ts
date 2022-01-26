@@ -349,6 +349,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
 
   loadExcuseApplicationsPage() {
     if (!this.showStudentFeatures) {
+      this.excuseApplicationService.styleIndexSubject.next(-1);
       this.dataSource.loadDepartmentExcuseApplications(
         this.currentUserId,
         +this.selectedDepartmentId,
