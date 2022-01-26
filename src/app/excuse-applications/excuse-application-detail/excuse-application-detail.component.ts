@@ -3,11 +3,8 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
-import { EnsureDialogService } from 'src/app/common/dialogs/ensure-dialog.service';
-import { SnackbarService } from 'src/app/common/snackbars/snackbar.service';
 import { AuthUser } from 'src/app/users/auth-user.model';
 import { ExcuseApplicationResponseData } from '../common/payload/response/excuseApplicationResponseData.interface';
-import { ExcuseApplicationsResponseData } from '../common/payload/response/excuseApplicationsResponseData.interface';
 import { ExcuseApplicationService } from '../excuse-application.service';
 
 @Component({
@@ -34,8 +31,6 @@ export class ExcuseApplicationDetailComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute,
     private router: Router,
     private excuseApplicationService: ExcuseApplicationService,
-    private snackbarService: SnackbarService,
-    private ensureDialogService: EnsureDialogService,
     private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -109,6 +104,9 @@ export class ExcuseApplicationDetailComponent implements OnInit, OnDestroy {
   } */
 
   onCancel() {
+    if (this.showSecretaryFeatures) {
+      this.excuseApplicationService.styleIndexSubject.next(-1);
+    }
     this.router.navigate(['../../'], { relativeTo: this.route });
   }
 

@@ -43,6 +43,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
   departments!: Department[];
   lectureTypes: LectureType[] = [];
 
+  selectedIndex: number = -1;
   selectedDepartmentId: string = '';
   selectedCourseScheduleId: string = '';
   selectedCourseSchedule: CourseSchedule | null = null;
@@ -57,6 +58,7 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
   currentColumnDef: string = 'id';
   currentActivityState: string = '';
 
+  styleIndexSubscription!: Subscription;
   statusFormControlChangedSubscription!: Subscription;
   courseScheduleFormControlChangedSubscription!: Subscription;
   departmentFormControlChangedSubscription!: Subscription;
@@ -91,6 +93,12 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
     private authService: AuthService) {}
 
   ngOnInit(): void {
+    
+    this.styleIndexSubscription = this.excuseApplicationService.styleIndexSubject.subscribe(
+      (styleIndex: number) => {
+        this.selectedIndex = styleIndex;
+      }
+    );
 
     this.authService.user.subscribe((user: AuthUser | null) => {
       if (user) {
@@ -384,6 +392,10 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
     this.loadExcuseApplicationsPage();
   }
 
+  setRow(_index: number) {
+    this.selectedIndex = _index;
+  }
+
   ngOnDestroy(): void {
     if (this.ensureDialogSubscription) {
       this.ensureDialogSubscription.unsubscribe();
@@ -411,6 +423,10 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
 
     if (this.departmentFormControlChangedSubscription) {
       this.departmentFormControlChangedSubscription.unsubscribe();
+    }
+
+    if (this.styleIndexSubscription) {
+      this.styleIndexSubscription.unsubscribe();
     }
 
   }

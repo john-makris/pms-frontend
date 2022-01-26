@@ -15,6 +15,15 @@
     margin-bottom: 1em;
 }
 
+.mat-row.hovered {
+    cursor: pointer;
+    background: #eee;
+}
+
+.mat-row.highlighted {
+  background: #999;
+}
+
 .course-schedule-hint-text {
     font-size: 75%;
     margin-top: 0.2em;

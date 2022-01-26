@@ -185,7 +185,11 @@
                 <div>
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                     <mat-row
-                        *matRowDef="let row; columns: displayedColumns;"
+                        *matRowDef="let row; columns: displayedColumns; let i = index;"
+                        (click)="setRow(i)"
+                        [ngClass]="{hovered: (row.hovered && showSecretaryFeatures),
+                            'highlighted': (selectedIndex === i && showSecretaryFeatures)}"
+                        (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"
                         routerLink="detail/{{row.id}}"
                         routerLinkActive="active"
                         class="table-row-style"

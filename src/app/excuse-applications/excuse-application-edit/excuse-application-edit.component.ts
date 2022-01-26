@@ -312,11 +312,13 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
       .pipe(last())
       .subscribe(() => {
         this.snackbarService.success(excuseApplicationData.status ? (excuseApplicationData.status === true ? "Excuse application Approved" : "Excuse application Rejected") : "Excuse application Rejected" );
+        this.excuseApplicationService.styleIndexSubject.next(-1);
         this.router.navigate(['../../'], { relativeTo: this.route});
       }).add(() => this.isLoading = false);
   }
 
   onCancel() {
+    this.excuseApplicationService.styleIndexSubject.next(-1);
     this.router.navigate(['/excuse-applications'], { relativeTo: this.route});
   }
 

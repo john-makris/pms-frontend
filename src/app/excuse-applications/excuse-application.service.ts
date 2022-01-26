@@ -12,6 +12,8 @@ const API_URL = 'http://localhost:8080/pms/excuse-applications/';
 })
 export class ExcuseApplicationService {
 
+    styleIndexSubject = new BehaviorSubject<number>(-1);
+
     excuseApplicationSubject = new BehaviorSubject<ExcuseApplicationResponseData | null>(null);
 
     excuseApplicationState = this.excuseApplicationSubject.asObservable();
