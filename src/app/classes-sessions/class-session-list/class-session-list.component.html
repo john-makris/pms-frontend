@@ -1,6 +1,7 @@
 <div
     [ngClass]="'container'"
     [ngClass.lt-sm]="'min-container'"
+    [ngClass]="{'student-styles' : showStudentFeatures === true}"
     fxFlex="40em"
     fxFlex.gt-md="40em"
     fxFlex.md="40em"
@@ -199,7 +200,7 @@
 
                 <!-- Checkbox Column  -->
                 <ng-container matColumnDef="presenceStatement">
-                    <mat-header-cell *matHeaderCellDef class="collapse-text">P. Statement</mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef class="collapse-text">Presence Statement</mat-header-cell>
                     <mat-cell *matCellDef="let row">
                         <mat-checkbox [matTooltip]="message !== '' ? message : 
                             ((!row.presenceStatementStatus) ? 'Presence Statement is closed' :

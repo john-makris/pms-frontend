@@ -11,6 +11,13 @@
     padding-right: 1em;
 }
 
+.student-styles {
+    /*border: 2px solid black;*/
+    padding-top: 2em;
+    padding-bottom: 2em;
+    margin-left: 20em;
+}
+
 .department-form-styles {
     margin-bottom: 1em;
 }

@@ -23,12 +23,20 @@
                     {{ classSession?.date }}
                 </div>
                 <div>
-                    <mat-label><strong>Class Group:</strong></mat-label>
-                    {{ classSession?.classGroup?.nameIdentifier }}
-                </div>
-                <div>
                     <mat-label><strong>Time:</strong></mat-label>
                     {{ classSession?.classGroup?.startTime+' - '+classSession?.classGroup?.endTime }}
+                </div>
+                <div>
+                    <mat-label><strong>Course Schedule:</strong></mat-label>
+                    {{ classSession?.classGroup?.courseSchedule?.course?.name }}
+                </div>
+                <div>
+                    <mat-label><strong>Lecture:</strong></mat-label>
+                    {{ classSession?.lecture?.nameIdentifier + ', ' + '"' + classSession?.lecture?.title + '"' }}
+                </div>
+                <div>
+                    <mat-label><strong>Class Group:</strong></mat-label>
+                    {{ classSession?.classGroup?.nameIdentifier }}
                 </div>
                 <div fxLayout="row wrap">
                     <label><strong>{{ "Teaching Stuff:"}}{{ space }}</strong></label>

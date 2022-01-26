@@ -1,6 +1,7 @@
 <div 
     [ngClass]="'container'"
     [ngClass.lt-sm]="'min-container'"
+    [ngClass]="{'student-styles' : showStudentFeatures === true}"
     fxFlex="40em"
     fxFlex.gt-md="40em"
     fxFlex.md="40em"
@@ -141,7 +142,7 @@
                         <mat-checkbox [matTooltip]="!row.status ? 'Group is closed' : 'Group is full'"
                             matTooltipPosition="after"
                             [matTooltipDisabled]="row.status && (row.capacity !== row.groupsOfStudents)"
-                            [disabled]="(selectedRow && !simpleCheck(row)) || (!row.status) || (row.capacity === row.groupsOfStudents)"
+                            [disabled]="(selectedRow && !simpleCheck(row)) || (!row.status) || ((row.capacity === row.groupsOfStudents) && !selectedRow)"
                             (click)="$event.stopPropagation()" (change)="selectHandler(row)"
                             [checked]="selection.isSelected(row) || check(row)">
                         </mat-checkbox>

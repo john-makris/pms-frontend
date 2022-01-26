@@ -98,12 +98,12 @@ export class ClassSessionDetailComponent implements OnInit, OnDestroy {
     if (this.classSession.groupType.name === 'Theory') {
       groupType = 'theories';
     } else {
-      groupType = 'tabs';
+      groupType = 'labs';
     } */
 
     if (!this.classSession) return;
     this.ensureDialogService.openDialog('will be Deleted', this.classSession.nameIdentifier
-    +' for '+this.classSession.classGroup.courseSchedule.course.name+' ', 'delete');
+    +' for '+this.classSession.classGroup.courseSchedule.course.name+', '+this.classSession.lecture.nameIdentifier+' ', 'delete');
 
     this.ensureDialogSubscription = this.ensureDialogService
       .ensureDialogState

@@ -56,8 +56,6 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
   selectedRow: ClassGroup | null = null;
   selection = new SelectionModel<ClassGroup>(true, []);
 
-  haha: boolean = false;
-
   totalItems: number = 0;
   currentPage: number = 0;
   currentPageItems: number = 0;
