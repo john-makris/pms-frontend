@@ -23,7 +23,7 @@ export class SnackbarService {
     }
 
     warn(_message: string) {
-        this.showSnackbar(_message, 'warning', 1000);
+        this.showSnackbar(_message, 'warning', 15000);
     }
 
     showSnackbar(

@@ -20,6 +20,10 @@ const httpOptions = {
 @Injectable({providedIn: 'root'})
 export class AuthService {
 
+    timerRefresh = new BehaviorSubject<boolean>(false);
+
+    refreshInterval = new BehaviorSubject<any>(null);
+
     private logOutSubject = new BehaviorSubject<boolean>(false);
 
     logout$ = this.logOutSubject.asObservable();
@@ -137,6 +141,7 @@ export class AuthService {
         this.tokenStorageService.saveUser(user);
         // save valid
         this.tokenStorageService.saveValid(refreshTokenExpirationDuration);
+        this.timerRefresh.next(true);
         this.autoLogout(refreshTokenExpirationDuration);
   }
 
@@ -147,6 +152,7 @@ export class AuthService {
             return;
         }
         
+
         const loadedUser = new AuthUser(
           userData.id,
           userData.firstname,
@@ -172,6 +178,7 @@ export class AuthService {
                 console.log("refreshTokenExpirationDuration: " + refreshTokenExpirationDuration);
             // save valid
             this.tokenStorageService.saveValid(refreshTokenExpirationDuration);
+            this.timerRefresh.next(true);
             this.autoLogout(refreshTokenExpirationDuration);
         }
     }
@@ -252,6 +259,7 @@ export class AuthService {
         this.tokenStorageService.saveUser(user);
         // save valid
         this.tokenStorageService.saveValid(refreshTokenExpirationDuration);
+        this.timerRefresh.next(true);
         this.autoLogout(refreshTokenExpirationDuration);
   }
 

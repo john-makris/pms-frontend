@@ -20,8 +20,11 @@ export class SidenavListComponent implements OnInit {
   showSecretaryFeatures = false;
   username!: string;
 
+  refreshInterval: any;
+
   private userSubscription!: Subscription;
   private deleteRefreshTokenSubscription!: Subscription;
+  private refreshIntervalSubscription!: Subscription;
 
   constructor(private authService: AuthService) { }
 
@@ -47,6 +50,11 @@ export class SidenavListComponent implements OnInit {
         }
       });
       console.log("WHAT??? " + this.isAuth);
+      this.refreshIntervalSubscription = this.authService.refreshInterval.subscribe((refreshInterval: any) => {
+        if (refreshInterval) {
+          this.refreshInterval = refreshInterval;
+        }
+      });
     }
   
      onClose() {
@@ -57,6 +65,7 @@ export class SidenavListComponent implements OnInit {
       this.deleteRefreshTokenSubscription = this.authService.deleteRefreshToken(this.user.id).subscribe(
         (data: any) => {
           console.log("Header Log out Message: "+data.message);
+          clearInterval(this.refreshInterval);
         }
       );
       this.authService.manualLogout();
@@ -69,6 +78,9 @@ export class SidenavListComponent implements OnInit {
       }
       if (this.deleteRefreshTokenSubscription) {
         this.deleteRefreshTokenSubscription.unsubscribe();
+      }
+      if (this.refreshIntervalSubscription) {
+        this.refreshIntervalSubscription.unsubscribe();
       }
     }
 

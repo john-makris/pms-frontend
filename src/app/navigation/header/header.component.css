@@ -18,3 +18,14 @@ a:active {
     display: flex;
     align-items: center;
 }
+
+.mat-icon-button-refresh {
+    width: 2.4em;
+    height: 2.4em;
+}
+
+.mat-icon {
+    font-size: 1.4em;
+    align-items: center;
+    margin-top: -0.3em;
+}
