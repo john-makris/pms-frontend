@@ -36,7 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     console.log("Token exists: "+refreshToken);
     if (refreshToken) {
-      this.refreshTokenSubscription = this.authService.refreshToken(refreshToken).subscribe(
+      this.refreshTokenSubscription = this.authService.refreshToken(refreshToken, currentUser.id).subscribe(
         (refreshTokenData: TokenRefreshResponse) => {
           // Moved out from if: && (accessTokenExpirationDate && (new Date() < new Date(accessTokenExpirationDate)))
           if (refreshTokenData) {

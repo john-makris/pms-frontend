@@ -74,8 +74,8 @@ export class AuthService {
         );
     }
 
-    refreshToken(token: string) {
-        return this.http.post<TokenRefreshResponse>(AUTH_API + 'refreshtoken', {
+    refreshToken(token: string, userId: number) {
+        return this.http.post<TokenRefreshResponse>(AUTH_API + 'refreshtoken'+ '/' + userId, {
           refreshToken: token
         }, httpOptions).pipe(
             catchError(this.handleError),

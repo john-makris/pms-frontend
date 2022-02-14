@@ -131,7 +131,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     onTokenRefresh() {
       const refreshToken = this.tokenStorageService.getRefreshToken();
       if (refreshToken) {
-        this.refreshTokenSubscription = this.authService.refreshToken(refreshToken).subscribe(
+        this.refreshTokenSubscription = this.authService.refreshToken(refreshToken, this.user.id).subscribe(
           (refreshTokenData: TokenRefreshResponse) => {
             if (refreshTokenData) {
               this.authService.handleRefreshTokenAuthentication(refreshTokenData);

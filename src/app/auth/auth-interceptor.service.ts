@@ -43,7 +43,7 @@ export class AuthInterceptorService implements HttpInterceptor {
           const token = this.tokenStorageService.getRefreshToken();
     
           if (token)
-            return this.authService.refreshToken(token).pipe(
+            return this.authService.refreshToken(token, this.tokenStorageService.getUser().id).pipe(
               switchMap((refreshTokenData: TokenRefreshResponse) => {
                 this.isRefreshing = false;
     
