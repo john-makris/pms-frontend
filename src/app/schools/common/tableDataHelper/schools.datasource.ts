@@ -63,7 +63,7 @@ export class SchoolsDataSource implements DataSource<School> {
     }
 
     checkData(response: SchoolResponseData) {
-        if(response!==null) {
+        if(response!==null && response.schools) {
             this.schoolSubject.next(response.schools);
             console.log(response);
             const pageDetail: PageDetail = new PageDetail(

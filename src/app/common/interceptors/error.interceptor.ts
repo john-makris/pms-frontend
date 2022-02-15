@@ -18,8 +18,13 @@ export class ErrorInterceptor implements HttpInterceptor {
             } else {
                 console.log("Eimai mesa sto Else tou error interceptor");
                 const error = err.error?.message || err.statusText;
-                // best solution is to output error
-                this.snackbarService.error(err.error.message);
+                // best solution is to output the error
+                if (err instanceof HttpErrorResponse && err.status === 403) {
+                    console.log("Error Interceptor");
+                    this.snackbarService.error("Unauthorised to access these resources");
+                } else {
+                    this.snackbarService.error(err.error.message);
+                }
                 console.error(err);
                 console.log("BGHKE APO TO ELSE");
                 return throwError(error);
