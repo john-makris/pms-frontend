@@ -19,7 +19,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                 console.log("Eimai mesa sto Else tou error interceptor");
                 const error = err.error?.message || err.statusText;
                 // best solution is to output error
-                this.snackbarService.error(err.message);
+                this.snackbarService.error(err.error.message);
                 console.error(err);
                 console.log("BGHKE APO TO ELSE");
                 return throwError(error);

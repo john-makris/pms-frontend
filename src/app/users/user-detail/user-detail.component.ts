@@ -40,20 +40,23 @@ export class UserDetailComponent implements OnInit, OnDestroy {
           .subscribe((currentUserData) => {
             this.user = currentUserData;
             this.currentRoleName = '';
+            this.isAdmin = false;
             this.user.roles.forEach((role: any) => {
               if (role.name.includes('ROLE_ADMIN')) {
                 this.currentRoleName = role.name;
+                this.isAdmin = true;
               } else if(role.name.includes('ROLE_TEACHER')) {
                 this.currentRoleName = role.name;
               } else {
                 this.currentRoleName = role.name;
               }
             });
-            if (this.currentRoleName.includes('ROLE_ADMIN')) {
+
+            /*if (this.currentRoleName.includes('ROLE_ADMIN')) {
               this.isAdmin = true;
             } else {
               this.isAdmin = false;
-            }
+            }*/
           });
       }
     );

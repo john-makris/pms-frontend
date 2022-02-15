@@ -56,7 +56,7 @@
                 </div>
             </mat-card-content>
             <mat-card-actions>
-                <div *ngIf="isAdmin === false">
+                <div *ngIf="isAdmin === false || currentRoleName === 'ROLE_TEACHER'">
                     <button
                         mat-raised-button color="primary"
                         (click)="editUser()">

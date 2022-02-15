@@ -86,7 +86,7 @@
                     </div>
                 </mat-form-field>
     
-                <mat-form-field appearance="outline" fxFlex>
+                <mat-form-field *ngIf="!isAdmin" appearance="outline" fxFlex>
                     <mat-label>Department</mat-label>
                     <input 
                         type="department" 

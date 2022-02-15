@@ -13,6 +13,7 @@ import { ChangePersonalDetailsDialogService } from './services/change-personal-d
 export class ProfileDetailsComponent implements OnInit {
   profileForm!: FormGroup;
   currentUser!: AuthUser;
+  isAdmin: boolean = false;
   roles: string = '';
 
   constructor(private authService: AuthService,
@@ -33,12 +34,14 @@ export class ProfileDetailsComponent implements OnInit {
     .subscribe((currentUser: AuthUser | null) =>  {
       if (currentUser) {
         this.currentUser = currentUser;
+        this.isAdmin = false;
         currentUser.roles.forEach((roleName: string) => {
           if (this.roles !== '') {
             this.roles = this.roles + ', ';
           }
           if (roleName.includes('ROLE_ADMIN')) {
             this.roles = this.roles + 'Admin';
+            this.isAdmin = true;
           }
           if (roleName.includes('ROLE_TEACHER')) {
             this.roles = this.roles + 'Teacher';
@@ -59,7 +62,7 @@ export class ProfileDetailsComponent implements OnInit {
           lastname: this.currentUser.lastname,
           email: this.currentUser.email,
           roleNames: this.roles,
-          department: this.currentUser.department.name
+          department: this.currentUser.department !== null ? this.currentUser.department.name : ''
         });
       }
     })
