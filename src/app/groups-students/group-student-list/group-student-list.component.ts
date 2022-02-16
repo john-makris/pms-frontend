@@ -198,6 +198,7 @@ export class GroupStudentListComponent implements OnInit, OnDestroy {
           this.checkForGroupValue();
           this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
           this.publishLectureType();
+          this.refreshTable();
         }
       });
 
