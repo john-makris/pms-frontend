@@ -115,13 +115,13 @@
                     </ng-container>
             
                     <ng-container matColumnDef="username">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header>Username</mat-header-cell>
-                        <mat-cell *matCellDef="let user">{{ user.username }}</mat-cell>
+                        <mat-header-cell *matHeaderCellDef mat-sort-header class="collapse-text">Username</mat-header-cell>
+                        <mat-cell *matCellDef="let user" class="collapse-text">{{ user.username }}</mat-cell>
                     </ng-container>
 
                     <ng-container matColumnDef="roles">
-                        <mat-header-cell *matHeaderCellDef>Roles</mat-header-cell>
-                        <mat-cell *matCellDef="let user" fxLayout="row wrap">
+                        <mat-header-cell *matHeaderCellDef class="collapse-text">Roles</mat-header-cell>
+                        <mat-cell *matCellDef="let user" fxLayout="row wrap" class="collapse-text">
                             <div *ngFor="let role of user.roles; let i = index">
                                 <container-element [ngSwitch]="role.name">
                                     <span *ngSwitchCase="'ROLE_ADMIN'">Admin</span>

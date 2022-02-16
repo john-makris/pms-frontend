@@ -20,6 +20,12 @@
     margin-top: 1em;
 }
 
+.collapse-text {
+    font-weight: normal;
+    word-break: break-word;
+    white-space: pre-wrap !important;
+}
+
 .mat-column-id {
     max-width: 13%;
 }

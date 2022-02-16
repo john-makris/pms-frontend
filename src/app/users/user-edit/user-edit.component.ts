@@ -55,16 +55,18 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
 
   ngOnInit(): void {
 
-    this.departmentIdSubscription = this.userService.departmentIdState
-      .subscribe((departmentId: number) => {
-        console.log("EDIT COMPONENT: "+departmentId);
-        if (departmentId == 0) {
-          this.allDepartments = true;
-        } else {
-          this.allDepartments = false;
-          this.selectedDepartmentId = departmentId.toString();
-        }
-    });
+    if (!this.isAddMode) {
+      this.departmentIdSubscription = this.userService.departmentIdState
+        .subscribe((departmentId: number) => {
+          console.log("EDIT COMPONENT: "+departmentId);
+          if (departmentId == 0) {
+            this.allDepartments = true;
+          } else {
+            this.allDepartments = false;
+            this.selectedDepartmentId = departmentId.toString();
+          }
+      });
+    }
 
     this.loadDepartments();
 
@@ -118,7 +120,7 @@ export class UserEditComponent implements OnInit, DoCheck, OnDestroy {
         email: ['', [Validators.required, Validators.email, Validators.maxLength(20)]],
         password: ['', [this.isAddMode ? Validators.required : Validators.nullValidator, Validators.minLength(10), Validators.maxLength(18)]],
         selectedRoleNames: this.selectedRoleNames,
-        departmentId: [this.selectedDepartmentId, Validators.required],
+        departmentId: ['', Validators.required],
         status: [false, Validators.required]
       });
   }
