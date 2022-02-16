@@ -122,10 +122,10 @@ export class CourseScheduleEditComponent implements OnInit, OnDestroy {
     console.log("BEFORE FORM INITIALIZATION: ");
     this.courseScheduleForm = this.formBuilder.group({
       maxTheoryLectures: [null, [Validators.required, Validators.max(12), Validators.min(1)]],
-      maxLabLectures: [null, [Validators.required, Validators.max(12), Validators.min(1)]],
+      maxLabLectures: [null, [Validators.required, Validators.max(12), Validators.min(0)]],
       theoryHours: [null, this.isAddMode ? [Validators.required, Validators.max(3), Validators.min(1)] : null],
       theoryMinutes: [null, this.isAddMode ? [Validators.required, Validators.max(59), Validators.min(0)] : null],
-      labHours: [null, this.isAddMode ? [Validators.required, Validators.max(3), Validators.min(1)] : null],
+      labHours: [null, this.isAddMode ? [Validators.required, Validators.max(3), Validators.min(0)] : null],
       labMinutes: [null, this.isAddMode ? [Validators.required, Validators.max(59), Validators.min(0)] : null],
       teachingStuff: [null, Validators.required],
       students: [null, this.isAddMode ? Validators.required : null],

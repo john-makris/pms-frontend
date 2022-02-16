@@ -19,21 +19,7 @@
             fxLayoutAlign="center">
 
                 <div fxLayout="row" fxLayout.lt-sm="column">
-                    <!-- <div fxLayout="column" fxFlex
-                        class="non-form-field-course" *ngIf="isAddMode">
-                        
-                        <button
-                        [class.border-invalid]="f.course.invalid && f.course.touched"
-                            [ngClass.gt-xs]="{'course-button': true}"
-                            type="button"
-                            mat-stroked-button color="primary"
-                            (click)="selectCourse()">
-                            Choose Course</button>
-                            <mat-label *ngIf="currentCourse">Selected Course: {{ currentCourse.name }}</mat-label>
-                            <mat-error class="validation-text" *ngIf="f.course.errors?.required && f.course.touched">Missing Course</mat-error>
-                    </div> -->
 
-                    <!-- dokimi gia antikatastasi tou course button -->
                     <div fxLayout="column" class="class-group-aligner" fxFlex *ngIf="isAddMode">
                         <div fxLayout fxLayoutGap="0.5em">
                             <!-- Student -->
@@ -146,14 +132,14 @@
                                     type="number" 
                                     placeholder="Hours"
                                     formControlName="labHours"
-                                    min="1"
+                                    min="0"
                                     max="3">
                                 <span matSuffix>
                                     <mat-icon>timer</mat-icon>
                                 </span>
                                 <mat-hint>Set Hours.</mat-hint>
                                 <mat-error *ngIf="f.labHours.errors?.max">Cannot set more than 3</mat-error>
-                                <mat-error *ngIf="f.labHours.errors?.min">Cannot set less than 1</mat-error>
+                                <mat-error *ngIf="f.labHours.errors?.min">Cannot set less than 0</mat-error>
                                 <mat-error *ngIf="f.labHours.errors?.required">Missing Hours</mat-error>
                             </mat-form-field>
     
@@ -207,14 +193,14 @@
                             type="number" 
                             placeholder="Max Labs"
                             formControlName="maxLabLectures"
-                            min="1"
+                            min="0"
                             max="12">
                         <span matSuffix>
                             <mat-icon>construction</mat-icon>
                         </span>
                         <mat-hint>Set Max Labs.</mat-hint>
                         <mat-error *ngIf="f.maxLabLectures.errors?.max">Cannot set more than 12</mat-error>
-                        <mat-error *ngIf="f.maxLabLectures.errors?.min">Cannot set less than 1</mat-error>
+                        <mat-error *ngIf="f.maxLabLectures.errors?.min">Cannot set less than 0</mat-error>
                         <mat-error *ngIf="f.maxLabLectures.errors?.required">Missing Labs</mat-error>
                     </mat-form-field>
                 </div>
