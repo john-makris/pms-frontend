@@ -18,6 +18,7 @@ import { AuthUser } from 'src/app/users/auth-user.model';
 import { ClassSession } from '../class-session.model';
 import { ClassSessionService } from '../class-session.service';
 import { ClassSessionRequestData } from '../common/payload/request/classSessionRequestData.interface';
+import { ClassSessionResponseData } from '../common/payload/response/classSessionResponseData.interface';
 
 @Component({
   selector: 'app-class-session-edit',
@@ -330,7 +331,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
   private updateClassSession(classSessionData: ClassSessionRequestData) {
     this.updateClassSessionSubscription = this.classSessionService.updateClassSession(this.id, this.currentUserId, classSessionData)
       .pipe(last())
-      .subscribe(() => {
+      .subscribe((classSession: ClassSessionResponseData) => {
         if (this.currentClassSessionStatus === 'pending') {
           this.snackbarService.success('Class Session updated');
           this.router.navigate(['../../'], { relativeTo: this.route});
@@ -339,14 +340,14 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
           const managePresenceRequestData: ManagePresencesRequestData = {
             classSessionId: this.id
           };
-          if (classSessionData.presenceStatementStatus === true) {
+          if (classSession.presenceStatementStatus === true) {
             this.createClassSessionPresences(managePresenceRequestData);
           } else {
             console.log("PRESENCE STATUS IS FALSE");
             this.updateClassSessionPresences(managePresenceRequestData);
           }
         }
-      }).add(() => this.isLoading = false);
+      }).add(() => this.isLoading = true);
   }
 
   onCancel() {
