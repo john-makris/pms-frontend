@@ -50,7 +50,8 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
 
     }
 
-    loadUserPresences(currentUserId: number,
+    loadUserPresences(
+        currentUserId: number,
         userId: number,
         courseScheduleId: number,
         lectureType: string,

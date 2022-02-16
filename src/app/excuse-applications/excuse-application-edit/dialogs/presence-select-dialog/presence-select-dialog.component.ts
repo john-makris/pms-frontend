@@ -127,7 +127,7 @@ export class PresenceSelectDialogComponent implements OnInit, AfterViewInit, OnD
 
   loadPresencesPage() {
       this.dataSource.loadUserPresences(
-        0,
+        this.loadedUserId,
         this.currentUserId,
         0,
         '',

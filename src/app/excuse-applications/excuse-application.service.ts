@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
+import { UserResponseData } from "../users/common/payload/response/userResponseData.interface";
 import { ExcuseApplicationRequestData } from "./common/payload/request/excuseApplicationRequestData.interface";
 import { ExcuseApplicationResponseData } from "./common/payload/response/excuseApplicationResponseData.interface";
 import { ExcuseApplicationsResponseData } from "./common/payload/response/excuseApplicationsResponseData.interface";

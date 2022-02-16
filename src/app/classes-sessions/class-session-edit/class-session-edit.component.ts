@@ -300,9 +300,9 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
 
   private createClassSessionPresences(managePresencesRequestData: ManagePresencesRequestData) {
     this.createClassSessionPresencesSubscription = this.presenceService.createPresences(managePresencesRequestData, this.currentUserId)
-    .pipe(last())
+    .pipe(first())
       .subscribe(() => {
-        console.log("DATA: "+ "Mpike sto subscribe");
+        console.log("DATA: "+ "Mpike sto subscribe toy CREATE $$$$$$$$$$$$$$$$$$$$$$$$$");
           this.snackbarService.success(this.currentClassSession?.nameIdentifier+' presence statement opened');
           this.router.navigate(['../../'], { relativeTo: this.route });
       }).add(() => { this.isLoading = false; });
@@ -310,9 +310,9 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
 
   private updateClassSessionPresences(managePresencesRequestData: ManagePresencesRequestData) {
     this.updateClassSessionPresencesSubscription = this.presenceService.updatePresences(managePresencesRequestData, this.currentUserId)
-    .pipe(last())
+    .pipe(first())
       .subscribe(() => {
-        console.log("DATA: "+ "Mpike sto subscribe");
+        console.log("DATA: "+ "Mpike sto subscribe toy UPDATE $$$$$$$$$$$$$$$$$$$$$$$$$$$$");
           this.snackbarService.success(this.currentClassSession?.nameIdentifier+' presence statement closed');
           this.router.navigate(['../../'], { relativeTo: this.route });
       }).add(() => { this.isLoading = false; });

@@ -134,7 +134,7 @@ export class PresenceListComponent implements OnInit, OnDestroy {
         this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
 
         if (this.showStudentFeatures) {
-          this.selectedDepartmentId = '1';
+          this.selectedDepartmentId = this.currentUser.department.id.toString();
           this.displayedColumns = [];
           this.displayedColumns = ['lecture', 'session_date', 'status'];
         }
