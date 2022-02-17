@@ -488,33 +488,11 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
     this.groupStudentService.deleteGroupStudentByClassGroupIdAndStudentId(classGroupId, studentId, this.currentUserId)
         .pipe(first())
         .subscribe(() => {
-          //this.groupStudent.isDeleting = false;
+
           this.snackbarService.success('You just unsubscribed from '+this.selectedLectureTypeName.toLowerCase()+'_'+this.selectedRow?.nameIdentifier);
           this.unCheck(row);
           this.router.navigate(['/classes-groups'], { relativeTo: this.route});
         });
-  }
-
-  checkCapacityAvailability(row: any) {
-    //console.log("#################### ROW: #####################");
-    let userOk: boolean = false;
-    //console.log(JSON.stringify(row));
-
-    if (this.simpleCheck(row)) {
-      return true;
-    }
-
-    this.selectedRow?.courseSchedule.students.forEach((student: any) => {
-      if (student.id === this.currentUserId) {
-        userOk = true;
-      }
-    });
-
-    if (userOk && (this.selectedRow?.id === row.id)) {
-      return true;
-    } else {
-      return false;
-    }
   }
   
   ngOnDestroy(): void {

@@ -141,10 +141,10 @@
                     <mat-cell *matCellDef="let row">
                         <mat-checkbox [matTooltip]="!row.status ? 'Group is closed' : 'Group is full'"
                             matTooltipPosition="after"
-                            [matTooltipDisabled]="row.status && ((row.capacity !== row.groupsOfStudents) || checkCapacityAvailability(row))"
-                            [disabled]="(selectedRow && !simpleCheck(row)) || (!row.status) || (((row.capacity === row.groupsOfStudents)) && !checkCapacityAvailability(row))"
                             (click)="$event.stopPropagation()" (change)="selectHandler(row)"
-                            [checked]="selection.isSelected(row) || check(row)">
+                            [checked]="selection.isSelected(row) || check(row)"
+                            [matTooltipDisabled]="row.status && ((row.capacity !== row.groupsOfStudents) || (selection.isSelected(row)))"
+                            [disabled]="(selectedRow && !simpleCheck(row)) || (!row.status) || ((row.capacity === row.groupsOfStudents) && !(selection.isSelected(row)))">
                         </mat-checkbox>
                     </mat-cell>
                 </ng-container>
