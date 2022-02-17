@@ -195,10 +195,8 @@ export class GroupStudentListComponent implements OnInit, OnDestroy {
           this.searchStudentsOfGroupsForm.patchValue({
             isLectureTypeNameTheory: true
           });
-          this.checkForGroupValue();
           this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
-          this.publishLectureType();
-          this.refreshTable();
+          this.onLectureTypeSelect(true);
         }
       });
 
