@@ -35,6 +35,8 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
 
+  nonLab: boolean = false;
+
   isLoading: boolean = false;
   submitted: boolean = false;
   
@@ -206,6 +208,11 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
           isLectureTypeNameTheory: true
         });
         this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
+        if (this.selectedCourseSchedule.maxLabLectures === 0) {
+          this.nonLab = true;
+        } else {
+          this.nonLab = false;
+        }
         this.onSearchLecturesFormSubmit();
       }
     });
