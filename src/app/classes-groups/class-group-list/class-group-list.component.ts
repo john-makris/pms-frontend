@@ -40,6 +40,8 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
 
+  nonLab: boolean = false;
+
   isLoading: boolean = false;
   submitted: boolean = false;
   ensureDialogStatus!: boolean;
@@ -210,7 +212,12 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
           isLectureTypeNameTheory: true
         });
         this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
-        this.onSearchLecturesFormSubmit();
+        if (this.selectedCourseSchedule.maxLabLectures === 0) {
+          this.nonLab = true;
+        } else {
+          this.nonLab = false;
+        }
+        this.onSearchClassesGroupsFormSubmit();
       }
     });
 
@@ -230,7 +237,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSearchLecturesFormSubmit() {
+  onSearchClassesGroupsFormSubmit() {
     this.router.navigate(['/classes-groups'], { relativeTo: this.route });
     this.submitted = true;
     //console.log("HAAAAALOOOO!!!");
@@ -290,7 +297,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
     this.searchClassesGroupsForm.patchValue({
       isLectureTypeNameTheory: lectureTypeNameSelection
     });
-    this.onSearchLecturesFormSubmit();
+    this.onSearchClassesGroupsFormSubmit();
   }
 
   selectCourseSchedule() {
