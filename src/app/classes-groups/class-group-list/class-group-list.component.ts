@@ -212,11 +212,13 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
           isLectureTypeNameTheory: true
         });
         this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
+
         if (this.selectedCourseSchedule.maxLabLectures === 0) {
           this.nonLab = true;
         } else {
           this.nonLab = false;
         }
+        
         this.onSearchClassesGroupsFormSubmit();
       }
     });

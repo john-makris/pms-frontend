@@ -62,7 +62,7 @@
                     formControlName="isLectureTypeNameTheory">
                     <div class="radio-container" fxLayoutGap="1em">
                         <mat-radio-button [value]=true (click)="onLectureTypeSelect(true)">Theory Groups</mat-radio-button>
-                        <mat-radio-button [value]=false (click)="onLectureTypeSelect(false)">Lab Groups</mat-radio-button>
+                        <mat-radio-button [value]=false (click)="onLectureTypeSelect(false)" *ngIf="nonLab === false">Lab Groups</mat-radio-button>
                     </div>
                 </mat-radio-group>
             </div>

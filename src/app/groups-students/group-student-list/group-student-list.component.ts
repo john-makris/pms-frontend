@@ -37,6 +37,8 @@ export class GroupStudentListComponent implements OnInit, OnDestroy {
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
 
+  nonLab: boolean = false;
+
   isLoading: boolean = false;
   submitted: boolean = false;
 
@@ -196,6 +198,13 @@ export class GroupStudentListComponent implements OnInit, OnDestroy {
             isLectureTypeNameTheory: true
           });
           this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
+
+          if (this.selectedCourseSchedule.maxLabLectures === 0) {
+            this.nonLab = true;
+          } else {
+            this.nonLab = false;
+          }
+          
           this.onLectureTypeSelect(true);
         }
       });
