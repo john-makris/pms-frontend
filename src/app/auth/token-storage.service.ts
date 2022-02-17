@@ -24,7 +24,7 @@ export class TokenStorageService {
       this.saveUser(user);
       console.log("User Access Token: "+user.accessToken);
   }
-  //+ Mporei na xrisimopoihthei ka8e fora poy ananeonetai me expirationDuration anti gia expiresIn
+  //+
   public saveValid(expirationDuration: number) {
     localStorage.setItem(VALID, expirationDuration.toString());
   }

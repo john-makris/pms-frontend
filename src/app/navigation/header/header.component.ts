@@ -63,7 +63,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         console.log("RESULT: " + result);
         clearInterval(this.refreshInterval);
         if (result === true) {
-          let initialTokenLife = localStorage.getItem('logged-in-lifetime')
+          let initialTokenLife = localStorage.getItem('logged-in-lifetime');
           if (initialTokenLife !== null) {
             this.timer(+initialTokenLife);
           }
@@ -75,7 +75,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // extra field
     timer(initialTokenLife: number): void {
       let currentTokenLife = initialTokenLife / 1000;
-      console.log("!!!!!!!!!!!currentTokenLife "+currentTokenLife);
+      console.log("currentTokenLife "+currentTokenLife);
       this.calcMinutesAndSeconds(currentTokenLife);
     }
 
