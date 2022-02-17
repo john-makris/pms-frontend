@@ -44,6 +44,8 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
 
+  nonLab: boolean = false;
+
   isLoading: boolean = false;
   submitted: boolean = false;
   ensureDialogStatus!: boolean;
@@ -209,7 +211,15 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
           });
           
           this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
+
+          if (this.selectedCourseSchedule.maxLabLectures === 0) {
+            this.nonLab = true;
+          } else {
+            this.nonLab = false;
+          }
+          
           this.publishLectureType();
+          this.refreshTable();
         }
       });
   
