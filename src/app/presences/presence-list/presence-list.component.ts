@@ -42,6 +42,8 @@ export class PresenceListComponent implements OnInit, OnDestroy {
   showTeacherFeatures: boolean = false;
   showStudentFeatures: boolean = false;
 
+  nonLab: boolean = false;
+
   isLoading: boolean = false;
   submitted: boolean = false;
   ensureDialogStatus!: boolean;
@@ -277,7 +279,15 @@ export class PresenceListComponent implements OnInit, OnDestroy {
         }
 
         this.courseScheduleService.courseScheduleSubject.next(this.selectedCourseSchedule);
-        this.publishLectureType();
+
+        if (this.selectedCourseSchedule.maxLabLectures === 0) {
+          this.nonLab = true;
+        } else {
+          this.nonLab = false;
+        }
+
+        this.onGroupTypeSelect(true);
+        
         if (this.showStudentFeatures) {
           this.onSearchPresencesFormSubmit();
         }
@@ -449,7 +459,7 @@ export class PresenceListComponent implements OnInit, OnDestroy {
     this.removeTableElement('excuseStatus');
   }
 
-  onLectureTypeSelect(lectureTypeNameSelection: boolean) {
+  onGroupTypeSelect(lectureTypeNameSelection: boolean) {
     this.searchPresencesForm.patchValue({
       isLectureTypeNameTheory: lectureTypeNameSelection
     });
