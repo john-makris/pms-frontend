@@ -616,13 +616,18 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
       .subscribe(
         () => {
         this.snackbarService.success('Presence statement was successfully');
-      }/*,
-      () => {
+      },
+      (error: any) => {
+        /*
         if (this.selectedRow) {
           this.checkbox.toggle();
-          this.message = "You already have an absence for this session, so you cannot make a statement anymore";
+        } */
+        if (this.selectedRow) {
+          this.unCheck(this.selectedRow);
+          this.selectedRow = null;
+          this.selection.clear();
         }
-      }*/).add(() => this.isLoading = false);
+      }).add(() => this.isLoading = false);
   }
   
   ngOnDestroy(): void {
