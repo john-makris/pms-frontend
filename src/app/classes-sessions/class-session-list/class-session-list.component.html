@@ -202,14 +202,13 @@
                 <ng-container matColumnDef="presenceStatement">
                     <mat-header-cell *matHeaderCellDef class="collapse-text">Presence Statement</mat-header-cell>
                     <mat-cell *matCellDef="let row">
-                        <mat-checkbox [matTooltip]="message !== '' ? message : 
-                            ((!row.presenceStatementStatus) ? 'Presence Statement is closed' :
+                        <mat-checkbox [matTooltip]="((!row.presenceStatementStatus) ? 'Presence Statement is closed' :
                             'You cannot make more than 1 presence statements for Lectures they are runnig in the same time')"
                             matTooltipPosition="after"
-                            [matTooltipDisabled]="row.presenceStatementStatus && simpleCheck(row) && message == ''"
-                            [disabled]="selectedRow && simpleCheck(row) || !row.presenceStatementStatus || !simpleCheck(row)"
                             (click)="$event.stopPropagation()" (change)="selectHandler(row)"
-                            [checked]="selection.isSelected(row) || check(row)">
+                            [checked]="selection.isSelected(row) || check(row)"
+                            [matTooltipDisabled]="row.presenceStatementStatus && simpleCheck(row) && (selectedRow===null || (selection.isSelected(row) || check(row)))"
+                            [disabled]="selectedRow && simpleCheck(row) || !row.presenceStatementStatus || !simpleCheck(row)">
                         </mat-checkbox>
                     </mat-cell>
                 </ng-container>

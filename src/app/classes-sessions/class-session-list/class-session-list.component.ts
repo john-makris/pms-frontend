@@ -73,7 +73,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
   currentColumnDef: string = 'nameIdentifier';
   currentActivityState: string = '';
 
-  message: string = '';
+  // message: string = '';
 
   selectedRow: ClassSessionResponseData | null = null;
   selection = new SelectionModel<ClassSessionResponseData>(true, []);
@@ -140,6 +140,7 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
         if (this.showStudentFeatures) {
           this.displayedColumns = [];
           this.displayedColumns = ['course', 'lecture', 'dateTime', 'presenceStatement'];
+
         }
 
         if (this.showTeacherFeatures && !this.showAdminFeatures) {
@@ -615,13 +616,13 @@ export class ClassSessionListComponent implements OnInit, OnDestroy {
       .subscribe(
         () => {
         this.snackbarService.success('Presence statement was successfully');
-      },
+      }/*,
       () => {
         if (this.selectedRow) {
           this.checkbox.toggle();
           this.message = "You already have an absence for this session, so you cannot make a statement anymore";
         }
-      }).add(() => this.isLoading = false);
+      }*/).add(() => this.isLoading = false);
   }
   
   ngOnDestroy(): void {
