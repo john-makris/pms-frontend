@@ -94,7 +94,7 @@ export class CoursesSchedulesDataSource implements DataSource<CourseScheduleResp
     }
 
     checkData(response: CoursesSchedulesResponseData) {
-        if(response!==null) {
+        if(response!==null && response.coursesSchedules) {
             this.courseScheduleSubject.next(response.coursesSchedules);
             console.log(response);
             const pageDetail: PageDetail = new PageDetail(
