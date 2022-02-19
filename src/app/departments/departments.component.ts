@@ -27,7 +27,7 @@ export class DepartmentsComponent implements OnInit {
         if (user) {
           this.currentUser = user;
           this.currentUserId = this.currentUser.id;
-          this.showAdminFeatures = this.currentUser.roles.includes('ADMIN');
+          this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
   
           if (!this.showAdminFeatures) {
             this.router.navigate(['../'], { relativeTo: this.route});
