@@ -80,7 +80,7 @@ export class DepartmentsDataSource implements DataSource<Department> {
     }
 
     checkData(response: DepartmentsResponseData) {
-        if(response!==null) {
+        if(response!==null && response.departments) {
             this.departmentSubject.next(response.departments);
             console.log(response);
             const pageDetail: PageDetail = new PageDetail(
