@@ -138,6 +138,7 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
           } else {
             if (!this.showStudentFeatures) {
               this.departmentIdSubscription = this.departmentService.departmentIdState
+              //.pipe(first())
               .subscribe((_departmentId: number) => {
                 if (_departmentId) {
                   console.log("Department ID: "+ _departmentId);

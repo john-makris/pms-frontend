@@ -112,7 +112,7 @@ export class ClassesSessionsDataSource implements DataSource<ClassSessionRespons
     }
 
     checkData(response: ClassesSessionsResponseData | null) {
-        if(response!==null) {
+        if(response!==null && response.classesSessions!==null) {
             this.classSessionSubject.next(response.classesSessions);
             console.log(response);
             const pageDetail: PageDetail = new PageDetail(
