@@ -293,7 +293,7 @@ export class ExcuseApplicationsDataSource implements DataSource<ExcuseApplicatio
     }
 
     checkData(response: ExcuseApplicationsResponseData | null) {
-        if(response!==null) {
+        if(response!==null && response.excuseApplications) {
             this.excuseApplicationSubject.next(response.excuseApplications);
             console.log(response);
             const pageDetail: PageDetail = new PageDetail(

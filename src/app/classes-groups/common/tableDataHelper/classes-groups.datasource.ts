@@ -77,7 +77,7 @@ export class ClassesGroupsDataSource implements DataSource<ClassGroupResponseDat
     }
 
     checkData(response: ClassesGroupsResponseData | null) {
-        if(response!==null) {
+        if(response!==null && response.classesGroups) {
             this.classGroupSubject.next(response.classesGroups);
             console.log(response);
             const pageDetail: PageDetail = new PageDetail(

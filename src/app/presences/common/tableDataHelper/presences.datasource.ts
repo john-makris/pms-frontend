@@ -167,7 +167,7 @@ export class PresencesDataSource implements DataSource<PresenceResponseData> {
     }
 
     checkData(response: PresencesResponseData | null) {
-        if(response!==null) {
+        if(response!==null && response.presences) {
             this.presenceSubject.next(response.presences);
             console.log(response);
             const pageDetail: PageDetail = new PageDetail(
