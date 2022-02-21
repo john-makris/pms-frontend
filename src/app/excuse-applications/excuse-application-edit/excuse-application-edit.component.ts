@@ -117,9 +117,6 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
             if (this.showStudentFeatures) {
               this.router.navigate(['../../'], { relativeTo: this.route });
             }
-            if (this.showSecretaryFeatures) {
-              this.router.navigate(['../../'], { relativeTo: this.route});
-            }
             this.presenceSubscription = this.excuseApplicationService.getExcuseApplicationById(this.id, this.currentUserId)
               .pipe(first())
               .subscribe((currentExcuseApplicationData: any) => {

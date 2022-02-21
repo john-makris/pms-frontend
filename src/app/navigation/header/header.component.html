@@ -10,7 +10,7 @@
     </div>
 
     <div fxLayout fxLayoutGap="3em">
-        <div><a routerLink="/">HUA Pms</a></div>
+        <div><a routerLink="/home">HUA Pms</a></div>
 
         <mat-label *ngIf="isAuth && showAdminFeatures" fxHide.lt-md>ADMIN PANEL</mat-label>
         <mat-label *ngIf="isAuth && showTeacherFeatures && !showAdminFeatures" fxHide.lt-md>TEACHER PANEL</mat-label>
