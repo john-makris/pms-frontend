@@ -98,17 +98,16 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
         this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
 
-        if (this.showStudentFeatures) {
-          this.snackbarService.error("Unauthorised to access these resources");
-          this.router.navigate(['../'], { relativeTo: this.route});
-        }
-
         if (this.showTeacherFeatures && !this.showAdminFeatures) {
           this.selectedDepartmentId = this.currentUser.department.id.toString();
           console.log("Teachers department: "+this.selectedDepartmentId);
         }
       }
     });
+
+    if (this.showStudentFeatures) {
+      this.router.navigate(['../'], { relativeTo: this.route});
+    }
 
     this.searchLecturesForm = this.formBuilder.group({
       departmentId: [this.selectedDepartmentId],
