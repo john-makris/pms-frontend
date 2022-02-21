@@ -63,7 +63,7 @@ export class LecturesDataSource implements DataSource<LectureResponseData> {
     }
 
     checkData(response: LecturesResponseData | null) {
-        if(response!==null) {
+        if(response!==null && response.lectures) {
             this.lectureSubject.next(response.lectures);
             console.log(response);
             const pageDetail: PageDetail = new PageDetail(
