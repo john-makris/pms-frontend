@@ -32,7 +32,6 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
   currentUser: AuthUser | null = null;
   currentUserId: number = 0;
   showAdminFeatures: boolean = false;
-  showTeacherFeatures: boolean = false;
   showSecretaryFeatures: boolean = false;
   showStudentFeatures: boolean = false;
 
@@ -106,7 +105,6 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
         this.currentUser = user;
         this.currentUserId = this.currentUser.id;
         this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
-        this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
         this.showSecretaryFeatures = this.currentUser.roles.includes('ROLE_SECRETARY');
         this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
 
@@ -159,11 +157,6 @@ export class ExcuseApplicationListComponent implements  OnInit, OnDestroy {
       this.dataSource.loadUserExcuseApplications(
         this.currentUserId, +this.selectedCourseScheduleId, this.selectedLectureTypeName,
         this.selectedStatus, '', 0, 3, 'asc', this.currentColumnDef);
-    }
-
-    if (this.showTeacherFeatures) {
-      this.snackbarService.error("Unauthorised to access these resources");
-      this.router.navigate(['../'], { relativeTo: this.route});
     }
 
     this.pageDetailSubscription = this.dataSource.pageDetailState.pipe(

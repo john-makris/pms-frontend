@@ -35,7 +35,6 @@ export class GroupStudentListComponent implements OnInit, OnDestroy {
   currentUserId: number = 0;
   showAdminFeatures: boolean = false;
   showTeacherFeatures: boolean = false;
-  showStudentFeatures: boolean = false;
 
   nonLab: boolean = false;
 

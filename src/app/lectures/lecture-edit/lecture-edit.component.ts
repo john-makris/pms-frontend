@@ -91,7 +91,6 @@ export class LectureEditComponent implements OnInit, OnDestroy {
 
         this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
-        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
       }
     });
 
@@ -121,10 +120,6 @@ export class LectureEditComponent implements OnInit, OnDestroy {
           this.isAddMode = params['id'] == null;
           if(!this.isAddMode) {
 
-            if (this.showStudentFeatures) {
-              this.router.navigate(['../../../'], { relativeTo: this.route});
-            }
-
             this.lectureSubscription = this.lectureService.getLectureById(this.id, this.currentUserId)
               .pipe(first())
               .subscribe((currentLectureData: LectureResponseData) => {
@@ -153,10 +148,6 @@ export class LectureEditComponent implements OnInit, OnDestroy {
                 this.onCancel();
               }
             });
-
-            if (this.showStudentFeatures) {
-              this.router.navigate(['../../'], { relativeTo: this.route});
-            }
           }
         }
       );

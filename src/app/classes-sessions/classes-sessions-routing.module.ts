@@ -10,9 +10,27 @@ const routes: Routes = [
         path: '', component: ClassesSessionsComponent,
         canActivate: [AuthGuard],
         children: [
-            { path: 'add', component: ClassSessionEditComponent },
-            { path: 'detail/:id', component: ClassSessionDetailComponent },
-            { path: 'edit/:id', component: ClassSessionEditComponent }
+            { path: 'add', 
+                component: ClassSessionEditComponent,
+                canActivate: [AuthGuard],
+                data : {
+                roles: ['ROLE_ADMIN', 'ROLE_TEACHER']
+                }
+            },
+            { path: 'detail/:id',
+                component: ClassSessionDetailComponent,
+                canActivate: [AuthGuard],
+                data : {
+                roles: ['ROLE_ADMIN', 'ROLE_TEACHER']
+                }
+            },
+            { path: 'edit/:id', 
+                component: ClassSessionEditComponent,
+                canActivate: [AuthGuard],
+                data : {
+                roles: ['ROLE_ADMIN', 'ROLE_TEACHER']
+                }
+            }
         ]
     }
 ];

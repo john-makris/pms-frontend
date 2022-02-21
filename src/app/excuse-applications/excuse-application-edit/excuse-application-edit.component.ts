@@ -114,9 +114,7 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
           this.id = params['id'];
           this.isAddMode = params['id'] == null;
           if(!this.isAddMode) {
-            if (this.showStudentFeatures) {
-              this.router.navigate(['../../'], { relativeTo: this.route });
-            }
+
             this.presenceSubscription = this.excuseApplicationService.getExcuseApplicationById(this.id, this.currentUserId)
               .pipe(first())
               .subscribe((currentExcuseApplicationData: any) => {
@@ -136,9 +134,6 @@ export class ExcuseApplicationEditComponent implements  OnInit, OnDestroy {
                 }
               });
           } else {
-            if (this.showSecretaryFeatures) {
-              this.router.navigate(['../'], { relativeTo: this.route});
-            }
             
             if (!this.showStudentFeatures) {
               this.departmentIdSubscription = this.departmentService.departmentIdState

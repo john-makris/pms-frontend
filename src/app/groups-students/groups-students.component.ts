@@ -9,7 +9,6 @@ export class GroupsStudentsComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
 }

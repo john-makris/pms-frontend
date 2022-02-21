@@ -12,12 +12,14 @@ import {
 import { map, take } from "rxjs/operators";
 import { Observable } from "rxjs";
 import { AuthService } from "./auth.service";
+import { SnackbarService } from "../common/snackbars/snackbar.service";
 
 @Injectable({providedIn: 'root'})
 export class AuthGuard implements CanActivate, CanLoad{
 
     constructor(
-        private authService: AuthService, 
+        private authService: AuthService,
+        private snackbarService: SnackbarService,
         private router: Router) {}
 
     canLoad(
@@ -32,6 +34,7 @@ export class AuthGuard implements CanActivate, CanLoad{
                 const isAuth = !!user;
                 if (isAuth) {
                     console.log("IS AUTH");
+
                     return true;
                 }
                 console.log("IS NOT AUTH");
@@ -56,6 +59,23 @@ export class AuthGuard implements CanActivate, CanLoad{
 
                 const isAuth = !!user;
                 if (isAuth) {
+                
+                    let userRoles = user?.roles;
+                
+                    if (userRoles) {
+                        userRoles.forEach(role => {
+                            if (route.data.roles && route.data.roles.indexOf(role) === -1) {
+                                this.snackbarService.error("Unauthorised to access these resources");
+                                this.router.navigate(['/home']);
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        });
+                    } else {
+                        return false;
+                    }
+
                     return true;
                 }
 

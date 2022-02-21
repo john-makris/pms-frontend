@@ -96,7 +96,6 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.showAdminFeatures = this.currentUser.roles.includes('ROLE_ADMIN');
         this.showTeacherFeatures = this.currentUser.roles.includes('ROLE_TEACHER');
-        this.showStudentFeatures = this.currentUser.roles.includes('ROLE_STUDENT');
 
         if (this.showTeacherFeatures && !this.showAdminFeatures) {
           this.selectedDepartmentId = this.currentUser.department.id.toString();
@@ -104,10 +103,6 @@ export class LectureListComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     });
-
-    if (this.showStudentFeatures) {
-      this.router.navigate(['../'], { relativeTo: this.route});
-    }
 
     this.searchLecturesForm = this.formBuilder.group({
       departmentId: [this.selectedDepartmentId],

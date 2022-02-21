@@ -312,7 +312,7 @@ export class ClassSessionEditComponent implements OnInit, OnDestroy {
     this.updateClassSessionPresencesSubscription = this.presenceService.updatePresences(managePresencesRequestData, this.currentUserId)
     .pipe(first())
       .subscribe(() => {
-        console.log("DATA: "+ "Mpike sto subscribe toy UPDATE $$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        console.log("DATA: "+ "Mpike sto subscribe toy UPDATE");
           this.snackbarService.success(this.currentClassSession?.nameIdentifier+' presence statement closed');
           this.router.navigate(['../../'], { relativeTo: this.route });
       }).add(() => { this.isLoading = false; });

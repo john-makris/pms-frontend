@@ -10,9 +10,21 @@ const routes: Routes = [
         path: '', component: ExcuseApplicationsComponent,
         canActivate: [AuthGuard],
         children: [
-            { path: 'add', component: ExcuseApplicationEditComponent },
+            { path: 'add', 
+                component: ExcuseApplicationEditComponent,
+                canActivate: [AuthGuard],
+                data : {
+                    roles: ['ROLE_ADMIN', 'ROLE_STUDENT']
+                }
+            },
             { path: 'detail/:id', component: ExcuseApplicationDetailComponent },
-            { path: 'edit/:id', component: ExcuseApplicationEditComponent }
+            { path: 'edit/:id', 
+                component: ExcuseApplicationEditComponent,
+                canActivate: [AuthGuard],
+                data : {
+                    roles: ['ROLE_ADMIN', 'ROLE_SECRETARY']
+                }
+            }
         ]
     }
 ];
