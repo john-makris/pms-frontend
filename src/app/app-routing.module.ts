@@ -67,6 +67,8 @@ const routes: Routes = [
     .then(m => m.ProfileModule),
     canLoad: [AuthGuard]
   },
+  { path: 'login', redirectTo: 'login'},
+  { path: 'signup', redirectTo: 'signup'},
   { path: '**', redirectTo: 'home'}
 ];
 

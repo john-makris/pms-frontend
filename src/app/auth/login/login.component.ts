@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
         this.roles = currentUser.roles;
         this.isLoading = false;
         this.resetForm();
-        this.router.navigate(['/']);
+        this.router.navigate(['/home']);
       },
       err => {
         console.log(err);
