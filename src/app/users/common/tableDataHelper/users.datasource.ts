@@ -190,7 +190,7 @@ export class UsersDataSource implements DataSource<UserData> {
     }
 
     checkData(response: UserPageResponseData) {
-        if(response!==null) {
+        if(response!==null && response.users) {
            this.userSubject.next(response.users);
             console.log(response);
             const pageDetail: PageDetail = new PageDetail(
