@@ -56,6 +56,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
   identifierSuffixList: Array<string> = [];
 
   selectedRow: ClassGroup | null = null;
+  initialClassGroup: ClassGroup | null = null;
   selection = new SelectionModel<ClassGroup>(true, []);
 
   totalItems: number = 0;
@@ -269,6 +270,7 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
         this.currentUser.id, +this.selectedCourseScheduleId, this.selectedLectureTypeName)
       .subscribe((classGroup: ClassGroup | null) => {
         if (classGroup) {
+          this.initialClassGroup = classGroup;
           this.selectedRow = classGroup;
           console.log("Class Group: "+JSON.stringify(classGroup));
         }
@@ -480,6 +482,15 @@ export class ClassGroupListComponent implements OnInit, OnDestroy {
       console.log("DATA: "+ "Entered sto subscribe");
         this.snackbarService.success('You just subscribed to '+this.selectedLectureTypeName.toLowerCase()+'_'+this.selectedRow?.nameIdentifier);
         this.router.navigate(['/classes-groups'], { relativeTo: this.route});
+      },
+      (error: any) => {
+        if (this.selectedRow) {
+          this.unCheck(this.selectedRow);
+          this.selectedRow = null;
+          this.selection.clear();
+          this.selectedRow = this.initialClassGroup;
+          this.check(this.selectedRow);
+        }
       }).add(() => { this.isLoading = false; });
   }
 

@@ -144,10 +144,11 @@
                             (click)="$event.stopPropagation()" (change)="selectHandler(row)"
                             [checked]="selection.isSelected(row) || check(row)"
                             [matTooltipDisabled]="row.status && ((row.capacity !== row.groupsOfStudents) || (selection.isSelected(row)))"
-                            [disabled]="(selectedRow && !simpleCheck(row)) || (!row.status) || ((row.capacity === row.groupsOfStudents) && !(selection.isSelected(row)))">
+                            [disabled]="(selection.isSelected(row) || check(row)) || (!row.status) || ((row.capacity === row.groupsOfStudents) && !(selection.isSelected(row)))">
                         </mat-checkbox>
                     </mat-cell>
                 </ng-container>
+                <!-- (selectedRow && !simpleCheck(row)) || (!row.status) || ((row.capacity === row.groupsOfStudents) && !(selection.isSelected(row))) -->
 
                 <div *ngIf="showStudentFeatures">
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
