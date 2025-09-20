@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 
-const API_URL = 'http://localhost:8080/pms/groups-students/';
+const API_URL = '/api/pms/groups-students/';
 
 @Injectable({
     providedIn: 'root'

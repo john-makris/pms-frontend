@@ -5,7 +5,7 @@ import { CourseRequestData } from "./common/payload/request/courseRequestData.in
 import { CourseResponseData } from "./common/payload/response/courseResponseData.interface";
 import { Course } from "./course.model";
 
-const API_URL = 'http://localhost:8080/pms/courses/';
+const API_URL = '/api/pms/courses/';
 
 @Injectable({
     providedIn: 'root'

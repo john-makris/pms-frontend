@@ -7,7 +7,7 @@ import { PresenceResponseData } from "./common/payload/response/presenceResponse
 import { PresencesResponseData } from "./common/payload/response/presencesResponseData.interface";
 import { Presence } from "./presence.model";
 
-const API_URL = 'http://localhost:8080/pms/presences/';
+const API_URL = '/api/pms/presences/';
 
 @Injectable({
     providedIn: 'root'

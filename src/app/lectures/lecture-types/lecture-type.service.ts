@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { LectureType } from "./lecture-type.model";
 
-const API_URL = 'http://localhost:8080/pms/lecture-types/';
+const API_URL = '/api/pms/lecture-types/';
 
 @Injectable({
     providedIn: 'root'

@@ -8,7 +8,7 @@ import { UserResponseData } from "./common/payload/response/userResponseData.int
 import { UserRequestData } from "./common/payload/request/userRequestData.interface";
 import { UserDetailsRequestData } from "../profile/common/payload/request/userDetailsRequestData.interface";
 
-const API_URL = 'http://localhost:8080/pms/users/';
+const API_URL = '/api/pms/users/';
 
 @Injectable({
     providedIn: 'root'

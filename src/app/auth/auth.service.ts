@@ -11,7 +11,7 @@ import { Department } from "../departments/department.model";
 import { MatDialog } from "@angular/material/dialog";
 
 
-const AUTH_API = 'http://localhost:8080/pms/auth/';
+const AUTH_API = '/api/pms/auth/';
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })

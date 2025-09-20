@@ -6,7 +6,7 @@ import { ExcuseApplicationRequestData } from "./common/payload/request/excuseApp
 import { ExcuseApplicationResponseData } from "./common/payload/response/excuseApplicationResponseData.interface";
 import { ExcuseApplicationsResponseData } from "./common/payload/response/excuseApplicationsResponseData.interface";
 
-const API_URL = 'http://localhost:8080/pms/excuse-applications/';
+const API_URL = '/api/pms/excuse-applications/';
 
 @Injectable({
     providedIn: 'root'

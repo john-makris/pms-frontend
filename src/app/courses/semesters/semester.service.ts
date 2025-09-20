@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Semester } from "./semester.model";
 
-const API_URL = 'http://localhost:8080/pms/semesters/';
+const API_URL = '/api/pms/semesters/';
 
 @Injectable({
     providedIn: 'root'

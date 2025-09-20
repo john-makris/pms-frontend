@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { ClassGroupResponseData } from "./common/payload/response/classGroupResponseData.interface";
 
-const API_URL = 'http://localhost:8080/pms/classes-groups/';
+const API_URL = '/api/pms/classes-groups/';
 
 @Injectable({
     providedIn: 'root'

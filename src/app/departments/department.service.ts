@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from "rxjs";
 import { DepartmentRequestData } from "./common/payload/request/departmentRequestData.interface";
 import { Department } from "./department.model";
 
-const API_URL = 'http://localhost:8080/pms/departments/';
+const API_URL = '/api/pms/departments/';
 
 @Injectable({
     providedIn: 'root'

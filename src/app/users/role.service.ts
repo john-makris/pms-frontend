@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Role } from "./role.model";
 
-const API_URL = 'http://localhost:8080/pms/roles/';
+const API_URL = '/api/pms/roles/';
 
 @Injectable({
     providedIn: 'root'

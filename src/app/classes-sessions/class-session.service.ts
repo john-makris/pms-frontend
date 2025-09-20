@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from "rxjs";
 import { ClassSessionRequestData } from "./common/payload/request/classSessionRequestData.interface";
 import { ClassSessionResponseData } from "./common/payload/response/classSessionResponseData.interface";
 
-const API_URL = 'http://localhost:8080/pms/classes-sessions/';
+const API_URL = '/api/pms/classes-sessions/';
 
 @Injectable({
     providedIn: 'root'

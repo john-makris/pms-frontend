@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class UploadFilesService {
-  private baseUrl = 'http://localhost:8080/pms/users';
+  private baseUrl = '/api/pms/users';
 
   constructor(private http: HttpClient) { }
 
